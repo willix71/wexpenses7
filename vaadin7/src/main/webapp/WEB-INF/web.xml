@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app 
+xmlns="http://java.sun.com/xml/ns/javaee" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:web="http://java.sun.com/xml/ns/javaee" 
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  
+  <display-name>wexpenses</display-name>
+  
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/WEB-INF/main-context.xml</param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+  </listener>
+  <context-param>
+    <description>Vaadin production mode</description>
+    <param-name>productionMode</param-name>
+    <param-value>false</param-value>
+  </context-param>
+  <filter>
+    <filter-name>openSession</filter-name>
+    <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+    <init-param>
+      <param-name>entityManagerFactory</param-name>
+      <param-value>entityManagerFactoryBean</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>openSession</filter-name>
+    <servlet-name>vaadin</servlet-name>
+  </filter-mapping>
+  <servlet>
+    <servlet-name>vaadin</servlet-name>
+    <servlet-class>ru.xpoft.vaadin.SpringVaadinServlet</servlet-class>
+    <init-param>
+      <param-name>beanName</param-name>
+      <param-value>wexUI</param-value>
+    </init-param>
+    <init-param>
+      <param-name>systemMessagesBeanName</param-name>
+      <param-value>DEFAULT</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>vaadin</servlet-name>
+    <url-pattern>/vaadin/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>vaadin</servlet-name>
+    <url-pattern>/VAADIN/*</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>wexpenses</welcome-file>
+  </welcome-file-list>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/static/*</url-pattern>
+  </servlet-mapping>
+</web-app>

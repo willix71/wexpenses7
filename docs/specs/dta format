@@ -1,0 +1,44 @@
+02WILLIAM KEYSER      11 CH. DU GRAND NOYS                    1197 PRANGINS       NATEL                                         
+02WILLIAM KEYSER      11 CH. DU GRAND NOYS                    1197 PRANGINS       NATEL                                         .
+02WILLIAM KEYSER          11 CH. DU GRAND NOYSER                          1197 PRANGINS           ECOLE ENFANTS                 .
+01{...1}            00000{...2}{3}    UBSK {004}{5}00UBSK ZW0000{004}CH650022822851333340B         CHF79,15                     .
+03/C/10-015213-4                INSTITUT CATHOLIQUE     MONT-OLIVET                                     1006 LAUSANNE           .
+04SHAUN ET KIMBERLY KEYSER    2011/2012                                                                                         .
+
+
+
+SHAUN ET KIMBERLY KEYSER    .
+WILLIAM KEYSER          
+11 CH. DU GRAND NOYS
+
+une ligne = 128 character
+Ligne 1
+1 date d'execution {yyMMdd}
+2 date d'envois {yyMMdd}
+3 clearing 228 ??
+4 compteur {00000}
+5 code de payement 82600 BVR orange, 82700 BVR rouge, 83600 payement banquaire en suisse, ... 89000 total
+6 IBAN
+7 monnaie + montant
+8 destinataire 2,3,4
+9 total decimal sur 3 chiffres xx,yyy
+  
+01{...1}            00000{...2}{3}    UBSK {..4}{..5}UBSK ZW0000{..4}CH650022822851333340B         CHF79,15                     02WILLIAM KEYSER      11 CH. DU GRAND NOYS                    1197 PRANGINS       NATEL                                         03/C/010530993SUNRISE COMMUNICATIOBINZMUHLESTRASSE 130                    8050 ZUERICH        000000449903330803386144644       
+
+01000000            00000{...2}       UBSK {..4}{..5}{9}
+
+Adresses pour un bvr orange 
+02 4 lignes de 20 + 1 champ libre de 46
+03 /C/010530993 + 4 lignes de 20 + 1 champ libre de 34 (01-053099-3 = 00-000000-0)
+
+01120430            00000120425228    UBSK 0000482600UBSK ZW000000004CH650022822851333340B         CHF79,15                     02WILLIAM KEYSER      11 CH. DU GRAND NOYE                    1197 PRANGINS       NATEL                                         03/C/010530993SUNRISE COMMUNICATIOBINZMUHLESTRASSE 130                    8050 ZUERICH        000000449903330803386144644                         
+
+Adresses pour un bvr rouge
+02 4 lignes de 24 + 1 champ libre de 30
+03 1 champe d2 30 (/C/10-015213-4) + 4 lignes de 24
+04 text libre (28 char par lignes ???)
+
+01120425            00000120425228    UBSK 0000182700UBSK ZW000000001CH650022822851333340B         CHF8418,00                   02WILLIAM KEYSER          11 CH. DU GRAND NOYSER                          1197 PRANGINS           ECOLE ENFANTS                 03/C/10-015213-4                INSTITUT CATHOLIQUE     MONT-OLIVET                                     1006 LAUSANNE           04SHAUN ET KIMBERLY KEYSER    2011/2012                                                                                         
+
+
+

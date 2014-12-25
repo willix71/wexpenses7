@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+   		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+   		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<!-- persistence  -->
+	<import resource="classpath:persistence-context.xml"/>
+	
+	<bean id="persistenceService" class="w.wexpense.vaadin7.container.ContainerService" >
+	<!-- 
+		<property name="helper">
+			<bean class="com.vaadin.addon.jpacontainer.util.EntityManagerPerRequestHelper"/>
+		</property>
+	-->
+	</bean>
+	
+	<context:annotation-config />
+	
+	<context:property-placeholder location="classpath:wexpenses.properties" />
+
+ 	<context:component-scan base-package="w.wexpense.service"/>
+ 	
+    <context:component-scan base-package="w.wexpense.vaadin7"/>
+    
+    <!-- message source  -->
+    <bean class="ru.xpoft.vaadin.VaadinMessageSource" />
+
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename" value="classpath:/locales/messages"/>
+     </bean>
+	
+</beans>

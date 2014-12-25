@@ -1,0 +1,32 @@
+
+Default order on list views (only on expenses)
+
+transaction line filters account
+
+Login and Security
+	fetch the owner's payee details for dta from current user
+
+GUI
+===
+
+center new windows
+
+height of cells in editable sub view
+
+
+NICE TO HAVE
+============
+
+edit expenses from transaction line and consolidation view
+
+selective combo boxes (i.e. only display filtered values such as with discriminators)
+
+unmodifiable sent payments and expenses
+
+
+TECHY
+=====
+
+remove jpaContainers and use custom jpaRepository dependant containers
+
+add caching to hibernate
