@@ -20,7 +20,7 @@ public class WexConverterFactory extends DefaultConverterFactory {
             return new StringToAmountConverter();
         } else if (Date.class.isAssignableFrom(sourceType)) {
             return new StringToDateConverter();
-        } else if (Date.class.isAssignableFrom(sourceType)) {
+        } else if (String.class.isAssignableFrom(sourceType)) {
             return new StringToStringConverter();
         } else {
             return super.createStringConverter(sourceType);

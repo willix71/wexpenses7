@@ -41,15 +41,15 @@ public class TransactionLineUtilsTest {
 	 */
 	private List<Expense> initExpenses() {
 		List<Expense> xs = new ArrayList<Expense>();
-		xs.add( createExpense(DateUtils.getDate(2013,2), new BigDecimal("100"), CHF, A11, A111) );
-		xs.add( createExpense(DateUtils.getDate(2014,4), new BigDecimal("45"), CHF, A11, A12) );
-		xs.add( createExpense(DateUtils.getDate(2012,1), new BigDecimal("200"), CHF, A13, A11) );	
+		xs.add( createExpense(DateUtils.getDate(1,2,2013), new BigDecimal("100"), CHF, A11, A111) );
+		xs.add( createExpense(DateUtils.getDate(1,4,2014), new BigDecimal("45"), CHF, A11, A12) );
+		xs.add( createExpense(DateUtils.getDate(1,1,2012), new BigDecimal("200"), CHF, A13, A11) );	
 		
-		Expense xsum = createExpense(DateUtils.getDate(2015,10), new BigDecimal("0"), CHF, null, App);
+		Expense xsum = createExpense(DateUtils.getDate(1,10,2015), new BigDecimal("0"), CHF, null, App);
 		addTransactionLine(xsum, A12, TransactionLineEnum.SUM, new BigDecimal("300"));
 		xs.add(xsum);
 		
-		xs.add( createExpense(DateUtils.getDate(2016), new BigDecimal("88"), CHF, A11, A12) );
+		xs.add( createExpense(DateUtils.getDate(1,1,2016), new BigDecimal("88"), CHF, A11, A12) );
 		return xs;
 	}
 
@@ -59,7 +59,7 @@ public class TransactionLineUtilsTest {
 		List<TransactionLine> initlines = TransactionLineUtils.getAllTransactionLines(initExpenses());
 		
 		List<TransactionLine> lines = TransactionLineUtils.sortForBalance(initlines);
-		Date d = DateUtils.getDate(2000);
+		Date d = DateUtils.getDate(1,1,2000);
 		
 		for(TransactionLine l: lines) {
 			Assert.assertFalse(l.getDate().before(d));
@@ -120,7 +120,7 @@ public class TransactionLineUtilsTest {
 		
 		TransactionLineUtils.sortAndBalance(TransactionLineUtils.getAllTransactionLines(xs));
 
-		xs.add(createExpense(DateUtils.getDate(2014,4), new BigDecimal("12"), CHF, A11, A12));
+		xs.add(createExpense(DateUtils.getDate(1,4,2014), new BigDecimal("12"), CHF, A11, A12));
 		
 		clearBalance(TransactionLineUtils.getAllTransactionLines(xs));
 		

@@ -27,7 +27,6 @@ import w.wexpense.model.ExpenseType;
 import w.wexpense.model.Payee;
 import w.wexpense.model.PayeeType;
 import w.wexpense.model.Payment;
-import w.wexpense.model.TransactionLine;
 import w.wexpense.model.enums.TransactionLineEnum;
 import w.wexpense.utils.ExpenseUtils;
 

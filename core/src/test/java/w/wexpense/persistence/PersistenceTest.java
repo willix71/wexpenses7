@@ -41,8 +41,8 @@ public class PersistenceTest {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	//@Autowired
-	//private DatabasePopulator populator;
+	@Autowired
+	private DatabasePopulator populator;
 	
 	@Autowired 
 	private PlatformTransactionManager transactionManager;
@@ -52,7 +52,7 @@ public class PersistenceTest {
 	public void setup() {
 		Assert.assertNotNull(entityManager);
 		//Assert.assertNotNull(populator);
-		//populator.populate();
+		populator.populate();
 	}
 	
 	@Test
