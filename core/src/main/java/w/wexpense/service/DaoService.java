@@ -34,10 +34,14 @@ public class DaoService<T, ID extends Serializable> implements StorableService<T
 
 	@SuppressWarnings("unchecked")
 	public DaoService(Class<T> entityClass, JpaRepository<T, ID> dao, Initializor<T> initializor1, Initializor<T> initializor2) {
-		this(entityClass, dao, new Initializor[] {initializor2, initializor2}
-		);
+		this(entityClass, dao, new Initializor[] {initializor1, initializor2});
 	}
 
+	@SuppressWarnings("unchecked")
+	public DaoService(Class<T> entityClass, JpaRepository<T, ID> dao, Initializor<T> initializor1, Initializor<T> initializor2, Initializor<T> initializor3) {
+		this(entityClass, dao, new Initializor[] {initializor1, initializor2, initializor3});
+	}
+	
 	public DaoService(Class<T> entityClass, JpaRepository<T, ID> dao, Initializor<T> initializors[]) {
 		this.entityClass = entityClass;
 		this.dao = dao;

@@ -1,5 +1,7 @@
 package w.wexpense.service.model;
 
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import w.wexpense.persistence.dao.IAccountJpaDao;
 import w.wexpense.persistence.dao.IConsolidationJpaDao;
 import w.wexpense.persistence.dao.ITransactionLineJpaDao;
 import w.wexpense.service.DaoService;
+import w.wexpense.service.instanciator.Initializor;
 import w.wexpense.utils.DBableUtils;
 
 @Service
@@ -27,7 +30,22 @@ public class ConsolidationService extends DaoService<Consolidation, Long> implem
 	
 	@Autowired
 	public ConsolidationService(IConsolidationJpaDao dao) {
-	   super(Consolidation.class, dao);
+	   super(Consolidation.class, dao, new Initializor<Consolidation>() {
+		   public Object[] initialize(Consolidation c, Object[] args) {
+			  	if (args==null || args.length == 0 ||  !(args[0] instanceof Consolidation)) return args;
+			  
+			  	Consolidation lastConsolidation = (Consolidation) args[0];
+			  	c.setInstitution(lastConsolidation.getInstitution());			  	
+			  	c.setOpeningBalance(lastConsolidation.getClosingBalance());
+			  	
+			  	Calendar cal=Calendar.getInstance();
+			  	cal.setTime(lastConsolidation.getDate());
+			  	cal.add(Calendar.MONTH, 1);
+			  	c.setDate(cal.getTime());
+			  	
+			  	return Arrays.copyOfRange(args, 1, args.length);
+		   }
+	   });
    }
 	
 	@Override

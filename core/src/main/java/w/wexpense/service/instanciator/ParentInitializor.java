@@ -14,8 +14,7 @@ public class ParentInitializor<T extends Parentable<T>> implements Initializor<T
 	
    @Override
    public Object[] initialize(T t, Object[] args) {
-   	if (args==null || args.length == 0) return args;
-   	if (! entityClass.isInstance(args[0])) return args;
+   	if (args==null || args.length == 0 || !entityClass.isInstance(args[0])) return args;
    	
    	@SuppressWarnings("unchecked")
    	T parent = (T) args[0];

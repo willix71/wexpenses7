@@ -1,5 +1,7 @@
 package w.wexpense.vaadin7.action;
 
+import java.io.Serializable;
+
 import w.wexpense.vaadin7.UIHelper;
 import w.wexpense.vaadin7.WexUI;
 import w.wexpense.vaadin7.event.EntityChangeEvent;
@@ -26,7 +28,12 @@ public class AddNewAction extends ListViewAction {
 	public void handleAction(final Object sender, final Object target) {
 		@SuppressWarnings("rawtypes")
         final EditorView editor = ((WexUI) UI.getCurrent()).getBean(EditorView.class, editorName);	
-		editor.newInstance();
+		if (target != null && target instanceof Serializable) {
+			editor.newInstance(editor.getStoreService().load((Serializable) target));
+		} else {
+			editor.newInstance();
+		}		
+		
 		editor.addListener(new Component.Listener() {
 			private static final long serialVersionUID = 8121179082149508635L;
 

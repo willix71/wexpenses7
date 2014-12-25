@@ -11,8 +11,7 @@ public class ExchangeRateInitializor implements Initializor<ExchangeRate> {
 
 	@Override
    public Object[] initialize(ExchangeRate xRate, Object[] args) {
-   	if (args==null || args.length == 0) return args;
-   	if (! (args[0] instanceof TransactionLine)) return args;
+   	if (args==null || args.length == 0 ||  !(args[0] instanceof TransactionLine)) return args;
    	
    	TransactionLine tl= (TransactionLine) args[0];
    	Expense x = tl.getExpense();
