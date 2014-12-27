@@ -1,4 +1,4 @@
-package w.wexpense.service.model;
+package w.wexpense.service.model.impl;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,7 +7,6 @@ import w.wexpense.model.City;
 import w.wexpense.model.Country;
 import w.wexpense.model.Currency;
 import w.wexpense.model.Discriminator;
-import w.wexpense.model.ExchangeRate;
 import w.wexpense.model.ExpenseType;
 import w.wexpense.model.Payee;
 import w.wexpense.model.PayeeType;
@@ -15,13 +14,11 @@ import w.wexpense.model.Template;
 import w.wexpense.persistence.dao.ICityJpaDao;
 import w.wexpense.persistence.dao.ICountryJpaDao;
 import w.wexpense.persistence.dao.ICurrencyJpaDao;
-import w.wexpense.persistence.dao.IExchangeRateJpaDao;
 import w.wexpense.persistence.dao.IPayeeJpaDao;
 import w.wexpense.persistence.dao.ITemplateJpaDao;
 import w.wexpense.service.DaoService;
 import w.wexpense.service.GenericService;
 import w.wexpense.service.StorableService;
-import w.wexpense.service.instanciator.ExchangeRateInitializor;
 import w.wexpense.service.instanciator.NameInitializor;
 import w.wexpense.service.instanciator.ParentInitializor;
 
@@ -61,11 +58,6 @@ public class StorableServiceConfiguration {
 	@Bean 
 	public StorableService<Discriminator, Long> discriminatorService() {
 		return new GenericService<Discriminator, Long>(Discriminator.class, new ParentInitializor<Discriminator>(Discriminator.class), new NameInitializor<Discriminator>(Discriminator.class));
-	}
-	
-	@Bean 
-	public StorableService<ExchangeRate, Long> exchangeRateService(IExchangeRateJpaDao dao) {
-		return new DaoService<ExchangeRate, Long>(ExchangeRate.class, dao, new ExchangeRateInitializor());
 	}
 
 	@Bean 

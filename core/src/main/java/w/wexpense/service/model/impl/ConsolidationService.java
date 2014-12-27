@@ -1,4 +1,4 @@
-package w.wexpense.service.model;
+package w.wexpense.service.model.impl;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -17,6 +17,7 @@ import w.wexpense.persistence.dao.IConsolidationJpaDao;
 import w.wexpense.persistence.dao.ITransactionLineJpaDao;
 import w.wexpense.service.DaoService;
 import w.wexpense.service.instanciator.Initializor;
+import w.wexpense.service.model.IConsolidationService;
 import w.wexpense.utils.DBableUtils;
 
 @Service
@@ -31,6 +32,7 @@ public class ConsolidationService extends DaoService<Consolidation, Long> implem
 	@Autowired
 	public ConsolidationService(IConsolidationJpaDao dao) {
 	   super(Consolidation.class, dao, new Initializor<Consolidation>() {
+		   @Override
 		   public Object[] initialize(Consolidation c, Object[] args) {
 			  	if (args==null || args.length == 0 ||  !(args[0] instanceof Consolidation)) return args;
 			  

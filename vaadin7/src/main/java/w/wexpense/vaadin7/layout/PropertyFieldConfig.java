@@ -2,6 +2,7 @@ package w.wexpense.vaadin7.layout;
 
 import w.wexpense.model.DBable;
 
+import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.util.converter.Converter;
 import com.vaadin.server.Sizeable;
@@ -28,8 +29,10 @@ public class PropertyFieldConfig<T> {
     
     private Boolean readOnly;
 
-    private Converter converter;
+    private Converter<T, ?> converter;
 
+    private Property.ValueChangeListener valueChangeListener;
+    
     public PropertyFieldConfig(AbstractLayout layout, Object id) {
         super();
         this.id = id;
@@ -67,7 +70,10 @@ public class PropertyFieldConfig<T> {
             c.setHeight(height, heightUnit);
         }
         if (converter != null) {
-            ((AbstractField<?>) c).setConverter(converter);
+            ((AbstractField<T>) c).setConverter(converter);
+        }
+        if (valueChangeListener != null) {
+            ((AbstractField<T>) c).addValueChangeListener(valueChangeListener);
         }
         if (expandRatio != null && layout instanceof AbstractOrderedLayout) {
             ((AbstractOrderedLayout) layout).setExpandRatio(c, expandRatio);
@@ -96,11 +102,16 @@ public class PropertyFieldConfig<T> {
         return this;
     }
 
-    public PropertyFieldConfig<T> converter(Converter converter) {
+    public PropertyFieldConfig<T> converter(Converter<T,?> converter) {
         this.converter = converter;
         return this;
     }
     
+    public PropertyFieldConfig<T> valueChangeListener(Property.ValueChangeListener listener) {
+        this.valueChangeListener = listener;
+        return this;
+    }
+        
     public PropertyFieldConfig<T> expand(Float expandRatio) {
         this.expandRatio = expandRatio;
         return this;

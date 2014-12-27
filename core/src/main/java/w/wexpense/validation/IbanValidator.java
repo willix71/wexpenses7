@@ -60,4 +60,19 @@ public class IbanValidator implements ConstraintValidator<Ibanized, String> {
 	public static int convertToNumber(char c) {
 		return 10 + Character.toUpperCase(c) - 'A';
 	}
+	
+	
+	public static String formatIban(String iban) {
+	    if (iban==null) return null;
+	    int i =0;
+	    StringBuilder sb = new StringBuilder();
+	    for(char c: iban.toCharArray()) {
+	    	if (Character.isWhitespace(c)) continue;
+	    	sb.append(c);
+	    	if (++i % 4 == 0) {
+	    		sb.append(" ");
+	    	}	    	
+	    }
+	    return sb.toString();	
+	}
 }

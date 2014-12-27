@@ -1,4 +1,4 @@
-package w.wexpense.service.model;
+package w.wexpense.service.model.impl;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -12,6 +12,7 @@ import w.wexpense.model.Expense;
 import w.wexpense.model.enums.TransactionLineEnum;
 import w.wexpense.persistence.dao.IExpenseJpaDao;
 import w.wexpense.service.DaoService;
+import w.wexpense.service.model.IExpenseService;
 import w.wexpense.utils.ExpenseUtils;
 
 @Service

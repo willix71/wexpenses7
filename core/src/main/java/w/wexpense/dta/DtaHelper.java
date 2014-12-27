@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import w.wexpense.model.Expense;
+import w.wexpense.model.Payee;
 import w.wexpense.model.TransactionLine;
 import w.wexpense.model.enums.TransactionLineEnum;
 
@@ -246,5 +247,20 @@ public class DtaHelper {
 			errors.put("payee.city", "Payee's must have a city");
 		}
 		return errors;
+	}
+	
+	public static String formatPostalAccount(Payee payee) {
+		StringBuilder sb = new StringBuilder();
+		String account = payee.getPostalAccount();
+		if (payee.getBankDetails() != null) {
+			sb.append(payee.getBankDetails().toString());
+			if (account==null) {
+				account = payee.getBankDetails().getPostalAccount();
+			}
+		}
+		if (account != null) {
+			sb.append("CP :").append(account);
+		}
+		return sb.toString();
 	}
 }

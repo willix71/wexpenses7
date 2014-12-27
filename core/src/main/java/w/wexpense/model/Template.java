@@ -43,10 +43,16 @@ public class Template extends DBable<Template> {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Account outAccount;
 	
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Discriminator outDiscriminator;
+	
 	private TransactionLineEnum outFactor = TransactionLineEnum.OUT;
 			
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Account inAccount;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Discriminator inDiscriminator;
 	
 	private TransactionLineEnum inFactor = TransactionLineEnum.IN;
 	
@@ -133,19 +139,35 @@ public class Template extends DBable<Template> {
 	public Account getOutAccount() {
 		return outAccount;
 	}
-
+	
 	public void setOutAccount(Account outAccount) {
 		this.outAccount = outAccount;
 	}
+	
+	public Discriminator getOutDiscriminator() {
+		return outDiscriminator;
+	}
 
+	public void setOutDiscriminator(Discriminator discriminator) {
+		this.outDiscriminator = discriminator;
+	}
+	
 	public Account getInAccount() {
 		return inAccount;
 	}
-
+	
 	public void setInAccount(Account inAccount) {
 		this.inAccount = inAccount;
 	}
+	
+	public Discriminator getInDiscriminator() {
+		return inDiscriminator;
+	}
 
+	public void setInDiscriminator(Discriminator discriminator) {
+		this.inDiscriminator = discriminator;
+	}
+	
 	public TransactionLineEnum getOutFactor() {
 		return outFactor;
 	}
@@ -187,6 +209,7 @@ public class Template extends DBable<Template> {
 		if (outAccount != null || inAccount != null) {
 			TransactionLine tl = new TransactionLine();			
 			tl.setAccount(outAccount);
+			tl.setDiscriminator(outDiscriminator);
 			tl.setFactor(outFactor);
 			tl.setAmount(amount);
 			tl.setValue(amount);
@@ -194,6 +217,7 @@ public class Template extends DBable<Template> {
 
 			tl = new TransactionLine();
 			tl.setAccount(inAccount);
+			tl.setDiscriminator(inDiscriminator);
 			tl.setFactor(inFactor);
 			tl.setAmount(amount);
 			tl.setValue(amount);

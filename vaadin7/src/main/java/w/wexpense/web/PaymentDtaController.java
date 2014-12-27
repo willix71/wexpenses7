@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import w.wexpense.model.Payment;
 import w.wexpense.model.PaymentDta;
-import w.wexpense.service.model.PaymentService;
+import w.wexpense.service.model.impl.PaymentService;
 
 @Controller
 public class PaymentDtaController {

@@ -7,6 +7,7 @@ import w.wexpense.dta.DtaException;
 import w.wexpense.dta.DtaFormater;
 import w.wexpense.dta.EndDtaFormater;
 import w.wexpense.model.Expense;
+import w.wexpense.model.ExpenseType;
 import w.wexpense.model.Payment;
 import w.wexpense.model.PaymentDta;
 
@@ -30,12 +31,16 @@ public class PaymentDtaUtils {
 	}
 
 	public static DtaFormater getDtaFormater(Expense expense) throws DtaException {
+		return getDtaFormater(expense.getType());
+	}
+	
+	public static DtaFormater getDtaFormater(ExpenseType expenseType) throws DtaException {
 		try {	
-			String formaterName = expense.getType().getPaymentGeneratorClassName();
+			String formaterName = expenseType.getPaymentGeneratorClassName();
 			return (DtaFormater) Class.forName(formaterName).newInstance();
 		}
 		catch(Exception e) {	
-			throw new DtaException("Can not generate DTA for type " + expense.getType(), e);
+			throw new DtaException("Can not generate DTA for type " + expenseType, e);
 		}
 	}
 	

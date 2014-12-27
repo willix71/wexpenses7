@@ -39,7 +39,7 @@ public class TemplateConfiguration {
 	public EditorView<Template, String> templateEditorView() {
 	    PropertyFieldLayout l = PropertyFieldHelper.getDBableFormPropertyFieldLayout(
 	        "createdTs","modifiedTs","templateMenu","templateName","templateDescription","templateOrder","type",
-            "payee","amount","currency","externalReference","description","outAccount","outFactor","inAccount","inFactor");
+            "payee","amount","currency","externalReference","description","outAccount","outFactor","outDiscriminator","inAccount","inFactor","inDiscriminator");
 	    
 		EditorView<Template, String> editorview = new EditorView<Template, String>(templateService, l);
 		initMenuItems(editorview);
@@ -58,14 +58,16 @@ public class TemplateConfiguration {
             new TableColumnConfig("templateMenu","Menu").desc(),
             new TableColumnConfig("templateOrder","Order").asc(),
             new TableColumnConfig("templateName", "Name"),
-            new TableColumnConfig("templateDescription", "Description"),
+            new TableColumnConfig("templateDescription", "Description").collapse(),
             new TableColumnConfig("type").centerAlign(),
             new TableColumnConfig("amount").rightAlign(),
             new TableColumnConfig("currency").centerAlign(),
             new TableColumnConfig("payee").sortBy(".display").expand(1.0f),              
             new TableColumnConfig("externalReference").collapse(),
-            new TableColumnConfig("outAccount"),
-            new TableColumnConfig("inAccount")
+            new TableColumnConfig("outAccount").collapse(),
+            new TableColumnConfig("inAccount").collapse(),
+            new TableColumnConfig("outDiscriminator").collapse(),
+            new TableColumnConfig("inDiscriminator").collapse()
             );
 		ActionHelper.setDefaultListViewActions(listview, "templateEditorView");
 		return listview;
@@ -75,7 +77,8 @@ public class TemplateConfiguration {
 		EnabalebalMenuBar<Template> menuBar = editorview.getMenuBar();
 		MenuItem mnuDta = menuBar.addItem("Template", null);
 		mnuDta.addItem("to expense", new Command() {
-         @SuppressWarnings("unchecked")
+
+	         @SuppressWarnings("unchecked")
          public void menuSelected(MenuItem selectedItem) { 
          	try {
          		Expense x = editorview.getInstance().toExpense();

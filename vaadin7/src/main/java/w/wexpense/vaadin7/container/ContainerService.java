@@ -52,18 +52,6 @@ public class ContainerService {
 		return jpac;
 	}
 	
-//	public <T> Container getContainer(Class<T> entityClass, String... nestedProperties) {
-//		JPAContainer<T> jpac = getJPAContainer(entityClass);
-//
-//		if (nestedProperties != null) {
-//			for (String nestedProperty : nestedProperties) {
-//				jpac.addNestedContainerProperty(nestedProperty);
-//			}
-//		}
-//	
-//		return jpac;
-//	}
-	
 	public <T> Container getContainer(Class<T> entityClass, TableColumnConfig... configs) {	
 		JPAContainer<T> jpac = getJPAContainer(entityClass);
 
@@ -82,8 +70,4 @@ public class ContainerService {
 		return jpac;
 	}
 
-//	public <T> T getEntity(Item i) {
-//		EntityItem<T> item=  (EntityItem<T>) i;
-//		return item.getEntity();
-//	}
 }

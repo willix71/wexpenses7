@@ -22,6 +22,7 @@ import w.wexpense.validation.ExchangeRateTransactionLineized;
 @Entity
 @TypeDefs({
 	@TypeDef(name = "amountValueType", typeClass = w.wexpense.persistence.type.AmountValueType.class),
+	@TypeDef(name = "accountPeriodType", typeClass = w.wexpense.persistence.type.AccountPeriodType.class),
 	@TypeDef(name = "transactionLineEnumType", typeClass = w.wexpense.persistence.type.TransactionLineEnumType.class)
 	})
 @ExchangeRateTransactionLineized
@@ -29,7 +30,8 @@ public class TransactionLine extends DBable<TransactionLine> {
 
 	private static final long serialVersionUID = 2482940442245899869L;
 		
-	private Integer period;
+	@Type(type="accountPeriodType")
+	private AccountPeriod period;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Expense expense;
@@ -199,11 +201,11 @@ public class TransactionLine extends DBable<TransactionLine> {
 		this.consolidation = consolidation;
 	}
 
-	public Integer getPeriod() {
+	public AccountPeriod getPeriod() {
 		return period;
 	}
 
-	public void setPeriod(Integer period) {
+	public void setPeriod(AccountPeriod period) {
 		this.period = period;
 	}
 	

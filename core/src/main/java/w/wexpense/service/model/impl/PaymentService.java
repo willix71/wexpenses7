@@ -1,4 +1,4 @@
-package w.wexpense.service.model;
+package w.wexpense.service.model.impl;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ import w.wexpense.persistence.dao.IExpenseJpaDao;
 import w.wexpense.persistence.dao.IPaymentDtaJpaDao;
 import w.wexpense.persistence.dao.IPaymentJpaDao;
 import w.wexpense.service.DaoService;
+import w.wexpense.service.model.IPaymentService;
 import w.wexpense.utils.DBableUtils;
 import w.wexpense.utils.PaymentDtaUtils;
 

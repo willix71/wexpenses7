@@ -71,3 +71,12 @@ alter table CONSOLIDATION add column DELTABALANCE DECIMAL(19,2);
 alter table Transactionline alter column amountvalue set null;
 
 create index similarexpenses on EXPENSE (AMOUNT ,DATE );
+
+// ----- 2014-12-27
+ALTER TABLE PAYEE ADD COLUMN PAYED varchar(512);
+ALTER TABLE EXPENSE ADD COLUMN PAYED varchar(512);
+
+ALTER TABLE Template ADD COLUMN inDiscriminator_id bigint;
+ALTER TABLE Template ADD COLUMN outDiscriminator_id bigint;
+alter table Template add constraint FKTemplateInDisc foreign key (inDiscriminator_id) references Discriminator;
+alter table Template add constraint FKTemplateOutDisc foreign key (outDiscriminator_id) references Discriminator;

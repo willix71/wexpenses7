@@ -5,6 +5,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -36,19 +37,20 @@ public class Payee extends DBable<Payee> {
     
     @Pattern(regexp="|\\d{1,2}-\\d{1,6}-\\d")
     private String postalAccount;
-    
-    private String externalReference;
-    
+       
     @ManyToOne(fetch = FetchType.EAGER)
     private Payee bankDetails;
    
+    @Transient
+    private String externalReference;
+ 
     private String display;
     
     @PrePersist
     @PreUpdate
     public void preupdate() {
-    	display = toString().toLowerCase();
     	externalReference = buildExternalReference();
+    	display = toString() + "; " + externalReference;    
     }
 
 	public String getDisplay() {
@@ -112,23 +114,35 @@ public class Payee extends DBable<Payee> {
 	}
 
 	public String getExternalReference() {
+		if (this.externalReference == null) {
+			this.externalReference = buildExternalReference();
+		}
 		return externalReference;
 	}
 	
 	public String buildExternalReference() {
-		if (iban == null) {
-			if (postalAccount == null) {
-				return null;
+		StringBuilder sb = new StringBuilder();
+		if (iban != null) {
+			sb.append("IBAN:").append(iban);		
+		}
+		String cp = postalAccount!=null?postalAccount:bankDetails!=null?bankDetails.getPostalAccount():null;
+		if (cp != null) {
+			if (sb.length()==0) {
+				sb.append("CP:");
 			} else {
-				return "CP:"+postalAccount;
+				sb.append( " | CP:");
 			}
-		} else {
-			if (postalAccount == null) {
-				return "IBAN:"+iban;
+			sb.append(cp);
+		}
+		if (bankDetails != null) {
+			if (sb.length()==0) {
+				sb.append("Bank: ");
 			} else {
-				return "IBAN:"+iban + " | CP:"+postalAccount;
+				sb.append( " | Bank: ");
 			}
-		}	
+			sb.append(bankDetails.toString());
+		}
+		return sb.toString();
 	}
 
 	public String getIban() {
@@ -158,8 +172,7 @@ public class Payee extends DBable<Payee> {
 	@Override
 	public String toString() {
 		String s = getPrefixedName();
-		if (city != null) s += ", " + city.toString();	
-		if (externalReference != null) s += "; " + externalReference;
+		if (city != null) s += ", " + city.toString();			
 		return s;
 	}
 }

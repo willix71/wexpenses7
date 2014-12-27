@@ -1,4 +1,4 @@
-package w.wexpense.service.model;
+package w.wexpense.service.model.impl;
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import w.wexpense.model.TransactionLine;
 import w.wexpense.persistence.dao.ITransactionLineJpaDao;
 import w.wexpense.service.DaoService;
+import w.wexpense.service.model.ITransactionLineService;
 import w.wexpense.utils.TransactionLineUtils;
 
 @Service

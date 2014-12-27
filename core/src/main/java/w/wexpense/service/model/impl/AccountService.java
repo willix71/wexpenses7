@@ -1,4 +1,4 @@
-package w.wexpense.service.model;
+package w.wexpense.service.model.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +8,7 @@ import w.wexpense.persistence.dao.IAccountJpaDao;
 import w.wexpense.service.DaoService;
 import w.wexpense.service.instanciator.NameInitializor;
 import w.wexpense.service.instanciator.ParentInitializor;
+import w.wexpense.service.model.IAccountService;
 import w.wexpense.utils.AccountUtils;
 
 @Service

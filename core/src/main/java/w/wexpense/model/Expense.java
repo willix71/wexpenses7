@@ -44,6 +44,8 @@ public class Expense extends DBable<Expense> {
 	//@JoinColumn(name="PAYEE_OID")
 	private Payee payee;
 	
+	private String payed;
+	
 	@ManyToOne(fetch = FetchType.EAGER)
 	//@JoinColumn(name="TYPE_OID")
 	private ExpenseType type;
@@ -141,6 +143,14 @@ public class Expense extends DBable<Expense> {
 
 	public void setPayment(Payment payment) {
 		this.payment = payment;
+	}
+
+	public String getPayed() {
+		return payed;
+	}
+
+	public void setPayed(String payed) {
+		this.payed = payed;
 	}
 
 	@Override

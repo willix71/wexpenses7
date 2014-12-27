@@ -9,13 +9,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.vaadin.dialogs.ConfirmDialog;
 
 import w.wexpense.model.ExchangeRate;
 import w.wexpense.model.Expense;
 import w.wexpense.model.Payee;
 import w.wexpense.model.TransactionLine;
 import w.wexpense.service.model.IExpenseService;
+import w.wexpense.utils.PaymentDtaUtils;
 import w.wexpense.utils.TransactionLineUtils;
 import w.wexpense.vaadin7.UIHelper;
 import w.wexpense.vaadin7.WexUI;
@@ -51,10 +51,10 @@ import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -101,6 +101,7 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
         @Override
         public boolean isReadOnly() { return true; }
     }
+        
     private static PropertyFieldLayout getGridPropertyFieldLayout() {
         VerticalLayout vl = PropertyFieldHelper.getVerticalLayout(false, true);
         
@@ -121,6 +122,8 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(vl, "payee"));
         
+        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(vl, "payed").width(100,Unit.PERCENTAGE).height(3,Unit.PICAS).readOnly(true));
+        
         HorizontalLayout hl3 = PropertyFieldHelper.getHorizontalLayout(true, false);    
         fpl.addPropertyFieldConfig(new DatePart(hl3, "Day", "{0,date,EE}").width(40,Unit.PIXELS));
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl3, "date").width(200, Unit.PIXELS));
@@ -134,8 +137,6 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(vl, "transactions"));        
         return fpl;
     }
-    
-    private IExpenseService expenseService;
     
     private OneToManyField<TransactionLine> expenseTransactionsField;
 	
@@ -161,7 +162,6 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 	@Autowired
 	public ExpenseEditorView(IExpenseService expenseService) {
 	   super(expenseService, getGridPropertyFieldLayout());
-	   this.expenseService = expenseService;
 	   
 	   MenuItem adminMenu = menuBar.addItem("admin", null);
 	   unlock = menuBar.addItem(adminMenu, "unlock", null, new Command() {
@@ -207,6 +207,10 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 		});    
 		
 		this.setCustomField("transactions", expenseTransactionsField);
+		
+		TextArea payedField = new TextArea(); 
+		payedField.setNullRepresentation("");
+		this.setCustomField("payed", payedField);
    }
 	
     @Override
@@ -230,6 +234,15 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 					getInstance().setCurrency(payee.getCity().getCountry().getCurrency());
 					getField("currency").markAsDirty();
 				}
+				
+				String payed = null;
+				try {
+					payed = PaymentDtaUtils.getDtaFormater(getInstance()).payee(getInstance());
+				} catch(Exception e) {
+					payed = payee==null?null:payee.toString();
+				}
+				getInstance().setPayed(payed);
+				getField("payed").markAsDirty();
 			}
 		});
 	}

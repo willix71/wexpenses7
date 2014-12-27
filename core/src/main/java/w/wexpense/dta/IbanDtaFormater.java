@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import w.wexpense.model.Expense;
 import w.wexpense.model.Payee;
 import w.wexpense.model.Payment;
+import w.wexpense.validation.IbanValidator;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -54,15 +55,12 @@ public class IbanDtaFormater implements DtaFormater {
 	
 	@Override
     public String payee(Expense expense) {
-	    Payee institution = expense.getPayee().getBankDetails();
-        Joiner j = Joiner.on(',').skipNulls();
-        return j.join(
-                institution.getPrefixedName(), 
-                institution.getCity().toString(), 
-                expense.getPayee().getIban(),
-                expense.getPayee().getPrefixedName(), 
-                expense.getPayee().getAddress1(), 
-                expense.getPayee().getCity().toString()); 
+		Payee payee = expense.getPayee();
+        Joiner j = Joiner.on('\n').skipNulls();
+        return j.join(               
+                payee.toString(),
+                IbanValidator.formatIban(payee.getIban()),
+                payee.getBankDetails().toString()); 
     }
 	   
 	protected String formatLine02(Payment payment, int index, Expense expense) {

@@ -41,21 +41,18 @@ public class BvoDtaFormater implements DtaFormater {
 		if (Strings.isNullOrEmpty(expense.getExternalReference())) {
 			errors.put("externalReference", "External reference is mandatory for BVO payments (826)");
 		}
-		if (Strings.isNullOrEmpty(expense.getPayee().getPostalAccount())) {
-			errors.put("payee.postalAccount", "Payee's postal account is mandatory for BVO payments (826)");
+		if (paddedAccountNumber(expense.getPayee())==null) {
+			String msg = "Either the payee's postal account or the payee's bank detail postal account are needed for BVO payments (826)";
+			errors.put("payee.postalAccount", msg);
+			errors.put("payee.bankDetails.postalAccount", msg);
 		}
 		return errors;
 	}		
 	
 	@Override
 	public String payee(Expense expense) {
-	    Joiner j = Joiner.on(',').skipNulls();
-	    return j.join(
-	            expense.getPayee().getPrefixedName(), 
-	            expense.getPayee().getAddress1(), 
-	            expense.getPayee().getAddress2(),
-	            expense.getPayee().getCity().toString(),
-	            expense.getPayee().getPostalAccount());   
+		Payee payee = expense.getPayee();
+		return payee.toString() + "\n" + DtaHelper.formatPostalAccount(payee);
 	}
 	
 	protected String formatLine02(Payment payment, int index, Expense expense) {
@@ -80,7 +77,7 @@ public class BvoDtaFormater implements DtaFormater {
 		line03.append("/C/");
 		
 		// ISR party number
-		line03.append(paddedAccountNumber(expense.getPayee().getPostalAccount()));
+		line03.append(paddedAccountNumber(expense.getPayee()));
 		
 		line03.append(pad(expense.getPayee().getPrefixedName(), 20));
 		line03.append(pad(expense.getPayee().getAddress1(), 20));
@@ -99,6 +96,16 @@ public class BvoDtaFormater implements DtaFormater {
 		return line03.toString();
 	}
 	
+	public static String paddedAccountNumber(Payee payee) {
+		if (!Strings.isNullOrEmpty(payee.getPostalAccount())) {
+			return paddedAccountNumber(payee.getPostalAccount());
+		} else if (payee.getBankDetails()!=null && !Strings.isNullOrEmpty(payee.getBankDetails().getPostalAccount())) {
+			return paddedAccountNumber(payee.getBankDetails().getPostalAccount());
+		}
+		return null;
+	}
+
+		
 	public static String paddedAccountNumber(String accountNumber) {
 		String[] parts = accountNumber.split("-");
 		return zeroPad(Integer.parseInt(parts[0]), 2) +

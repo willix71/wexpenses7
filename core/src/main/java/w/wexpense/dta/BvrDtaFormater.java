@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import w.wexpense.model.Expense;
 import w.wexpense.model.Payee;
 import w.wexpense.model.Payment;
+import w.wexpense.validation.IbanValidator;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -39,9 +40,7 @@ public class BvrDtaFormater implements DtaFormater {
 	@Override
 	public Multimap<String, String> validate(Expense expense) {
 		Multimap<String, String> errors = DtaHelper.commonValidation(expense);
-		if (Strings.isNullOrEmpty(expense.getPayee().getPostalAccount()) &&
-				(expense.getPayee().getBankDetails()==null || Strings.isNullOrEmpty(expense.getPayee().getBankDetails().getPostalAccount()))) {
-			
+		if (getBeneficiaryAccount(expense.getPayee())==null) {			
 			String msg = "Either the payee's postal account or the payee's bank detail postal account are needed for BVR payments (827)";
 			errors.put("payee.postalAccount", msg);
 			errors.put("payee.bankDetails.postalAccount", msg);
@@ -52,14 +51,10 @@ public class BvrDtaFormater implements DtaFormater {
 	
 	@Override
     public String payee(Expense expense) {
-        Joiner j = Joiner.on(',').skipNulls();
-        return j.join(
-                expense.getPayee().getPrefixedName(), 
-                expense.getPayee().getAddress1(), 
-                expense.getPayee().getAddress2(),
-                expense.getPayee().getCity().toString(),
-                DtaHelper.stripBlanks(expense.getPayee().getIban()),
-                expense.getPayee().getPostalAccount()); 
+		Payee payee = expense.getPayee();
+
+		Joiner j = Joiner.on('\n').skipNulls();
+	    return j.join(payee.toString(), IbanValidator.formatIban(payee.getIban()), DtaHelper.formatPostalAccount(payee));   
    }
    
 	protected String getProcessingDate(Expense expense) {
@@ -84,7 +79,7 @@ public class BvrDtaFormater implements DtaFormater {
 		StringBuilder line03 = new StringBuilder();
 		line03.append("03");
 		
-		line03.append(getBeneficiaryAccount(expense));
+		line03.append("/C/").append(pad(getBeneficiaryAccount(expense.getPayee()),27));
 		
 		if (Strings.isNullOrEmpty(expense.getPayee().getIban())) {
     		line03.append(pad(expense.getPayee().getPrefixedName(), 24));
@@ -98,14 +93,6 @@ public class BvrDtaFormater implements DtaFormater {
 		line03.append(pad(expense.getPayee().getCity().toString(), 24));
 		
 		return line03.toString();
-	}
-	
-	protected String getBeneficiaryAccount(Expense expense) {
-		String account = Strings.isNullOrEmpty(expense.getPayee().getPostalAccount())?
-				expense.getPayee().getBankDetails().getPostalAccount():expense.getPayee().getPostalAccount();
-		
-		// beneficiary
-		return "/C/" + pad(account,27);
 	}
 	
 	protected String formatLine04(Payment payment, int index, Expense expense) {
@@ -131,4 +118,13 @@ public class BvrDtaFormater implements DtaFormater {
 		return line04.toString();
 	}
 	
+	public static String getBeneficiaryAccount(Payee payee) {
+		if (!Strings.isNullOrEmpty(payee.getPostalAccount())) {
+			return payee.getPostalAccount();
+		} else if (payee.getBankDetails()!=null && !Strings.isNullOrEmpty(payee.getBankDetails().getPostalAccount())) {
+			return payee.getBankDetails().getPostalAccount();
+		}
+		return null;
+	}
+
 }

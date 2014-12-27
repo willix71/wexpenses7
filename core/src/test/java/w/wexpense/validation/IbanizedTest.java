@@ -4,6 +4,7 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -46,5 +47,14 @@ public class IbanizedTest extends AbstractValidationTest {
 	public void testBadIbanValidator() {
 		bad("CH6480485000003213174");
 		bad("CH00");
+	}
+	
+	@Test
+	public void testIbanFormater() {
+		Assert.assertEquals("CH84 0076 7000 T093 0649 7", IbanValidator.formatIban("CH84 0076 7000 T093 0649 7"));
+		Assert.assertEquals("CH84 0076 7000 T093 0649 7", IbanValidator.formatIban("C H840 0767 000T 0930 6497"));
+		Assert.assertEquals("CH84 0076 7000 T093 0649 7", IbanValidator.formatIban("CH8400767000T09306497"));
+		Assert.assertEquals("", IbanValidator.formatIban(""));
+		Assert.assertNull(IbanValidator.formatIban(null));
 	}
 }
