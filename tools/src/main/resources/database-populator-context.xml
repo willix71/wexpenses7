@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<context:annotation-config />
+
+	<util:properties id="persistence.properties">
+		<prop key="jdbc.driverClassName">org.h2.Driver</prop>
+		<!-- 
+		<prop key="jdbc.url">jdbc:h2:~/temp/database-populator</prop>
+
+		<prop key="jdbc.url">jdbc:h2:mem:database-populator;DB_CLOSE_DELAY=-1</prop>
+
+		Dev
+		<prop key="jdbc.url">jdbc:h2:~/Documents/workspace-sts-3.6.3.RELEASE/wexpenses/db/wexpenses-dev</prop>
+
+		Production
+		<prop key="jdbc.url">jdbc:h2:~/ApplicationData/raiffeisen/wexdb/wexpenses-prod-v2</prop>
+		 -->
+		 <prop key="jdbc.url">jdbc:h2:mem:database-populator;DB_CLOSE_DELAY=-1</prop>
+		<prop key="jdbc.username">sa</prop>
+		<prop key="jdbc.password">sa</prop>
+	</util:properties>
+
+	<context:property-override properties-ref="persistence.properties" />
+
+	<bean id="jdbc" class="w.wexpense.persistence.PersistenceConfiguration">
+		<property name="jpaAdapterProperties">
+			<util:properties>
+				<prop key="hibernate.hbm2ddl.auto">org.hibernate.dialect.H2Dialect</prop>
+				<!-- 
+					# validate: validate the schema, makes no changes to the database.
+					# update: update the schema.
+					# create: creates the schema, destroying previous data.
+					# create-drop: drop the schema at the END of the session.
+					# Executes import.sql if set to "create" or "create-drop".
+				 -->
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.cache.use_query_cache">false</prop>
+				<prop key="hibernate.cache.use_second_level_cache">false</prop>
+			</util:properties>
+		</property>
+	</bean>
+
+	<jpa:repositories base-package="w.wexpense.persistence.dao" />
+
+	<context:component-scan base-package="w.wexpense.service" />
+
+	<bean class="w.wexpense.persistence.DatabasePopulator" />
+
+	<bean class="w.wexpense.test.utils.PersistenceHelper" />
+</beans>

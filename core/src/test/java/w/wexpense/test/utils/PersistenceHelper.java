@@ -1,5 +1,7 @@
 package w.wexpense.test.utils;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -87,5 +89,8 @@ public class PersistenceHelper {
       return (T) q.setParameter("name", name).getSingleResult();
    }
    
-   
+   @SuppressWarnings("unchecked")  
+   public <T> List<T> getAll(Class<T> clazz) {
+      return (List<T>) entityManager.createQuery("from " + clazz.getSimpleName()).getResultList();
+   }
 }

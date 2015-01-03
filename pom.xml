@@ -30,6 +30,6 @@
 	<modules>
 		<module>core</module>
 		<module>vaadin7</module>
-		<module>populator</module>
+		<module>tools</module>
 	</modules>
 </project>
