@@ -33,7 +33,7 @@ public class Payment extends DBable<Payment> implements Selectable {
 	@OrderBy("date, amount")
 	private List<Expense> expenses;
 
-	@OneToMany(mappedBy = "payment"/*, cascade={CascadeType.ALL}*/)
+	@OneToMany(mappedBy = "payment" /*, cascade={CascadeType.ALL}*/)
 	@OrderBy("orderBy")
 	private List<PaymentDta> dtaLines;
     
@@ -85,7 +85,21 @@ public class Payment extends DBable<Payment> implements Selectable {
 		this.expenses = new ArrayList<Expense>();
 		return xs;
 	}
-	
+
+   public void addExpense(Expense expense) {
+      if (this.expenses == null) this.expenses = new ArrayList<Expense>();
+      this.expenses.add(expense);
+      expense.setPayment(this);
+   }
+	  
+   public void removeExpense(Expense expense) {
+      if (this.expenses != null) {
+         if (this.expenses.remove(expense)) {
+            expense.setPayment(null);
+         }
+      }
+   }
+   
 	public List<PaymentDta> getDtaLines() {
 		return dtaLines;
 	}

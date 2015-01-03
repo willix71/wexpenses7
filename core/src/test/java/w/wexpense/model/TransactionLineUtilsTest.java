@@ -41,15 +41,16 @@ public class TransactionLineUtilsTest {
 	 */
 	private List<Expense> initExpenses() {
 		List<Expense> xs = new ArrayList<Expense>();
-		xs.add( createExpense(DateUtils.getDate(1,2,2013), new BigDecimal("100"), CHF, A11, A111) );
-		xs.add( createExpense(DateUtils.getDate(1,4,2014), new BigDecimal("45"), CHF, A11, A12) );
-		xs.add( createExpense(DateUtils.getDate(1,1,2012), new BigDecimal("200"), CHF, A13, A11) );	
+		xs.add( ExpenseUtils.newExpense(DateUtils.getDate(1,2,2013), new BigDecimal("100"), CHF, A11, A111) );
+		xs.add( ExpenseUtils.newExpense(DateUtils.getDate(1,4,2014), new BigDecimal("45"), CHF, A11, A12) );
+		xs.add( ExpenseUtils.newExpense(DateUtils.getDate(1,1,2012), new BigDecimal("200"), CHF, A13, A11) );	
 		
-		Expense xsum = createExpense(DateUtils.getDate(1,10,2015), new BigDecimal("0"), CHF, null, App);
-		addTransactionLine(xsum, A12, TransactionLineEnum.SUM, new BigDecimal("300"));
+		Expense xsum = ExpenseUtils.newExpense(DateUtils.getDate(1,10,2015), new BigDecimal("0"), CHF);
+		ExpenseUtils.newTransactionLine(xsum, App, TransactionLineEnum.IN);
+		ExpenseUtils.newTransactionLine(xsum, A12, TransactionLineEnum.SUM, new BigDecimal("300"));
 		xs.add(xsum);
 		
-		xs.add( createExpense(DateUtils.getDate(1,1,2016), new BigDecimal("88"), CHF, A11, A12) );
+		xs.add( ExpenseUtils.newExpense(DateUtils.getDate(1,1,2016), new BigDecimal("88"), CHF, A11, A12) );
 		return xs;
 	}
 
@@ -120,7 +121,7 @@ public class TransactionLineUtilsTest {
 		
 		TransactionLineUtils.sortAndBalance(TransactionLineUtils.getAllTransactionLines(xs));
 
-		xs.add(createExpense(DateUtils.getDate(1,4,2014), new BigDecimal("12"), CHF, A11, A12));
+		xs.add(ExpenseUtils.newExpense(DateUtils.getDate(1,4,2014), new BigDecimal("12"), CHF, A11, A12));
 		
 		clearBalance(TransactionLineUtils.getAllTransactionLines(xs));
 		
@@ -146,48 +147,5 @@ public class TransactionLineUtilsTest {
 	
 	public void clearBalance(List<TransactionLine> lines) {
 		for(TransactionLine l:lines) l.setBalance(null);
-	}
-	
-	// =================================
-	
-	public static Expense createExpense(Date date, BigDecimal amount, Currency currency, Account ...accounts) {
-		Expense x = ExpenseUtils.newExpense(date, amount, currency, null, null, null);
-		if (accounts.length>0 && accounts[0]!=null) addTransactionLine(x, accounts[0], TransactionLineEnum.OUT);
-		if (accounts.length>1 && accounts[1]!=null) addTransactionLine(x, accounts[1], TransactionLineEnum.IN);
-		return x;
-	}
-	
-	public static TransactionLine addTransactionLine(Expense x, Account account, TransactionLineEnum factor, Object ...args) {
-		TransactionLine tx = new TransactionLine();
-		tx.setAccount(account);
-		tx.setFactor(factor);
-
-		tx.setExpense(x);
-		List<TransactionLine> lines = x.getTransactions();
-		if (lines == null) {
-			lines = new ArrayList<TransactionLine>();
-			x.setTransactions(lines);			
-		}
-		lines.add(tx);
-
-		tx.setAmount(x.getAmount());
-		tx.setValue(x.getAmount());
-
-		tx.setDate(x.getDate());
-		
-		for(Object o: args) {
-			if (o instanceof Date) {
-				tx.setDate((Date) o);
-			} else if (o instanceof BigDecimal) {
-				BigDecimal d = (BigDecimal) o;
-				tx.setAmount(d);
-				tx.setValue(d);
-			} else if (o instanceof Number) {
-				BigDecimal d = new BigDecimal(o.toString());
-				tx.setAmount(d);
-				tx.setValue(d);
-			}
-		}
-		return tx;	
 	}
 }

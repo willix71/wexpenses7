@@ -12,7 +12,6 @@ import w.wexpense.model.Expense;
 import w.wexpense.model.Payee;
 import w.wexpense.model.TransactionLine;
 import w.wexpense.model.enums.AccountEnum;
-import w.wexpense.model.enums.TransactionLineEnum;
 import w.wexpense.utils.ExpenseUtils;
 
 public class ExchangeRateTransactionLineValidationTest extends AbstractValidationTest {
@@ -21,22 +20,14 @@ public class ExchangeRateTransactionLineValidationTest extends AbstractValidatio
 	Currency GBP = new Currency("GBP", "Pounds",100);
 	Currency USD = new Currency("USD", "US",100);
 	
-	public TransactionLine getTransactionLine() {
-		Expense x = ExpenseUtils.newExpense(DateUtils.getDate(), new BigDecimal("10"), CHF, new Payee(), null, null);
-		
-		TransactionLine l = new TransactionLine();
-		l.setExpense(x);
-		l.setAmount(x.getAmount());
-		l.setFactor(TransactionLineEnum.IN);
-		l.updateValue();
-		
-		return l;
+
+	public Expense getExpense() {
+	   return ExpenseUtils.newExpense(DateUtils.getDate(), new BigDecimal("10"), CHF, new Payee());
 	}
 	
 	@Test
 	public void testSimpleGood() {
-		TransactionLine l = getTransactionLine();
-		l.setAccount(new Account());
+		TransactionLine l = ExpenseUtils.newTransactionLine(getExpense(), new Account());
 		good("simplest transaction line", l);
 		
 		l.setAccount(new Account(null,1,"1",AccountEnum.EXPENSE, CHF));
@@ -49,9 +40,7 @@ public class ExchangeRateTransactionLineValidationTest extends AbstractValidatio
 	
 	@Test
 	public void testSimpleBad() {
-		TransactionLine l = getTransactionLine();
-		
-		l.setAccount(new Account(null,1,"1",AccountEnum.EXPENSE, USD));
+		TransactionLine l = ExpenseUtils.newTransactionLine(getExpense(), new Account(null,1,"1",AccountEnum.EXPENSE, USD));
 		bad("different currency", l);
 		
 		l.setExchangeRate(new ExchangeRate(CHF, GBP, 1.4));

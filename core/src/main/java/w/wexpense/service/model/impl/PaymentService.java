@@ -53,28 +53,26 @@ public class PaymentService extends DaoService<Payment, Long> implements IPaymen
 
 			if (!CollectionUtils.isEmpty(xs)) {
 				for(Expense x:xs) {
-					x.setPayment(p);
-					p.getExpenses().add(expenseDao.save(x));
+					p.addExpense(expenseDao.save(x));
 				}
 			}
 			return p;
-		} else {		
-			// update all expenses which were removed from the payment's expenses
-			List<Expense> xs = CollectionUtils.isEmpty(entity.getExpenses())?expenseDao.findByPayment(entity):expenseDao.findNotInPayment(entity, DBableUtils.getUids(entity.getExpenses()));
-			if (!CollectionUtils.isEmpty(xs)) {
-				for(Expense x: xs) {				
-					x.setPayment(null);
-				}
-			}
-
-			// make sure the all expenses are set to this payment
-			if (!CollectionUtils.isEmpty(entity.getExpenses())) {
-				for(Expense x: entity.getExpenses()) {				
-					if (x.getPayment() == null || !x.getPayment().equals(entity)) {
-						x.setPayment(entity);
-					}
-				}
-			}
+		} else {
+         // update all expenses which were removed from the payment's expenses
+         List<Expense> xs = CollectionUtils.isEmpty(entity.getExpenses())?
+               expenseDao.findByPayment(entity):
+               expenseDao.findNotInPayment(entity, DBableUtils.getUids(entity.getExpenses()));
+         if (!CollectionUtils.isEmpty(xs)) {
+            for(Expense x: xs) {          
+               x.setPayment(null);
+            }
+         }
+         
+		   for(Expense x: entity.getExpenses()) {
+		      if (x.isNew()) {
+		         expenseDao.save(x);
+		      }
+		   }
 			
 			Payment p = super.save(entity);		
 			return p;	

@@ -1,10 +1,8 @@
-package w.wexpense.persistence;
+package w.wexpense.persistence.oneToMany;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -16,18 +14,17 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import w.wexpense.model.Expense;
 import w.wexpense.model.Payment;
+import w.wexpense.model.PaymentDta;
+import w.wexpense.model.TransactionLine;
 import w.wexpense.service.model.IPaymentService;
 
 @ActiveProfiles("PaymentOneToManyTest")
-@Ignore
 public class PaymentOneToManyTest extends AbstractOneToManyTest {
 
 	@Autowired
 	private IPaymentService paymentService;
 		
-	private static Long paymentId;
-
-	private static String expenseUid;
+	private static final Payment PAYMENT = new Payment();
 
 	@Test
 	@Order(1)
@@ -39,206 +36,197 @@ public class PaymentOneToManyTest extends AbstractOneToManyTest {
 	@Order(2)
 	public void insertNewExpenseAndPayment() {
 		logger.info("================ STEP 1 insert new payment and new expense ================");
-		Payment payment = new Payment();
-		payment.setFilename("test1");		
+		
+		PAYMENT.setFilename("test1");		
 
 		Expense expense1 = newExpense("100");
-		expenseUid = expense1.getUid();
-		allocate(payment, expense1);
+		PAYMENT.addExpense(expense1);
 
-		Payment payment2 = savePayment(payment);
+		Payment payment2 = savePayment(PAYMENT);
 
-		Assert.assertNotNull("Id has not been set", payment.getId());
-		paymentId = payment.getId();
+		Assert.assertNotNull("Id has not been set", PAYMENT.getId());
 		
-		Assert.assertTrue(payment.equals(payment2));
-		// instance is the same after insert
-		Assert.assertTrue(payment == payment2);
-
-		// need to reload it because of orphanRemoval=true ??? why
-		// payment2 = loadPayment(paymentId);
+      Assert.assertEquals(PAYMENT,payment2);
+      Assert.assertSame(PAYMENT, payment2);
 		
 		payment2.setFilename("test2");
+		
 		Payment payment3 = savePayment(payment2);
 		
-		Assert.assertTrue(payment.equals(payment3));
-		Assert.assertTrue(payment != payment3);
+      Assert.assertEquals(PAYMENT, payment3);
+      Assert.assertNotSame(PAYMENT, payment3);
 
 		Assert.assertEquals("test2", payment3.getFilename());
 
 		List<Expense> expenses = payment3.getExpenses();
 		Assert.assertEquals(1, expenses.size());
 		
-		checkNumberOfExpenses(payment.getUid(), 1);
+		checkNumberOfExpenses(PAYMENT.getUid(), 1);
+		
+		Assert.assertEquals(1, persistenceHelper.count(Expense.class));
+		Assert.assertEquals(2, persistenceHelper.count(TransactionLine.class));
 	}
 
 	@Test
 	@Order(3)
 	public void insertNewExpenseInExistingPayment() {
 		logger.info("================ STEP 2 insert new expense in existing payment ================");
-		Payment payment = loadPayment(paymentId);
+		Payment payment2 = loadPayment(PAYMENT.getId());
 		
-		allocate(payment, newExpense("200"));
-		Payment payment2 = savePayment(payment);
+		Expense newExpense = newExpense("200");
+		payment2.addExpense(newExpense);
+		
+		Payment payment3 = savePayment(payment2);
 
-		Assert.assertTrue(payment.equals(payment2));
-		Assert.assertTrue(payment != payment2);
+      Assert.assertEquals(PAYMENT, payment3);
+      Assert.assertNotSame(PAYMENT, payment3);
 
-		List<Expense> expenses = payment2.getExpenses();
+		List<Expense> expenses = payment3.getExpenses();
 		Assert.assertEquals(2, expenses.size());
 		
-		checkNumberOfExpenses(payment.getUid(), 2);
+		checkNumberOfExpenses(PAYMENT.getUid(), 2);
+		
+	    Assert.assertEquals(2, persistenceHelper.count(Expense.class));
+	    Assert.assertEquals(4, persistenceHelper.count(TransactionLine.class));
 	}
 
 	@Test
 	@Order(4)
 	public void updateExpenseInExistingPayment() {
 		logger.info("================ STEP 2.2 update expense in existing payment ================");
-		Payment payment = loadPayment(paymentId);
+		
+		checkNumberOfExpenses(PAYMENT.getUid(), 2);
+		
+		Payment payment = loadPayment(PAYMENT.getId());
 		List<Expense> expenses = payment.getExpenses();
-		expenses.get(0).setDescription("this is a test");
-		final String exUid = expenses.get(0).getUid();
+		Assert.assertEquals(2, expenses.size());
+		
+		final Expense expense = expenses.get(0);
+		expense.setDescription("this is a test2");
 		
 		savePayment(payment);
+		
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				Expense ex = getByUid(Expense.class, exUid);
-				Assert.assertEquals("Expense was not updated", "this is a test", ex.getDescription());
-
+				Expense ex = persistenceHelper.getByUid(Expense.class, expense.getUid());
+				Assert.assertEquals("Expense was not updated", "this is a test2", ex.getDescription());
 			}
 		});	
 	}
 	
 	@Test
-	@Order(14)
+	@Order(5)
 	public void removeExpenseFromPayment() {
 		logger.info("================ STEP 3 remove existing expense from existing payment ================");
-		Payment payment = loadPayment(paymentId);
-		List<Expense> expenses = payment.getExpenses();
+		checkNumberOfExpenses(PAYMENT.getUid(), 2);
 		
-		Assert.assertEquals(2, expenses.size());
-		deallocate(payment, expenses.get(0), expenses.get(1));
-		Payment payment2 = savePayment(payment);
+		Payment payment2 = loadPayment(PAYMENT.getId());
+		List<Expense> expenses = payment2.getExpenses();
+		Assert.assertEquals("number of expenses", 2, expenses.size());
+		
+		final Expense expense = expenses.get(0);
+		payment2.removeExpense(expense);
+		
+		Payment payment3 = savePayment(payment2);
 
-		Assert.assertTrue(payment2.equals(payment));
-		Assert.assertTrue(payment2 != payment);
+		Assert.assertEquals(payment2,payment3);
+		Assert.assertNotSame(payment2,payment3);
 
-		List<Expense> expenses2 = payment2.getExpenses();
-		Assert.assertEquals(0, expenses2.size());
+		List<Expense> expenses3 = payment3.getExpenses();
+		Assert.assertEquals(1, expenses3.size());
 
 		logger.info("================ STEP 3.1 check expenses are removed ================");
-		Expense expense1 = getByUid(Expense.class, expenseUid);
+		Expense expense1 = persistenceHelper.getByUid(Expense.class, expense.getUid());
 		Assert.assertNotNull(expense1);
 		Assert.assertNull(expense1.getPayment());
 
-		checkNumberOfExpenses(payment.getUid(), 0);
-	}
-	
-	@Test
-	@Order(15)
-	public void insertExistingExpenseInNewPayment() {
-		logger.info("================ STEP 4 insert existing payment in new expense ================");
-		Payment payment = new Payment();
-		payment.setFilename("test4");
-		
-		Expense expense1 = getByUid(Expense.class, expenseUid);
-		allocate(payment, expense1);
-		
-		Payment payment2 = savePayment(payment);
-		
-		Assert.assertTrue(payment.equals(payment2));
-		Assert.assertTrue(payment == payment2);
-		
-		checkNumberOfExpenses(payment.getUid(), 1);
+		checkNumberOfExpenses(PAYMENT.getUid(), 1);
 	}
 
+   //
+   // ========================================================================
+   //
+	
 	@Test
 	@Order(25)
 	public void generatingDtasForNewPayment() throws Exception {
 		logger.info("================ STEP 6 generating dtas for new payment ================");
-		int dtas = ((Number) entityManager.createQuery("select count(a) from PaymentDta a").getSingleResult()).intValue();
+		int dtas = persistenceHelper.count(PaymentDta.class);
 		Assert.assertEquals(0, dtas);
-		String expenseUid = new TransactionTemplate(transactionManager).execute(new TransactionCallback<String>() {
-			@Override
-			public String doInTransaction(TransactionStatus status) {
-				Expense expense1 = newlines(newExpense("600"));
-				persist(expense1);
-				
-				return expense1.getUid();
-			}
-		});
 		
 		Payment payment = new Payment();
-		payment.setFilename("dta1");		
-
-		allocate(payment,  getByUid(Expense.class, expenseUid));	
+		payment.setFilename("dta6");
+		
+		Expense expense = newExpense("600");
+		payment.addExpense(expense);	
 		
 		Payment payment2 = paymentService.generatePaymentDtas(payment);
 		Assert.assertNotNull("null dta lines", payment2.getDtaLines());
-		Assert.assertEquals("dta lines", 4, payment2.getDtaLines().size());
-		
+		Assert.assertEquals("dta lines", 4, payment2.getDtaLines().size());	
 	}
 	
+	private static final Payment dta_payment = new Payment();
 	@Test
 	@Order(26)
 	public void generatingDtasForExistingPayment() throws Exception {
 		logger.info("================ STEP 7 generating dtas for existing payment ================");
-		int dtas = ((Number) entityManager.createQuery("select count(a) from PaymentDta a").getSingleResult()).intValue();
+		int dtas = persistenceHelper.count(PaymentDta.class);
 		Assert.assertEquals(4, dtas);
+				
+		dta_payment.setFilename("dta7");
+		dta_payment.addExpense(newExpense("700"));  
+      savePayment(dta_payment);
 		
-		Payment payment = new TransactionTemplate(transactionManager).execute(new TransactionCallback<Payment>() {
-			@Override
-			public Payment doInTransaction(TransactionStatus status) {
-				Payment payment = new Payment();
-				payment.setFilename("dta1");		
-
-				Expense expense1 = newlines(newExpense("700"));
-				allocate(payment, expense1);
-				return savePayment(payment);
-			}
-		});
+      Payment payment2 = loadPayment(dta_payment.getId());
+      
+      // make sure it has been relaoded
+      Assert.assertNotSame(dta_payment, payment2);
+      
+		Payment payment3 = paymentService.generatePaymentDtas(payment2);
+		Assert.assertNotNull("null dta lines", payment3.getDtaLines());
+		Assert.assertEquals("dta lines", 4, payment3.getDtaLines().size());
 		
-		Payment payment2 = paymentService.generatePaymentDtas(payment);
-		Assert.assertNotNull("null dta lines", payment2.getDtaLines());
-		Assert.assertEquals("dta lines", 4, payment2.getDtaLines().size());
-		
-		paymentId = payment.getId();
+      dtas = persistenceHelper.count(PaymentDta.class);
+      Assert.assertEquals(8, dtas);
 	}
 
 	@Test
 	@Order(27)
 	public void generatingDtasAgainForExistingPayment() throws Exception {
 		logger.info("================ STEP 8 generating dtas again for existing payment ================");
-		int dtas = ((Number) entityManager.createQuery("select count(a) from PaymentDta a").getSingleResult()).intValue();
-		Assert.assertEquals(8, dtas);
+      int dtas = persistenceHelper.count(PaymentDta.class);
+      Assert.assertEquals(8, dtas);
 		
-		Payment payment = loadPayment(paymentId);
+		Payment payment = loadPayment(dta_payment.getId());
 		
 		Assert.assertEquals("Number of initial expenses", 1, payment.getExpenses().size());
 		
-		allocate(payment, newlines(newExpense("801")), newlines(newExpense("802")));
+		payment.addExpense(newExpense("801"));
+		payment.addExpense(newExpense("802"));
 		
 		Assert.assertEquals("Number of final expenses", 3, payment.getExpenses().size());
 		
 		Payment payment2 = paymentService.generatePaymentDtas(payment);
 		Assert.assertNotNull("null dta lines", payment2.getDtaLines());
 		Assert.assertEquals("dta lines", 10, payment2.getDtaLines().size());
-		
+	
+		dtas = persistenceHelper.count(PaymentDta.class);
+      Assert.assertEquals(14, dtas);
 	}
 	
 	@Test
 	@Order(28)
 	public void generatingDtasAgainAfterRemovingPayment() throws Exception {
 		logger.info("================ STEP 9 generating dtas after removing existing payment ================");
-		int dtas = ((Number) entityManager.createQuery("select count(a) from PaymentDta a").getSingleResult()).intValue();
+		int dtas = persistenceHelper.count(PaymentDta.class);
 		Assert.assertEquals(14, dtas);
 		
-		Payment payment = loadPayment(paymentId);
+		Payment payment = loadPayment(dta_payment.getId());
 		
 		Assert.assertEquals("Number of initial expenses", 3, payment.getExpenses().size());
 		
-		deallocate(payment, payment.getExpenses().get(1));
+		payment.removeExpense(payment.getExpenses().get(1));
 		
 		Assert.assertEquals("Number of final expenses", 2, payment.getExpenses().size());
 			
@@ -246,6 +234,8 @@ public class PaymentOneToManyTest extends AbstractOneToManyTest {
 		Assert.assertNotNull("null dta lines", payment2.getDtaLines());
 		Assert.assertEquals("dta lines", 7, payment2.getDtaLines().size());
 		
+		dtas = persistenceHelper.count(PaymentDta.class);
+      Assert.assertEquals(11, dtas);
 	}
 	
 	//
@@ -279,33 +269,11 @@ public class PaymentOneToManyTest extends AbstractOneToManyTest {
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				Payment p = getByUid(Payment.class, uid);
+				Payment p = persistenceHelper.getByUid(Payment.class, uid);
 				Assert.assertEquals("Wrong number of expenses", expectedNumber, p.getExpenses().size());
 
 			}
 		});
-	}
-
-	Payment allocate(Payment p, Expense... expenses) {
-		List<Expense> allocations = p.getExpenses();
-		if (allocations == null) {
-			allocations = new ArrayList<Expense>();
-			p.setExpenses(allocations);
-		}
-		for (Expense x : expenses) {
-			allocations.add(x);
-			//x.setPayment(p);
-		}
-		return p;
-	}
-
-	Payment deallocate(Payment p, Expense... expenses) {
-		List<Expense> allocations = p.getExpenses();
-		for (Expense x : expenses) {
-			allocations.remove(x);
-			//x.setPayment(null);
-		}
-		return p;
 	}
 
 }

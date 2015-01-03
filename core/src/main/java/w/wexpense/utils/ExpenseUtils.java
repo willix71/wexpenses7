@@ -17,53 +17,103 @@ import w.wexpense.model.enums.TransactionLineEnum;
 
 public class ExpenseUtils {
 
-    public static Expense newExpense(Date date, BigDecimal amount, Currency currency, Payee payee, ExpenseType type, String externalReference) {
-        Expense x = new Expense();
-        x.setDate(date);
-        x.setAmount(amount);
-        x.setPayee(payee);
-        x.setCurrency(currency != null ? currency : payee.getCity().getCountry().getCurrency());
-        x.setType(type);
-        x.setExternalReference(externalReference);
-        return x;
-    }
+   public static Expense newExpense(Object... args) {
+      return fillExpense(new Expense(), args);
+   }
 
-    public static TransactionLine addTransactionLine(Expense x, Account account, TransactionLineEnum factor, BigDecimal amount, ExchangeRate rate) {
-        TransactionLine tx = new TransactionLine();
-        tx.setExpense(x);
-        tx.setAmount(amount == null? x.getAmount() : amount);
-        tx.setExchangeRate(rate);        
-        tx.setAccount(account);
-        tx.setFactor(factor);
-        tx.updateValue();
-        
-        List<TransactionLine> lines = x.getTransactions();
-        if (lines == null) {
-            lines = new ArrayList<TransactionLine>();
-            x.setTransactions(lines);
-        }
-        lines.add(tx);
+   public static Expense fillExpense(Expense x, Object... args) {
+      for (Object arg : args) {
+         if (arg instanceof Date) {
+            x.setDate((Date) arg);
+         } else if (arg instanceof BigDecimal) {
+            x.setAmount((BigDecimal) arg);
+         } else if (arg instanceof Float || arg instanceof Double) {
+            x.setAmount(new BigDecimal(((Number) arg).doubleValue()));
+         } else if (arg instanceof Number) {
+            x.setAmount(new BigDecimal(((Number) arg).longValue()));
+         } else if (arg instanceof ExpenseType) {
+            x.setType((ExpenseType) arg);
+         } else if (arg instanceof Payee) {
+            Payee p = (Payee) arg;
+            x.setPayee(p);
+            if (x.getCurrency() == null) {
+               try {
+                  x.setCurrency(p.getCity().getCountry().getCurrency());
+               } catch (NullPointerException e) {
+               }
+            }
+         } else if (arg instanceof Currency) {
+            x.setCurrency((Currency) arg);
+         } else if (arg instanceof String) {
+            x.setExternalReference((String) arg);
+         } else if (arg instanceof TransactionLine) {
+            TransactionLine tl = (TransactionLine) arg;
+            x.addTransaction(tl);
+            tl.setExpense(x);
+         } else if (arg instanceof Account) {
+            if (x.getTransactions() == null || x.getTransactions().size() % 2 == 0) {
+               newTransactionLine(x, TransactionLineEnum.OUT, (Account) arg);
+            } else {
+               newTransactionLine(x, TransactionLineEnum.IN, (Account) arg);
+            }
+         } else {
+            throw new IllegalArgumentException("Don't knoe what to do for a new expense with a " + args.getClass());
+         }
+      }
+      return x;
+   }
 
-        return tx;
-    }
+   public static TransactionLine newTransactionLine(Object... args) {
+      return fillTransactionLine(new TransactionLine(), args);
+   }
 
-    public static TransactionLine addTransactionLine(Expense x, Account account, TransactionLineEnum factor, BigDecimal amount) {
-        return addTransactionLine(x, account, factor, amount, null);
-    }
+   public static TransactionLine fillTransactionLine(TransactionLine tl, Object... args) {
+      for (Object arg : args) {
+         if (arg instanceof Expense) {
+            Expense x = (Expense) arg;
+            tl.setExpense(x);
+            if (tl.getDate() == null) {
+               tl.setDate(x.getDate());
+            }
+            if (tl.getAmount() == null) {
+               tl.setAmount(x.getAmount());
+            }
+            x.addTransaction(tl);
+         } else if (arg instanceof Date) {
+            tl.setDate((Date) arg);
+         } else if (arg instanceof BigDecimal) {
+            tl.setAmount((BigDecimal) arg);
+         } else if (arg instanceof Float || arg instanceof Double) {
+            tl.setAmount(new BigDecimal(((Number) arg).doubleValue()));
+         } else if (arg instanceof Number) {
+            tl.setAmount(new BigDecimal(((Number) arg).longValue()));
+         } else if (arg instanceof ExchangeRate) {
+            tl.setExchangeRate((ExchangeRate) arg);
+         } else if (arg instanceof Account) {
+            tl.setAccount((Account) arg);
+         } else if (arg instanceof TransactionLineEnum) {
+            tl.setFactor((TransactionLineEnum) arg);
+         } else {
+            throw new IllegalArgumentException(
+                  "Don't knoe what to do for a new transaction line with a " + args.getClass());
+         }
+      }
+      tl.updateValue();
+      return tl;
+   }
 
-    public static TransactionLine addTransactionLine(Expense x, Account account, TransactionLineEnum factor) {
-        return addTransactionLine(x, account, factor, null, null);
-    }
-    
-    public static String toString(Expense expense) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(MessageFormat.format("\n{0,date,dd.MM.yy} {1,number,0.00}{2} {3} {4}", expense.getDate(), expense.getAmount(), expense.getCurrency(),
-                expense.getPayee(), expense.getType()));
-        for (TransactionLine tr : expense.getTransactions()) {
-            sb.append(MessageFormat.format("\n\t{0}.{1} {2,number,0.000} {3,number,0.000}", tr.getAccount(), tr.getDiscriminator(), tr.getAmount(),
-                    tr.getValue()));
-        }
-        return sb.toString();
-    }
-
+   public static Expense addTransactionLines(Expense x, TransactionLine... lines) {
+      for (TransactionLine tl : lines) {
+         x.addTransaction(tl);
+         tl.setExpense(x);
+         if (tl.getDate() == null) {
+            tl.setDate(tl.getDate());
+         }
+         if (tl.getAmount() == null) {
+            tl.setAmount(tl.getAmount());
+         }
+         tl.updateValue();
+      }
+      return x;
+   }
 }

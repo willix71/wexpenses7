@@ -1,5 +1,6 @@
 package w.wexpense.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -11,40 +12,58 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import w.junit.extras.OrderedSpringJUnit4ClassRunner;
-import w.wexpense.persistence.DatabasePopulator;
+import w.wexpense.model.KlonableTest.KlonableTestBean;
+import w.wexpense.test.utils.TestDatabaseConfiguror;
+import w.wexpense.test.utils.TestDatabasePopulator;
 
 @RunWith(OrderedSpringJUnit4ClassRunner.class)
 @TransactionConfiguration(defaultRollback = false)
-@ContextConfiguration(locations={"classpath:persistence-test-context.xml"})
+@ContextConfiguration(classes= {TestDatabaseConfiguror.class, KlonableTestBean.class})
 public class KlonableTest {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(KlonableTest.class);
 	
+	@Configuration
+	public static class KlonableTestBean extends TestDatabasePopulator {
+      @Override
+      public List<Object> getPopulation() {
+         List<Object> population = new ArrayList<Object>();
+         Currency chf = new Currency("CHF", "Swiss Francs", 20);
+         Currency euro = new Currency("EUR", "Euro", 100);
+         population.add(chf);         
+         population.add(euro);       
+         Country ch = new Country("CH", "Switzerland", chf);         
+         Country f = new Country("FR", "France", euro);
+         population.add(ch);
+         population.add(f);
+
+         population.add(new City(null, "Paris", f));
+         population.add(new City("1260", "Nyon", ch));
+         population.add(new City("1197", "Prangins", ch));
+         
+         return population;
+      };
+	}
+
 	@PersistenceContext
 	private EntityManager entityManager;
-
-	@Autowired
-	private DatabasePopulator populator;
-	
+	   
 	@Test
-	@Order(1)
+	@Order(0)
 	public void setup() {
 		Assert.assertNotNull(entityManager);
-		Assert.assertNotNull(populator);
-		populator.populate();
-		LOGGER.info("\n\n==================Setup done==================\n");
-		
+		LOGGER.info("\n\n==================Setup done==================\n");		
 	}
-	
+	  
 	@Test
-	@Order(2) 
+	@Order(1) 
 	public void testCountCities1() {
 		List<City> cities = getAll(City.class);
 		Assert.assertEquals(3, cities.size());

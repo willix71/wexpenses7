@@ -105,6 +105,20 @@ public class Consolidation extends DBable<Consolidation> {
 		return xs;
 	}
 	
+	public void addTransaction(TransactionLine transaction) {
+	   if (this.transactions == null) this.transactions = new ArrayList<TransactionLine>();
+	   this.transactions.add(transaction);
+	   transaction.setConsolidation(this);
+	}
+	  
+  public void removeTransaction(TransactionLine transaction) {
+      if (this.transactions != null) {
+	      if (this.transactions.remove(transaction)) {
+	         transaction.setConsolidation(null);
+	      }
+      }
+   }
+  
 	@Override
 	public String toString() {		
 		return MessageFormat.format("{0,date,dd/MM/yyyy} {1}", date, institution);

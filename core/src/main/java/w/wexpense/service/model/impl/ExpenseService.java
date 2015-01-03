@@ -35,8 +35,8 @@ public class ExpenseService extends DaoService<Expense, Long> implements IExpens
 	@Override
 	public Expense newInstance(Object... args) {
 		Expense x = new Expense();
-		ExpenseUtils.addTransactionLine(x, null, TransactionLineEnum.OUT);
-		ExpenseUtils.addTransactionLine(x, null, TransactionLineEnum.IN);
+		ExpenseUtils.newTransactionLine(x, TransactionLineEnum.OUT);
+		ExpenseUtils.newTransactionLine(x, TransactionLineEnum.IN);
 		return x;
 	}
 	
@@ -51,30 +51,4 @@ public class ExpenseService extends DaoService<Expense, Long> implements IExpens
         Date d2 = cal.getTime();
         return ((IExpenseJpaDao) getDao()).findSimiliarExpenses(d1, d2, amount);
     }
-	
-//	@Autowired
-//	private ITransactionLineJpaDao transactionLineDao;
-		
-//	@Override
-//   public Expense save(Expense entity) {
-//	   LOGGER.debug("Saving expense {}", entity);
-//	   
-//	   List<TransactionLine> newTransactionLines = entity.getTransactions();
-//	   
-//	   Expense newExpense = super.save(entity);
-//	   
-//	   List<TransactionLine> oldTransactionLines = transactionLineDao.findByExpense(newExpense);	   
-//	   LOGGER.debug("old expense's transaction line size{}", oldTransactionLines.size());
-//	   
-//	   for(TransactionLine newTransactionLine: newTransactionLines) {
-//	   	newTransactionLine.setExpense(newExpense);
-//	   	transactionLineDao.save(newTransactionLine);
-//	   }
-//	   for(TransactionLine oldTransactionLine: oldTransactionLines) {
-//	   	if (!newTransactionLines.contains(oldTransactionLine)) {
-//	   		transactionLineDao.delete(oldTransactionLine);	   		
-//	   	}
-//	   }
-//	   return newExpense;
-//	}
 }

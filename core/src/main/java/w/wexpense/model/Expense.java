@@ -137,6 +137,14 @@ public class Expense extends DBable<Expense> {
 		transaction.setExpense(this);
 	}
 	
+   public void removeTransaction(TransactionLine transaction) {
+      if (this.transactions != null) {
+         if (this.transactions.remove(transaction)) {
+            transaction.setExpense(null);
+         }
+      }
+   }
+	  
 	public Payment getPayment() {
 		return payment;
 	}
