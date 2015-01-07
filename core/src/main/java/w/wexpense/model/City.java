@@ -2,8 +2,6 @@ package w.wexpense.model;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -11,7 +9,6 @@ import javax.persistence.PreUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class City extends DBable<City> {
 
 	private static final long serialVersionUID = 2482940442245899869L;
