@@ -43,6 +43,20 @@ public class PaymentService extends DaoService<Payment, Long> implements IPaymen
 	   super(Payment.class, dao);
    }
 	
+	private IPaymentJpaDao getPaymentDao() {
+	   return (IPaymentJpaDao) getDao();
+	   
+	}
+   @Override
+   public Payment getNextPayment() {
+      List<Payment> ps = getPaymentDao().findNextPayment();
+      if (ps.isEmpty()) {
+         return getPaymentDao().save(new Payment());
+      } else {
+         return ps.get(0);
+      }
+   }
+
    @Override
    public Payment save(Payment entity) {
 		if (entity.isNew()) {
@@ -124,10 +138,10 @@ public class PaymentService extends DaoService<Payment, Long> implements IPaymen
 	}
 	
 	public Payment getPaymentByUid(String uid) throws Exception {
-		return ((IPaymentJpaDao) getDao()).findByUid(uid);
+		return getPaymentDao().findByUid(uid);
 	}
 	
 	public Payment getPaymentByFilename(String filename) throws Exception {
-		return ((IPaymentJpaDao) getDao()).findByUid(filename);
+		return getPaymentDao().findByUid(filename);
 	}
 }

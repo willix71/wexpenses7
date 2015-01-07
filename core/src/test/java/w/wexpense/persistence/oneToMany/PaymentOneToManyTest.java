@@ -2,6 +2,8 @@ package w.wexpense.persistence.oneToMany;
 
 import java.util.List;
 
+import javax.persistence.Query;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -239,6 +241,57 @@ public class PaymentOneToManyTest extends AbstractOneToManyTest {
 	}
 	
 	//
+   // ========================================================================
+   //
+	
+	@Test
+	@Order(30)
+	public void testNextPayment() {	   
+	   Assert.assertEquals(1, countSelectable());
+	   
+	   Payment p1 = nextPayment();
+	   Assert.assertNotNull(p1);
+	   
+	   Assert.assertEquals(PAYMENT.getUid(), p1.getUid());
+	   
+	   p1.setSelectable(false);
+	   savePayment(p1);
+	   
+	   Assert.assertEquals(0, countSelectable());
+	   
+	   Payment p2 = paymentService.getNextPayment();
+	   Assert.assertNotNull(p2);
+	   
+	   Assert.assertEquals(1, countSelectable());
+	   
+	   Assert.assertFalse(PAYMENT.getUid().equals(p2.getUid()));
+	   
+	   Payment p3  = paymentService.getNextPayment();
+      Assert.assertNotNull(p3);
+      
+      Assert.assertEquals(1, countSelectable());
+      
+      Assert.assertEquals(p2.getUid(), p3.getUid());
+      
+      // insert a new selectable payment
+      Payment p4 = savePayment(new Payment());
+      Assert.assertEquals(2, countSelectable());
+      
+      Payment p5 = paymentService.getNextPayment();
+      Assert.assertNotNull(p5);
+      
+      Assert.assertEquals(2, countSelectable());
+      
+      Assert.assertFalse(p4.getUid().equals(p5.getUid()));
+      Assert.assertEquals(p5.getUid(), p2.getUid());
+	}
+
+	private int countSelectable() {
+	   Query q = entityManager.createQuery("select count(*) from Payment p where p.selectable = true");
+	   return ((Number) q.getSingleResult()).intValue();
+	}
+	
+	//
 	// ========================================================================
 	//
 
@@ -265,6 +318,18 @@ public class PaymentOneToManyTest extends AbstractOneToManyTest {
 		});
 	}
 
+  Payment nextPayment() {
+      return new TransactionTemplate(transactionManager).execute(new TransactionCallback<Payment>() {
+         @Override
+         public Payment doInTransaction(TransactionStatus status) {
+            Payment p2 = paymentService.getNextPayment();
+            p2.getExpenses().size();
+            p2.getDtaLines().size();
+            return p2;
+         }
+      });
+   }
+  
 	void checkNumberOfExpenses(final String uid, final int expectedNumber) {
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			@Override

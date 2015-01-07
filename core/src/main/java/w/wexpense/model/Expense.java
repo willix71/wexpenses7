@@ -176,7 +176,10 @@ public class Expense extends DBable<Expense> {
 	@Override
    public Expense klone() {
 		Expense klone = super.klone();
-		kloneLines(klone, false);
+      if (getPayment()!=null && !getPayment().isSelectable()) {
+         klone.setPayment(null);
+      }
+      kloneLines(klone, false);
 		return klone;
    }
 	
