@@ -9,12 +9,28 @@ public class AccountPeriod extends Number implements Serializable, Comparable<Ac
 
 	private static final long serialVersionUID = 1L;
 
-	private static final List<String> MONTHS = Arrays.asList("","JAN","FEB","MAR","APR","MAI","JUN","JUL","AUG","SEP","OCT","NOV","DEC");
-	private static final String[] MONTHS_SPACE = {"","JAN ","FEB ","MAR ","APR ","MAI ","JUN ","JUL ","AUG ","SEP ","OCT ","NOV ","DEC "};
+	private static final List<String> MONTHS = Arrays.asList(null,
+	      "JAN","FEB","MAR","APR","MAI","JUN","JUL","AUG","SEP","OCT",
+	      "NOV","DEC", null, null, null, null, null, null, null, null,
+	      "S1", "S2", null, null, null, null, null, null, null, null,
+	      "T1", "T2", "T3", null, null, null, null, null, null, null,
+	      "Q1", "Q2", "Q3", "Q4");
+	
+	private static final String[] MONTHS_SPACE = {"",
+	   "JAN ","FEB ","MAR ","APR ","MAI ","JUN ","JUL ","AUG ","SEP ","OCT ",
+	   "NOV ","DEC ", null, null, null, null, null, null, null, null,
+      "S1 ", "S2 ", null, null, null, null, null, null, null, null,
+      "T1 ", "T2 ", "T3 ", null, null, null, null, null, null, null,
+      "Q1 ", "Q2 ", "Q3 ", "Q4 "};
 	
 	private int period;
 
 	public AccountPeriod(int value) {
+	   int mod = value % 100;
+	   if (mod < 0 || mod >= MONTHS_SPACE.length || MONTHS_SPACE[mod] == null) {
+	      throw new IllegalArgumentException("Illegal period "+value);
+	   }
+	   
 		this.period = value;
 	}
 	
@@ -38,6 +54,55 @@ public class AccountPeriod extends Number implements Serializable, Comparable<Ac
 		return period;
 	}
 
+	public boolean isYearly() {
+	   return period % 100 == 0;	   
+	}
+	
+   public boolean isMonthly() {
+      int mod = period % 100;
+      return mod > 0 && mod < 13;
+   }
+	 
+   public boolean isQuaterly() {
+      int mod = period % 100;
+      return mod > 40 && mod < 45;
+   }
+   
+   public AccountPeriod nextPeriod() {
+      int mod = period % 100;
+      switch(mod) {
+         case 0: 
+            return AccountPeriod.valueOf(period + 100);
+         case 1:
+         case 2:
+         case 3:
+         case 4:
+         case 5:
+         case 6:
+         case 7:
+         case 8:
+         case 9:
+         case 10:
+         case 11:
+         case 21:
+         case 31:
+         case 32:
+         case 41:
+         case 42:
+         case 43:
+            return AccountPeriod.valueOf(period + 1);
+         case 12: 
+            return AccountPeriod.valueOf(period + 89);
+         case 22:
+            return AccountPeriod.valueOf(period + 99);
+         case 33:
+            return AccountPeriod.valueOf(period + 98);
+         case 44:
+            return AccountPeriod.valueOf(period + 97);
+         default:
+            throw new IllegalArgumentException("Illegal period "+period);
+      }
+   }
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		return super.clone();
@@ -128,7 +193,7 @@ public class AccountPeriod extends Number implements Serializable, Comparable<Ac
 				}
 			}
 			
-			if (year < 0 || month < 0 || month > 12) {
+			if (month < 0 || month > MONTHS_SPACE.length || MONTHS_SPACE[month] == null) {
 				throw new IllegalArgumentException(String.format("Can't convert '%s' to an AccountPeriod", value));
 			}
 		}
