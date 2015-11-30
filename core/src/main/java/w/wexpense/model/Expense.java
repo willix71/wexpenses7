@@ -21,9 +21,12 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import w.wexpense.validation.Dtanized;
 import w.wexpense.validation.Transactionized;
+import w.wexpense.validation.Warning;
 
 @Entity
+@Dtanized(groups=Warning.class)
 public class Expense extends DBable<Expense> {
 
 	private static final long serialVersionUID = 2482940442245899869L;
