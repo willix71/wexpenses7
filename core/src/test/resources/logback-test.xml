@@ -4,14 +4,14 @@
 	
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<pattern>%d %5p %logger | %m %n</pattern>
+			<pattern>%d %red( [%5p] ) %cyan(%logger) | %m %n</pattern>
 			<outputPatternAsHeader>true</outputPatternAsHeader>			
 		</encoder>
 	</appender>
 
-	<logger name="org.springframework" level="INFO" />
+	<logger name="org.springframework" level="ERROR" />
 
-	<logger name="org.hibernate" level="INFO" />
+	<logger name="org.hibernate" level="ERROR" />
 
     <!-- 
 	<logger name="org.springframework.orm.jpa.support" level="DEBUG" />
