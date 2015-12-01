@@ -3,7 +3,9 @@ package w.wexpense.vaadin7.converter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.StringTokenizer;
 
+import com.fathzer.soft.javaluator.DoubleEvaluator;
 import com.vaadin.data.util.converter.Converter;
 
 public class StringToDoubleConverter implements Converter<String, Double> {
@@ -25,7 +27,7 @@ public class StringToDoubleConverter implements Converter<String, Double> {
         if (value == null || value.length() == 0)
             return null;
         else
-            return new Double(value);
+            return fullEval(value);
     }
 
     @Override
@@ -45,4 +47,39 @@ public class StringToDoubleConverter implements Converter<String, Double> {
     public Class<String> getPresentationType() {
         return String.class;
     }
+    
+    private static final DoubleEvaluator EVALUATOR = new DoubleEvaluator();
+    public static Double fullEval(String string) {
+    	return EVALUATOR.evaluate(string);
+    }
+    
+    public static Double simpleEval(String string) {
+		if (string.startsWith("+")) string = string.substring(1);
+		else if (string.startsWith("-")) string = "0" +string;
+		else if (string.startsWith("/"))  string = "1" +string;
+		
+		StringTokenizer st = new StringTokenizer(string,"+-*/",true);
+		Double c = new Double(st.nextToken());
+		while(st.hasMoreTokens()) {
+			String operator = st.nextToken();
+			Double operande = new Double(st.nextToken());
+			switch(operator.charAt(0)) {
+			case '+':
+				c += operande;
+				break;
+			case '-':
+				c -= operande;
+				break;
+			case '*':
+				c *= operande;
+				break;
+			case '/':				
+				c /= operande;
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown operator " + operator);
+			}
+		}
+		return c;
+	}
 }

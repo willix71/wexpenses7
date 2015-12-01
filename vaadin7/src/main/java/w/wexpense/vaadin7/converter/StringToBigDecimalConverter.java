@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.Locale;
 
+import com.udojava.evalex.Expression;
 import com.vaadin.data.util.converter.Converter;
 
 public class StringToBigDecimalConverter implements Converter<String, BigDecimal> {
@@ -15,7 +16,7 @@ public class StringToBigDecimalConverter implements Converter<String, BigDecimal
         if (value == null || value.length() == 0)
             return null;
         else
-            return new BigDecimal(value);
+            return eval(value);
     }
 
     @Override
@@ -34,5 +35,9 @@ public class StringToBigDecimalConverter implements Converter<String, BigDecimal
     @Override
     public Class<String> getPresentationType() {
         return String.class;
+    }
+    
+    public static BigDecimal eval(String s) {
+    	return new Expression(s).eval();
     }
 }

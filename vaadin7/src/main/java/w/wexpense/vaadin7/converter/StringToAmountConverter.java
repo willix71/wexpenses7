@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import w.wexpense.model.AmountValue;
 
+import com.fathzer.soft.javaluator.DoubleEvaluator;
 import com.vaadin.data.util.converter.Converter;
 
 public class StringToAmountConverter implements Converter<String, AmountValue> {
@@ -16,7 +17,7 @@ public class StringToAmountConverter implements Converter<String, AmountValue> {
         if (value == null || value.length() == 0)
             return null;
         else
-            return new AmountValue(value);
+            return AmountValue.fromRealValue(eval(value));
     }
 
     @Override
@@ -35,5 +36,11 @@ public class StringToAmountConverter implements Converter<String, AmountValue> {
     @Override
     public Class<String> getPresentationType() {
         return String.class;
+    }
+    
+    
+    private static final DoubleEvaluator EVALUATOR = new DoubleEvaluator();
+    public static Double eval(String string) {
+    	return EVALUATOR.evaluate(string);
     }
 }
