@@ -23,4 +23,7 @@ public interface IExpenseJpaDao extends JpaRepository< Expense, Long >, JpaSpeci
 	
 	@Query(value="from Expense x where x.date>=?1 and x.date<=?2 and x.amount = ?3")
 	List<Expense> findSimiliarExpenses(Date d1, Date d2, BigDecimal amount);
+	
+	@Query(value="from Expense x where x.date>=?1 and x.date<=?2 and x.amount = ?3 and x != ?4")
+   List<Expense> findSimiliarExpenses(Date d1, Date d2, BigDecimal amount, Expense x);
 }

@@ -1,6 +1,5 @@
 package w.wexpense.service.model.impl;
 
-import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -42,13 +41,18 @@ public class ExpenseService extends DaoService<Expense, Long> implements IExpens
 	
 
     @Override
-    public List<Expense> findSimiliarExpenses(Date d, BigDecimal amount) {
+    public List<Expense> findSimiliarExpenses(Expense x) {       
         Calendar cal = Calendar.getInstance();
-        cal.setTime(d);
-        cal.clear();
+        cal.setTime(x.getDate());
+        cal.set(Calendar.MILLISECOND,0);
+        cal.set(Calendar.SECOND,0);
+        cal.set(Calendar.MINUTE,0);
+        cal.set(Calendar.HOUR,0);
         Date d1 = cal.getTime();
         cal.add(Calendar.DAY_OF_MONTH, 1);
         Date d2 = cal.getTime();
-        return ((IExpenseJpaDao) getDao()).findSimiliarExpenses(d1, d2, amount);
+        
+        IExpenseJpaDao dao = (IExpenseJpaDao) getDao();
+        return x.isNew()?dao.findSimiliarExpenses(d1, d2, x.getAmount()):dao.findSimiliarExpenses(d1, d2, x.getAmount(), x);
     }
 }
