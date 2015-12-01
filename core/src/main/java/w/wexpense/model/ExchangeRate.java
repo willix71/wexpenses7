@@ -37,6 +37,8 @@ public class ExchangeRate extends DBable<ExchangeRate> {
 
 	private Double fee;
 
+	private Double fixFee;
+	
 	public ExchangeRate() {}
 	
 	public ExchangeRate(Currency fromCurrency, Currency toCurrency, Double rate) {
@@ -78,6 +80,14 @@ public class ExchangeRate extends DBable<ExchangeRate> {
 		this.fromCurrency = currency;
 	}
 
+	public Double getStrenghedRate() {
+		if (fromCurrency.getStrengh() != null && toCurrency.getStrengh() !=null && fromCurrency.getStrengh() > toCurrency.getStrengh()) {
+			return 1/rate;
+		}
+		
+		return rate;
+	}
+	
 	public Double getRate() {
 		return rate;
 	}
@@ -94,7 +104,15 @@ public class ExchangeRate extends DBable<ExchangeRate> {
 		this.fee = fee;
 	}
 
-	@Override
+	public Double getFixFee() {
+      return fixFee;
+   }
+
+   public void setFixFee(Double fixFee) {
+      this.fixFee = fixFee;
+   }
+
+   @Override
 	public String toString() {
 		return MessageFormat.format("{0} x {2,number, 0.00000} {1}", fromCurrency, toCurrency, rate);
 	}

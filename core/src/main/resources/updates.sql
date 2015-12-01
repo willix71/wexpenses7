@@ -80,3 +80,8 @@ ALTER TABLE Template ADD COLUMN inDiscriminator_id bigint;
 ALTER TABLE Template ADD COLUMN outDiscriminator_id bigint;
 alter table Template add constraint FKTemplateInDisc foreign key (inDiscriminator_id) references Discriminator;
 alter table Template add constraint FKTemplateOutDisc foreign key (outDiscriminator_id) references Discriminator;
+
+-- //////
+ALTER TABLE exchangerate add column fixfee double(17);
+ALTER TABLE currency add column strengh integer(10);
+

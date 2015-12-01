@@ -129,8 +129,11 @@ public class TransactionLine extends DBable<TransactionLine> {
 		if (exchangeRate != null) {
 			v = v.multiply(BigDecimal.valueOf(exchangeRate.getRate()));			
 			if (exchangeRate.getFee() != null) {
-				
 				v = v.multiply(BigDecimal.valueOf(1+exchangeRate.getFee()));
+			}
+			
+			if (exchangeRate.getFixFee() != null) {
+			   v = v.add(BigDecimal.valueOf(exchangeRate.getFixFee()));
 			}
 			// get the currency of the exchange rate
 			currency = exchangeRate.getToCurrency();

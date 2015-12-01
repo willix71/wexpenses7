@@ -20,6 +20,8 @@ public class Currency implements Codable<Currency> {
 
 	private Integer roundingFactor;
 	
+	private Integer strengh;
+	
 	public Currency() {
 		super();
 	}
@@ -53,6 +55,14 @@ public class Currency implements Codable<Currency> {
 
 	public void setRoundingFactor(Integer roundingFactor) {
 		this.roundingFactor = roundingFactor;
+	}
+
+	public Integer getStrengh() {
+		return strengh;
+	}
+
+	public void setStrengh(Integer strengh) {
+		this.strengh = strengh;
 	}
 
 	@Override
