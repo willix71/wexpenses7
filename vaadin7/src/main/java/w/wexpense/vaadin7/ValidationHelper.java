@@ -11,11 +11,13 @@ public class ValidationHelper {
 
 	public static <T> String validate(T o, Class<?>... groups) {
 		Set<ConstraintViolation<T>> violations = validator.validate(o, groups);
-		if (violations.isEmpty())return null;
+		if (violations.isEmpty()) return null;
 
 		StringBuilder msg = new StringBuilder();
 		for (ConstraintViolation<?> violation : violations) {
-			msg.append("\n").append(violation.getPropertyPath().toString()).append(": ").append(violation.getMessage());
+			if (msg.length() > 0)  msg.append("\n");
+			msg.append(violation.getPropertyPath().toString()).append(": ");
+			msg.append(violation.getMessage());
 		}
 		return msg.toString();
 	}
