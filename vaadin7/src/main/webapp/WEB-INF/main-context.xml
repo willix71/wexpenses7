@@ -12,7 +12,7 @@
 
 	<!-- persistence  -->
 	<import resource="classpath:persistence-context.xml"/>
-	
+	<import resource="classpath:service-context.xml"/>
 	<bean id="persistenceService" class="w.wexpense.vaadin7.container.ContainerService" >
 	<!-- 
 		<property name="helper">
@@ -24,9 +24,7 @@
 	<context:annotation-config />
 	
 	<context:property-placeholder location="classpath:wexpenses.properties" />
-
- 	<context:component-scan base-package="w.wexpense.service"/>
- 	
+	
     <context:component-scan base-package="w.wexpense.vaadin7"/>
     
     <!-- message source  -->

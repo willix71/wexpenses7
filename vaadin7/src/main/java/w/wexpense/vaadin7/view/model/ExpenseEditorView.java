@@ -108,17 +108,17 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
         PropertyFieldLayout fpl = new PropertyFieldLayout(vl);
         
         HorizontalLayout hl = PropertyFieldHelper.getHorizontalLayout(false, false);
-        //Converter ts = new ReverseConverter(new StringToDateConverter("dd/MM/yyyy HH:mm:ss"));
+      
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl, "fullId").width(100, Unit.PIXELS));
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl, "uid").width(300, Unit.PIXELS));
-        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl, "createdTs"));//.converter(ts));
-        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl, "modifiedTs"));//.converter(ts));
-        fpl.addPropertyFieldConfig(new StaticFieldConfig(vl, hl));
+        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl, "createdTs"));
+        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl, "modifiedTs"));
+        fpl.addPropertyFieldConfig(new StaticFieldConfig<Expense>(vl, hl));
         
         HorizontalLayout hl2 = PropertyFieldHelper.getHorizontalLayout(true, false);
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl2, "type").width(200, Unit.PIXELS));
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl2, "payment").expand(100f));
-        fpl.addPropertyFieldConfig(new StaticFieldConfig(vl, hl2).width(100, Unit.PERCENTAGE));
+        fpl.addPropertyFieldConfig(new StaticFieldConfig<Expense>(vl, hl2).width(100, Unit.PERCENTAGE));
 
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(vl, "payee"));
         
@@ -130,7 +130,7 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
         fpl.addPropertyFieldConfig(new DatePart(hl3, "Time", "{0,date,HH:mm}").width(60,Unit.PIXELS));
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl3, "amount"));
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl3, "currency").width(80, Unit.PIXELS));
-        fpl.addPropertyFieldConfig(new StaticFieldConfig(vl, hl3));
+        fpl.addPropertyFieldConfig(new StaticFieldConfig<Expense>(vl, hl3));
         
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(vl, "externalReference"));
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(vl, "description"));
@@ -145,6 +145,8 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 	private MenuItem unlock;
 	
 	private Property.ValueChangeListener amountListener = new Property.ValueChangeListener() {
+	   private static final long serialVersionUID = 1L;
+	   
 		@Override
 		public void valueChange(Property.ValueChangeEvent event) {
 			updateAmount();
@@ -153,6 +155,8 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 	
 	private List<ExchangeRateField> exchangeRateFields = new ArrayList<ExchangeRateField>();
 	private com.vaadin.ui.Component.Listener exchangeRateListener = new com.vaadin.ui.Component.Listener() {
+	   private static final long serialVersionUID = 1L;
+	   
 		@Override
 		public void componentEvent(com.vaadin.ui.Component.Event event) {			
 			updateExchangeRate(((ExchangeRateField) event.getSource()).getValue());
@@ -165,6 +169,8 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 	   
 	   MenuItem adminMenu = menuBar.addItem("admin", null);
 	   unlock = menuBar.addItem(adminMenu, "unlock", null, new Command() {
+	        private static final long serialVersionUID = 1L;
+	      
            public void menuSelected(MenuItem selectedItem) {
               lock(false);
               unlock.setEnabled(false);
@@ -196,6 +202,8 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 					} else if (("factor").equals(fcevnt.getColId())) {
 						((AbstractComponent) fcevnt.getField()).setImmediate(true);
 						fcevnt.getField().addValueChangeListener(new Property.ValueChangeListener() {
+						   private static final long serialVersionUID = 1L;
+						   
 							@Override
 							public void valueChange(Property.ValueChangeEvent event) {
 								expenseTransactionsField.itemChange();
@@ -220,6 +228,8 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 		UIHelper.addValueChangeListener(getField("amount"), amountListener);
 		
 		UIHelper.addValueChangeListener(getField("date"), new Property.ValueChangeListener() {
+		   private static final long serialVersionUID = 1L;
+		   
 			@Override
 			public void valueChange(Property.ValueChangeEvent event) {
 				updateTransactionLineDate();
@@ -227,6 +237,8 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 		});
 	
 		UIHelper.addValueChangeListener(getField("payee"),new Property.ValueChangeListener() {
+		   private static final long serialVersionUID = 1L;
+		   
 			@Override
 			public void valueChange(Property.ValueChangeEvent event) {
 				Payee payee = getInstance().getPayee();
@@ -270,37 +282,7 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
       super.setInstance(expense);
       oldAmount = expense.getAmount();
    }
-/*	
-	@Override
-    public Expense validateAndSave() {
-	    if (!super.validate()) {
-	        return null;
-	    }
-	    
-        // check for similiar expense
-//        Expense x = fieldGroup.getItemDataSource().getBean();
-//        List<Expense> sims =expenseService.findSimiliarExpenses(x.getDate(), x.getAmount());
-//        if (sims==null || sims.size() == 0) {
-//            return saveAndNotify();
-//        }
 
-        Saver saver = new Saver();
-        String text = "this is a test";
-        ConfirmDialog.show(UI.getCurrent(), "Similar Expense", text, "yes", "no", saver);
-        return saver.x;
-        
-	}
-	
-	class Saver implements ConfirmDialog.Listener {
-        private static final long serialVersionUID = 1L;
-        Expense x;
-        public void onClose(ConfirmDialog dialog) {
-            if (dialog.isConfirmed()) {
-                x = saveAndNotify();
-            }
-        }
-    }
-*/
 	@Override
 	 protected SavingStep<Expense> getSavingSteps(SavingStep<Expense> finalizer) {
            return new ValidateStep<Expense>(this, new CheckWarningsStep<Expense>(this, 
@@ -354,7 +336,9 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
       		);
       xtransactionsField.setPageLength(5);
       xtransactionsField.setEditable(true);
-		xtransactionsField.addFooterListener(new Container.ItemSetChangeListener() {			
+		xtransactionsField.addFooterListener(new Container.ItemSetChangeListener() {
+		   private static final long serialVersionUID = 1L;
+		   
 			@Override
 			public void containerItemSetChange(ItemSetChangeEvent event) {
 				@SuppressWarnings("unchecked")
@@ -372,8 +356,10 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 	
 	private ActionHandler initExpenseTransactionsActionHanler() {
 		// set the expenseTransactionsField menu actions
-		ListViewAction addAction = new ListViewAction("add") {			
-			@Override
+		ListViewAction addAction = new ListViewAction("add") {	
+         private static final long serialVersionUID = 1L;
+
+         @Override
 			public void handleAction(Object sender, Object target) {
 				Table table = (Table) sender;
 				
@@ -391,7 +377,9 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 			}
 		};
       
-		ListViewAction editAction = new ListViewAction("edit") {			
+		ListViewAction editAction = new ListViewAction("edit") {	
+		   private static final long serialVersionUID = 1L;
+		   
 			@Override
 			public void handleAction(Object sender, Object target) {
 				if (target != null) {

@@ -19,13 +19,17 @@ public class CheckSimilarExpenseStep extends SavingStep<Expense> {
     @Override
     public void save(final Expense x) {
 
-        List<Expense> sims = ((IExpenseService) getEditorView().getStoreService()).findSimiliarExpenses(x.getDate(), x.getAmount());
+        List<Expense> sims = ((IExpenseService) getEditorView().getStoreService()).findSimiliarExpenses(x);
         if (sims == null || sims.size() == 0) {
             nextStep(x);
         } else {
 
-        String similarText = "there are similiar expenses"; //TODO build the text
-
+        String similarText = "there are similiar expenses";
+        
+        for(Expense ex: sims) {
+           similarText += "\n" + ex.getPayee();
+        }
+        
         ConfirmDialog.show(UI.getCurrent(), "Are you sure you want to save?", similarText, "yes", "no", new ConfirmDialog.Listener() {
             private static final long serialVersionUID = 1L;
 
