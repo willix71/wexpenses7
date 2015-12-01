@@ -25,7 +25,7 @@ public class CurrencyConfiguration {
 	@Bean
 	@Scope("prototype")
 	public EditorView<Currency, String> currencyEditorView() {
-	    PropertyFieldLayout l = PropertyFieldHelper.getFormPropertyFieldLayout("code","name");
+	    PropertyFieldLayout l = PropertyFieldHelper.getFormPropertyFieldLayout("code","name","strengh");
 		EditorView<Currency, String> editorview = new EditorView<Currency, String>(currencyService, l);
 		return editorview;
 	}
@@ -36,7 +36,8 @@ public class CurrencyConfiguration {
 		ListView<Currency> listview = new ListView<Currency>(Currency.class);
 		listview.setColumnConfigs(
 				   new TableColumnConfig("code").asc(),
-				   new TableColumnConfig("name").asc()
+				   new TableColumnConfig("name").asc(),
+				   new TableColumnConfig("strengh")
 				   );
 		   
 		ActionHelper.setDefaultListViewActions(listview, "currencyEditorView");

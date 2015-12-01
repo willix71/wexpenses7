@@ -30,7 +30,7 @@ public class ExchangeRateConfiguration {
 	@Bean
 	@Scope("prototype")
 	public EditorView<ExchangeRate, Long> exchangeRateEditorView() {
-	    PropertyFieldLayout l = PropertyFieldHelper.getDBableFormPropertyFieldLayout("date","institution","fromCurrency","toCurrency","rate","fee");
+	    PropertyFieldLayout l = PropertyFieldHelper.getDBableFormPropertyFieldLayout("date","institution","fromCurrency","toCurrency","rate","fee","fixFee");
 		EditorView<ExchangeRate, Long> editorview = new EditorView<ExchangeRate, Long>(exchangeRateService, l) {
 		    private static final long serialVersionUID = 1L;
 		    
@@ -38,6 +38,7 @@ public class ExchangeRateConfiguration {
 			public void initFields() {
 			    super.initFields();
 				((AbstractField) fieldGroup.getField("rate")).setConverter(new StringToDoubleConverter("0.00000##"));
+				((AbstractField) fieldGroup.getField("fixFee")).setConverter(new StringToDoubleConverter("0.00"));
 			};
 		};
 		return editorview;
@@ -77,10 +78,11 @@ public class ExchangeRateConfiguration {
 
 			   new TableColumnConfig("date").desc(),
 			   new TableColumnConfig("institution").sortBy(".display").expand(1.0f), 
-			   new TableColumnConfig("fromCurrency").centerAlign(),
-			   new TableColumnConfig("toCurrency").centerAlign(),
-			   new TableColumnConfig("rate").convert(new StringToDoubleConverter("0.00000")),
-			   new TableColumnConfig("fee").convert(new StringToDoubleConverter("0.##%"))
+			   new TableColumnConfig("fromCurrency","Sell").centerAlign(),
+			   new TableColumnConfig("toCurrency","Buy").centerAlign(),
+			   new TableColumnConfig("strenghedRate","Rate").convert(new StringToDoubleConverter("0.00000")),
+			   new TableColumnConfig("fee").convert(new StringToDoubleConverter("0.##%")),
+			   new TableColumnConfig("fixFee","Fix Fee").convert(new StringToDoubleConverter("0.00")).rightAlign()
 		};
 	}
 }
