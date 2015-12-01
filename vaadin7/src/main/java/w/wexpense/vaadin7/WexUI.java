@@ -22,6 +22,9 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 
+import figlet.FigletUtil;
+import figlet.FigletUtil.Figlet;
+
 @Component
 @Scope("prototype")
 public class WexUI extends UI {
@@ -33,7 +36,7 @@ public class WexUI extends UI {
 
 	@Override
 	protected void init(VaadinRequest request) {
-		LOGGER.debug("{} inited", getClass().getSimpleName() );
+		LOGGER.debug("\n{}", FigletUtil.getMessage(getClass().getSimpleName() + " init", Figlet.CHUNKY));
 		
 		setSizeFull();
 

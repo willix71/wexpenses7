@@ -77,8 +77,9 @@ public class TemplateConfiguration {
 		EnabalebalMenuBar<Template> menuBar = editorview.getMenuBar();
 		MenuItem mnuDta = menuBar.addItem("Template", null);
 		mnuDta.addItem("to expense", new Command() {
+         private static final long serialVersionUID = 1L;
 
-	         @SuppressWarnings("unchecked")
+         @SuppressWarnings("unchecked")
          public void menuSelected(MenuItem selectedItem) { 
          	try {
          		Expense x = editorview.getInstance().toExpense();

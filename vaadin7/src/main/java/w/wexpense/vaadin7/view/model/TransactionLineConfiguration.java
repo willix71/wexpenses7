@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import w.wexpense.model.Duplicatable;
 import w.wexpense.model.TransactionLine;
 import w.wexpense.service.model.ITransactionLineService;
 import w.wexpense.vaadin7.action.ActionHandler;
@@ -67,6 +66,8 @@ public class TransactionLineConfiguration {
 		ActionHandler handler = new ActionHandler();
 		handler.addListViewAction(new AddNewAction(editorName));
 		handler.addListViewAction(new EditAction(editorName) {
+         private static final long serialVersionUID = 1L;
+
 			@Override
 			public Serializable getInstanceId(Object sender, Object target) {
 				com.vaadin.data.Container c = ((Table) sender) .getContainerDataSource();
@@ -77,13 +78,15 @@ public class TransactionLineConfiguration {
 		}, true);
 		
 		handler.addListViewAction(new DuplicateAction(editorName) {
-		    @Override
-            public Serializable getInstanceId(Object sender, Object target) {
-                com.vaadin.data.Container c = ((Table) sender) .getContainerDataSource();
-                @SuppressWarnings("unchecked")
-                JPAContainerItem<TransactionLine> i = (JPAContainerItem<TransactionLine>) c.getItem(target);
-                return i.getEntity().getExpense().getId();
-            } 
+         private static final long serialVersionUID = 1L;
+
+		   @Override
+         public Serializable getInstanceId(Object sender, Object target) {
+             com.vaadin.data.Container c = ((Table) sender) .getContainerDataSource();
+             @SuppressWarnings("unchecked")
+             JPAContainerItem<TransactionLine> i = (JPAContainerItem<TransactionLine>) c.getItem(target);
+             return i.getEntity().getExpense().getId();
+         } 
 		});
 	      
 		handler.addListViewAction(new RefreshAction());

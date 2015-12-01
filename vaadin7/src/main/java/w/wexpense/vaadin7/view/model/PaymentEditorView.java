@@ -21,7 +21,6 @@ import w.wexpense.vaadin7.action.RemoveAction;
 import w.wexpense.vaadin7.component.OneToManyField;
 import w.wexpense.vaadin7.container.OneToManyContainer;
 import w.wexpense.vaadin7.layout.PropertyFieldHelper;
-import w.wexpense.vaadin7.layout.PropertyFieldLayout;
 import w.wexpense.vaadin7.menu.EnabalebalMenuBar;
 import w.wexpense.vaadin7.view.EditorView;
 import w.wexpense.vaadin7.view.MultiSelectorView;

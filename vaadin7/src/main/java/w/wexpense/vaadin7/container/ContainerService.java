@@ -28,7 +28,7 @@ public class ContainerService {
 	}
 	
 	private <T> JPAContainer<T> getJPAContainer(Class<T> entityClass) {
-		LOGGER.info("Creating JPAContainer for {}", entityClass);
+		LOGGER.debug("Creating JPAContainer for {}", entityClass);
 		
 		JPAContainer<T> jpac = JPAContainerFactory.make(entityClass, entityManager);
 

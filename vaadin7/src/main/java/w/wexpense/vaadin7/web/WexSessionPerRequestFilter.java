@@ -41,13 +41,12 @@ public class WexSessionPerRequestFilter extends OncePerRequestFilter {
 		}
 	}
 
-	protected ContainerService lookupPersistenceService(
-			HttpServletRequest request) {
+	protected ContainerService lookupPersistenceService(HttpServletRequest request) {
+	   
 		if (this.persistenceService == null) {
 			LOGGER.info("Fetching PersistenceService");
 			
-			WebApplicationContext wac = WebApplicationContextUtils
-					.getRequiredWebApplicationContext(getServletContext());
+			WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
 			this.persistenceService = wac.getBean("persistenceService", ContainerService.class);
 		}
 		return this.persistenceService;
