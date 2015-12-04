@@ -62,6 +62,7 @@
 		<module>core</module>
 		<module>vaadin7</module>
 		<module>tools</module>
+		<module>rest</module>
 	</modules>
 	
 	<dependencyManagement>
