@@ -1,6 +1,7 @@
 package w.wexpense.service;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +78,11 @@ public class DaoService<T, ID extends Serializable> implements StorableService<T
 	@Override
    public T load(ID id) {
 		return dao.findOne(id);
+	}
+	
+	@Override
+   public List<T> loadAll() {
+		return dao.findAll();
 	}
 	
 	@Override

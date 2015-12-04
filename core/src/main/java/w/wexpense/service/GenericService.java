@@ -1,6 +1,7 @@
 package w.wexpense.service;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -81,6 +82,12 @@ public class GenericService<T, ID extends Serializable> implements StorableServi
 	@Override
 	public T load(ID id) {
 		return entityManager.find(entityClass, id);
+	}
+	
+	@Override
+	public List<T> loadAll() {
+		String entityName = entityClass.getSimpleName();
+		return entityManager.createQuery("FROM "+entityName, entityClass).getResultList();
 	}
 	
 	@Override
