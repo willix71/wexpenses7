@@ -6,18 +6,17 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import w.utils.DateUtils;
 import w.wexpense.model.enums.AccountEnum;
 import w.wexpense.model.enums.TransactionLineEnum;
 import w.wexpense.utils.ExpenseUtils;
 import w.wexpense.utils.TransactionLineUtils;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * @author willy

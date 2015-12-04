@@ -1,10 +1,12 @@
 package w.wexpense.dta;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static w.wexpense.dta.DtaCommonTestData.bvo;
 import static w.wexpense.dta.DtaCommonTestData.chf;
 import static w.wexpense.dta.DtaCommonTestData.createDate;
 import static w.wexpense.dta.DtaCommonTestData.createPaymentData;
 import static w.wexpense.dta.DtaCommonTestData.nyon;
+import static w.wexpense.dta.DtaCommonTestData.williamKeyser;
 import static w.wexpense.model.enums.AccountEnum.ASSET;
 import static w.wexpense.model.enums.AccountEnum.EXPENSE;
 
@@ -12,8 +14,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.Assert;
-
+import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.iterable.Extractor;
 import org.junit.Test;
 
 import w.wexpense.model.Account;
@@ -33,30 +35,39 @@ public class BvoDtaFormaterTest {
 	
 	@Test
 	public void testPaddedAccountNumber() {
-		Assert.assertEquals("011234561", BvoDtaFormater.paddedAccountNumber("1-123456-1"));		
-		Assert.assertEquals("120000011", BvoDtaFormater.paddedAccountNumber("12-1-1"));		
+		assertThat(BvoDtaFormater.paddedAccountNumber("1-123456-1")).isEqualTo("011234561");
+		assertThat(BvoDtaFormater.paddedAccountNumber("12-1-1")).isEqualTo("120000011");
 	}
 
 	@Test
 	public void testBvoExpense() throws DtaException {
 		Payment payment = createPaymentData(15,2,2012,"test.dta", getBvoExpense());
 		List<String> l = new BvoDtaFormater().format(payment, 1, payment.getExpenses().get(0));
-		Assert.assertEquals(3, l.size());
+		
+		// use SoftAssertions instead of direct assertThat methods
+		SoftAssertions softly = new SoftAssertions();
+		softly.assertThat(l.size()).isEqualTo(3);   
 
 		// check length
 		for(int i=0;i<3;i++) {
-			Assert.assertEquals("line "+i+"'s length is not 128",128, l.get(i).length());
+			softly.assertThat(l.get(i).length()).as("line "+i).isEqualTo(128);
 		}
+		
 		// check content
-		for(int i=0;i<3;i++) {
-			Assert.assertEquals("Line "+i+" is wrong", expected[i], l.get(i).toUpperCase());
-		}
+		softly.assertThat(l).extracting(new Extractor<String, String>() {
+			  public String extract(String input) {
+				  return input.toUpperCase();
+			  }
+		}).containsOnly(expected);
+
+		// Don't forget to call SoftAssertions global verification !
+		softly.assertAll();
 	}
 	
 	public static Expense getBvoExpense() {	
 		Account assetAcc = new Account(null, 1, "asset", ASSET, null);						
-		Account ecAcc = new Account(assetAcc, 2, "courant", ASSET, chf);
-		ecAcc.setOwner(DtaHelperTest.getWilliamsBankDetails());
+		Account ecAcc = new Account(assetAcc, 2, "courant", ASSET, chf);		
+		ecAcc.setOwner(williamKeyser);
 		
 		Account vehicleAcc = new Account(null, 4, "vehicle", EXPENSE, null);
 		Account gasAcc = new Account(vehicleAcc, 1, "gas", EXPENSE, chf);			

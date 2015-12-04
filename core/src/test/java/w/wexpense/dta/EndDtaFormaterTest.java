@@ -1,7 +1,7 @@
 package w.wexpense.dta;
 
 import static w.wexpense.dta.DtaCommonTestData.createPaymentData;
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 
