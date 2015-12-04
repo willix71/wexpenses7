@@ -53,7 +53,7 @@ public class PersistenceConfiguration {
 	}
 
 	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean() throws Exception {	
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {	
 		final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
 		factoryBean.setDataSource( wxDataSource() );
 		factoryBean.setPackagesToScan( new String[ ] { "w.wexpense.model" } );
@@ -67,7 +67,7 @@ public class PersistenceConfiguration {
 	@Bean
 	public JpaTransactionManager transactionManager() throws Exception {
 		final JpaTransactionManager transactionManager = new JpaTransactionManager();
-		transactionManager.setEntityManagerFactory(entityManagerFactoryBean().getObject());
+		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
 		return transactionManager;
 	}
 

@@ -26,7 +26,7 @@ public class TestDatabaseConfiguror  {
    }
 
    @Bean
-   public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean() {
+   public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
       final LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
       factory.setDataSource(dataSource());
       factory.setPackagesToScan("w.wexpense.model");
@@ -39,7 +39,7 @@ public class TestDatabaseConfiguror  {
    @Bean
    public JpaTransactionManager transactionManager() {
       final JpaTransactionManager transactionManager = new JpaTransactionManager();
-      transactionManager.setEntityManagerFactory(entityManagerFactoryBean().getObject());
+      transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
       return transactionManager;
    }
 
