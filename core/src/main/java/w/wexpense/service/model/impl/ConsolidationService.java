@@ -15,13 +15,13 @@ import w.wexpense.model.TransactionLine;
 import w.wexpense.persistence.dao.IAccountJpaDao;
 import w.wexpense.persistence.dao.IConsolidationJpaDao;
 import w.wexpense.persistence.dao.ITransactionLineJpaDao;
-import w.wexpense.service.DaoService;
+import w.wexpense.service.JpaRepoDaoService;
 import w.wexpense.service.instanciator.Initializor;
 import w.wexpense.service.model.IConsolidationService;
 import w.wexpense.utils.DBableUtils;
 
 @Service
-public class ConsolidationService extends DaoService<Consolidation, Long> implements IConsolidationService {
+public class ConsolidationService extends JpaRepoDaoService<Consolidation, Long> implements IConsolidationService {
 
 	@Autowired
 	private IAccountJpaDao accountDao;

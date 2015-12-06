@@ -18,7 +18,7 @@ import w.wexpense.service.instanciator.Initializor;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class GenericService<T, ID extends Serializable> implements StorableService<T, ID> {
+public class EntityMgrDaoService<T, ID extends Serializable> implements StorableService<T, ID> {
 
 	protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	
@@ -30,28 +30,28 @@ public class GenericService<T, ID extends Serializable> implements StorableServi
 	private Initializor<T> initializors[];
 	
 	@SuppressWarnings("unchecked")
-	public GenericService(Class<T> entityClass) {
+	public EntityMgrDaoService(Class<T> entityClass) {
 		this(entityClass,new Initializor[] {});
 	}
 	
 	// Generic and optional arguments do not get along very well....
 	
 	@SuppressWarnings("unchecked")
-   public GenericService(Class<T> entityClass, Initializor<T> initializor) {
+   public EntityMgrDaoService(Class<T> entityClass, Initializor<T> initializor) {
 		this(entityClass,new Initializor[] {initializor});
 	}
 	
 	@SuppressWarnings("unchecked")
-	public GenericService(Class<T> entityClass, Initializor<T> initializor1, Initializor<T> initializor2) {
+	public EntityMgrDaoService(Class<T> entityClass, Initializor<T> initializor1, Initializor<T> initializor2) {
 		this(entityClass,new Initializor[] {initializor1, initializor2});
 	}
 	
 	@SuppressWarnings("unchecked")
-	public GenericService(Class<T> entityClass, Initializor<T> initializor1, Initializor<T> initializor2, Initializor<T> initializor3) {
+	public EntityMgrDaoService(Class<T> entityClass, Initializor<T> initializor1, Initializor<T> initializor2, Initializor<T> initializor3) {
 		this(entityClass,new Initializor[] {initializor1, initializor2, initializor3});
 	}
 	
-	public GenericService(Class<T> entityClass, Initializor<T> initializors[]) {
+	public EntityMgrDaoService(Class<T> entityClass, Initializor<T> initializors[]) {
 		this.entityClass = entityClass;		
 		this.initializors = initializors;
 	}
@@ -90,6 +90,32 @@ public class GenericService<T, ID extends Serializable> implements StorableServi
 		return entityManager.createQuery("FROM "+entityName, entityClass).getResultList();
 	}
 	
+	@Override
+	public PagedContent<T> loadPage(int page, int size) {
+		String entityName = entityClass.getSimpleName();
+		entityManager.createQuery("SELECT count FROM "+entityName).getFirstResult();
+		
+		// TODO Auto-generated method stub
+
+ 	   
+/*    	List<T> all = service.loadAll();
+		int fromIndex = page*size;
+		if (fromIndex >= all.size()) {
+			throw new MyResourceNotFoundException();			
+		}
+		int toIndex = fromIndex + size;
+		if (toIndex > all.size()) toIndex = all.size();
+		
+		int totalPages = all.size() / size;
+		if (all.size() % size > 0) totalPages++;
+		
+     eventPublisher.publishEvent(new PaginatedResultsRetrievedEvent(this, LinkUtil.plural(uriBuilder, this.clazz), response, size, page, totalPages));
+
+     return toDtos( all.subList(fromIndex, toIndex) );
+*/    
+		return null;
+	}
+
 	@Override
 	public T save(T entity) {
 		if (PersistenceUtils.getIdValue(entity) == null) {			

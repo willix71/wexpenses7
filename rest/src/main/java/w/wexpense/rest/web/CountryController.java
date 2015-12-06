@@ -6,12 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import w.expense.rest.dto.CountryDTO;
 import w.wexpense.model.Country;
 import w.wexpense.service.StorableService;
 
 @Controller
 @RequestMapping(value = "/country")
-public class CountryController extends CodableController<Country>{
+public class CountryController extends CodableController<Country, CountryDTO>{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CountryController.class);
 

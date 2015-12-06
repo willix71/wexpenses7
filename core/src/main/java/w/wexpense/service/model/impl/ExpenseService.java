@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 import w.wexpense.model.Expense;
 import w.wexpense.model.enums.TransactionLineEnum;
 import w.wexpense.persistence.dao.IExpenseJpaDao;
-import w.wexpense.service.DaoService;
+import w.wexpense.service.JpaRepoDaoService;
 import w.wexpense.service.model.IExpenseService;
 import w.wexpense.utils.ExpenseUtils;
 
 @Service
-public class ExpenseService extends DaoService<Expense, Long> implements IExpenseService {
+public class ExpenseService extends JpaRepoDaoService<Expense, Long> implements IExpenseService {
 	
 	@Autowired
 	public ExpenseService(IExpenseJpaDao dao) {

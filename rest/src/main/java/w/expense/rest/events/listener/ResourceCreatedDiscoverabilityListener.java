@@ -14,7 +14,7 @@ import com.google.common.base.Preconditions;
 import w.expense.rest.events.ResourceCreatedEvent;
 
 @Component
-class ResourceCreatedDiscoverabilityListener implements ApplicationListener<ResourceCreatedEvent> {
+public class ResourceCreatedDiscoverabilityListener implements ApplicationListener<ResourceCreatedEvent> {
 
     @Override
     public void onApplicationEvent(final ResourceCreatedEvent resourceCreatedEvent) {

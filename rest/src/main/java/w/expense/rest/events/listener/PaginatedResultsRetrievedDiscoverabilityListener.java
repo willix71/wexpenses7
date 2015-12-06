@@ -13,14 +13,14 @@ import w.expense.rest.events.PaginatedResultsRetrievedEvent;
 import w.wexpense.rest.utils.LinkUtil;
 
 @Component
-class PaginatedResultsRetrievedDiscoverabilityListener implements ApplicationListener<PaginatedResultsRetrievedEvent> {
+public class PaginatedResultsRetrievedDiscoverabilityListener implements ApplicationListener<PaginatedResultsRetrievedEvent> {
 
     private static final String PAGE = "page";
     private static final String SIZE = "size";
     
     public PaginatedResultsRetrievedDiscoverabilityListener() {
         super();
-    }
+     }
 
     // API
 

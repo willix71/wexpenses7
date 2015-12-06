@@ -10,12 +10,12 @@ import w.wexpense.model.ExchangeRate;
 import w.wexpense.model.Expense;
 import w.wexpense.model.TransactionLine;
 import w.wexpense.persistence.dao.IExchangeRateJpaDao;
-import w.wexpense.service.DaoService;
+import w.wexpense.service.JpaRepoDaoService;
 import w.wexpense.service.instanciator.Initializor;
 import w.wexpense.service.model.IExchangeRateService;
 
 @Service
-public class ExchangeRateService extends DaoService<ExchangeRate, Long> implements IExchangeRateService {
+public class ExchangeRateService extends JpaRepoDaoService<ExchangeRate, Long> implements IExchangeRateService {
 
 	@Autowired
 	public ExchangeRateService(IExchangeRateJpaDao dao) {

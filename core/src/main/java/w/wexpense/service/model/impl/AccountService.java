@@ -5,14 +5,14 @@ import org.springframework.stereotype.Service;
 
 import w.wexpense.model.Account;
 import w.wexpense.persistence.dao.IAccountJpaDao;
-import w.wexpense.service.DaoService;
+import w.wexpense.service.JpaRepoDaoService;
 import w.wexpense.service.instanciator.NameInitializor;
 import w.wexpense.service.instanciator.ParentInitializor;
 import w.wexpense.service.model.IAccountService;
 import w.wexpense.utils.AccountUtils;
 
 @Service
-public class AccountService extends DaoService<Account, Long> implements IAccountService {
+public class AccountService extends JpaRepoDaoService<Account, Long> implements IAccountService {
 
 	@Autowired
 	public AccountService(IAccountJpaDao dao) {

@@ -2,6 +2,7 @@ package w.wexpense.rest.utils;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
@@ -42,6 +43,19 @@ public final class LinkUtil {
      */
     public static UriComponentsBuilder plural(final UriComponentsBuilder uriBuilder, final Class<?> clazz) {
         final String resourceName = clazz.getSimpleName().toLowerCase() + "s";
+        uriBuilder.path("/" + resourceName);
+        return uriBuilder;
+    }
+    
+    /**
+     * Retrieves the request mapping value
+     * @param uriBuilder
+     * @param clazz
+     * @return
+     */
+    public static UriComponentsBuilder getRequestMapping(final UriComponentsBuilder uriBuilder, final Class<?> clazz) {
+    	RequestMapping requestMapping = clazz.getAnnotation(RequestMapping.class);
+        final String resourceName = requestMapping.value()[0];
         uriBuilder.path("/" + resourceName);
         return uriBuilder;
     }

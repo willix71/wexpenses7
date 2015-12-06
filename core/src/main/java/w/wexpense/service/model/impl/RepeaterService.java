@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 
 import w.wexpense.model.Repeater;
 import w.wexpense.persistence.dao.IRepeaterJpaDao;
-import w.wexpense.service.DaoService;
+import w.wexpense.service.JpaRepoDaoService;
 import w.wexpense.service.instanciator.NameInitializor;
 import w.wexpense.service.model.IRepeaterService;
 ;
 
 @Service
-public class RepeaterService extends DaoService<Repeater, Long> implements IRepeaterService {
+public class RepeaterService extends JpaRepoDaoService<Repeater, Long> implements IRepeaterService {
 
 	@Autowired
 	public RepeaterService(IRepeaterJpaDao dao) {

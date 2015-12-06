@@ -13,7 +13,7 @@ import w.expense.rest.events.SingleResourceRetrievedEvent;
 import w.wexpense.rest.utils.LinkUtil;
 
 @Component
-class SingleResourceRetrievedDiscoverabilityListener implements ApplicationListener<SingleResourceRetrievedEvent> {
+public class SingleResourceRetrievedDiscoverabilityListener implements ApplicationListener<SingleResourceRetrievedEvent> {
 
     @Override
     public void onApplicationEvent(final SingleResourceRetrievedEvent resourceRetrievedEvent) {
@@ -34,5 +34,4 @@ class SingleResourceRetrievedDiscoverabilityListener implements ApplicationListe
         
         response.addHeader(HttpHeaders.LINK, linkHeaderValue);
     }
-
 }
