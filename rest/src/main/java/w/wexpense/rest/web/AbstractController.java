@@ -113,14 +113,19 @@ public abstract class AbstractController <T, D , ID extends Serializable> {
      */
     @RequestMapping(params = { "page" }, method = RequestMethod.GET)
     @ResponseBody
-    public List<D> findPaginated(@RequestParam("page") final int page, @RequestParam(value="size", defaultValue="10" ) final int size, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
-    	PagedContent<T> resultPage = service.loadPage(page,size);
+    public List<D> findPaginated(
+    		@RequestParam("page") final int page, 
+    		@RequestParam(value="size", defaultValue="10" ) final int size, 
+    		@RequestParam(value="orderBy", required=false) final String orderBy, 
+    		final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
+    	
+    	PagedContent<T> resultPage = service.loadPage(page,size, orderBy);
     	
     	if( page >= resultPage.getTotalPages() ){
     	      throw new MyResourceNotFoundException();
     	   }
     	
-        eventPublisher.publishEvent(new PaginatedResultsRetrievedEvent(this, LinkUtil.getRequestMapping(uriBuilder, this.getClass()), response, size, page, resultPage.getTotalPages()));
+        eventPublisher.publishEvent(new PaginatedResultsRetrievedEvent(this, LinkUtil.getRequestMapping(uriBuilder, this.getClass()), response, size, page, resultPage.getTotalPages(), orderBy));
   	 
     	return toDtos( resultPage.getContent() );
     }

@@ -17,6 +17,7 @@ public class PaginatedResultsRetrievedDiscoverabilityListener implements Applica
 
     private static final String PAGE = "page";
     private static final String SIZE = "size";
+    private static final String ORDER_BY = "orderBy";
     
     public PaginatedResultsRetrievedDiscoverabilityListener() {
         super();
@@ -28,23 +29,23 @@ public class PaginatedResultsRetrievedDiscoverabilityListener implements Applica
     public final void onApplicationEvent(final PaginatedResultsRetrievedEvent ev) {
         Preconditions.checkNotNull(ev);
 
-        addLinkHeaderOnPagedResourceRetrieval(ev.getUriBuilder(), ev.getResponse(), ev.getPageSize(), ev.getPage(), ev.getTotalPages()-1);
+        addLinkHeaderOnPagedResourceRetrieval(ev.getUriBuilder(), ev.getResponse(), ev.getPageSize(), ev.getPage(), ev.getTotalPages()-1, ev.getOrderBy());
     }
 
-    void addLinkHeaderOnPagedResourceRetrieval(final UriComponentsBuilder uriBuilder, final HttpServletResponse response, final int pageSize, final int page, final int lastPage) {
+    void addLinkHeaderOnPagedResourceRetrieval(final UriComponentsBuilder uriBuilder, final HttpServletResponse response, final int pageSize, final int page, final int lastPage, final String orderBy) {
         final StringBuilder linkHeader = new StringBuilder();
         
         if (hasNextPage(page, lastPage)) {
         	appendCommaIfNecessary(linkHeader);
-        	linkHeader.append(LinkUtil.createLinkHeader(constructPageUri(uriBuilder, page+1, pageSize), LinkUtil.REL_NEXT));
+        	linkHeader.append(LinkUtil.createLinkHeader(constructPageUri(uriBuilder, page+1, pageSize, orderBy), LinkUtil.REL_NEXT));
             appendCommaIfNecessary(linkHeader);
-            linkHeader.append(LinkUtil.createLinkHeader(constructPageUri(uriBuilder, lastPage, pageSize), LinkUtil.REL_LAST));
+            linkHeader.append(LinkUtil.createLinkHeader(constructPageUri(uriBuilder, lastPage, pageSize, orderBy), LinkUtil.REL_LAST));
         }
         if (hasPreviousPage(page)) {
             appendCommaIfNecessary(linkHeader);
-            linkHeader.append(LinkUtil.createLinkHeader(constructPageUri(uriBuilder, page-1, pageSize), LinkUtil.REL_PREV));
+            linkHeader.append(LinkUtil.createLinkHeader(constructPageUri(uriBuilder, page-1, pageSize, orderBy), LinkUtil.REL_PREV));
             appendCommaIfNecessary(linkHeader);
-            linkHeader.append(LinkUtil.createLinkHeader(constructPageUri(uriBuilder, 0, pageSize), LinkUtil.REL_FIRST));
+            linkHeader.append(LinkUtil.createLinkHeader(constructPageUri(uriBuilder, 0, pageSize, orderBy), LinkUtil.REL_FIRST));
         }
         
         if (linkHeader.length() > 0) {
@@ -52,8 +53,12 @@ public class PaginatedResultsRetrievedDiscoverabilityListener implements Applica
         }
     }
 
-    final String constructPageUri(final UriComponentsBuilder uriBuilder, final int page, final int size) {
-        return uriBuilder.replaceQueryParam(PAGE, page).replaceQueryParam(SIZE, size).build().encode().toUriString();
+    final String constructPageUri(UriComponentsBuilder uriBuilder, final int page, final int size, final String orderBy) {
+    	uriBuilder = uriBuilder.replaceQueryParam(PAGE, page).replaceQueryParam(SIZE, size);
+    	if (orderBy != null) {
+    		uriBuilder.replaceQueryParam(ORDER_BY, orderBy);
+    	}
+    	return uriBuilder.build().encode().toUriString();
     }
     
     final boolean hasNextPage(final int page, final int lastPage) {

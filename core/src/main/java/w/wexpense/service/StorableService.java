@@ -15,7 +15,7 @@ public interface StorableService<T, ID extends Serializable> {
 
 	List<T> loadAll();
 	
-	PagedContent<T> loadPage(final int page, final int size);
+	PagedContent<T> loadPage(final int page, final int size, final String orderBy);
 	
 	@Transactional
 	T save(T entity);

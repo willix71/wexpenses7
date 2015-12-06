@@ -19,9 +19,10 @@ public final class PaginatedResultsRetrievedEvent extends ApplicationEvent {
     private final int pageSize;
     private final int page;
     private final int totalPages;
+    private final String orderBy; 
 
 
-    public PaginatedResultsRetrievedEvent(final Object source, final UriComponentsBuilder uriBuilderToSet, final HttpServletResponse responseToSet, final int pageSizeToSet, final int pageToSet, final int totalPagesToSet) {
+    public PaginatedResultsRetrievedEvent(final Object source, final UriComponentsBuilder uriBuilderToSet, final HttpServletResponse responseToSet, final int pageSizeToSet, final int pageToSet, final int totalPagesToSet, final String orderByField) {
         super(source);
 
         uriBuilder = uriBuilderToSet;
@@ -29,6 +30,7 @@ public final class PaginatedResultsRetrievedEvent extends ApplicationEvent {
         pageSize = pageSizeToSet;
         page = pageToSet;
         totalPages = totalPagesToSet;
+        orderBy = orderByField;
     }
 
     // API
@@ -52,4 +54,10 @@ public final class PaginatedResultsRetrievedEvent extends ApplicationEvent {
     public final int getTotalPages() {
         return totalPages;
     }
+
+	public String getOrderBy() {
+		return orderBy;
+	}
+    
+    
 }

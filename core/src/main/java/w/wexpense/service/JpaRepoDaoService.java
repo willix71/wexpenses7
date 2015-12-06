@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,8 +92,17 @@ public class JpaRepoDaoService<T, ID extends Serializable> implements StorableSe
 	}
 
 	@Override
-	public PagedContent<T> loadPage(int page, int size) {
-		Page<T> result = dao.findAll(new PageRequest(page, size));
+	public PagedContent<T> loadPage(int page, int size, final String orderBy) {
+		Page<T> result;
+		if (orderBy==null) {
+			result = dao.findAll(new PageRequest(page, size));
+		} else if (orderBy.startsWith("-")) {
+			result = dao.findAll(new PageRequest(page, size, Direction.DESC, orderBy.substring(1)));
+		} else if (orderBy.startsWith("+")) {
+			result = dao.findAll(new PageRequest(page, size, Direction.ASC, orderBy.substring(1)));
+		} else {
+			result = dao.findAll(new PageRequest(page, size, Direction.ASC, orderBy));
+		}
 		return new PagedContent<>(result.getContent(), result.getTotalElements(), result.getTotalPages());
 	}
 

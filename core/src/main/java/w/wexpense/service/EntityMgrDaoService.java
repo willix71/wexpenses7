@@ -94,7 +94,7 @@ public class EntityMgrDaoService<T, ID extends Serializable> implements Storable
 	}
 
 	@Override
-	public PagedContent<T> loadPage(int page, int size) {
+	public PagedContent<T> loadPage(int page, int size, final String orderBy) {
 		// first count the number of entities
 		String entityName = entityClass.getSimpleName();
 		int count = entityManager.createQuery("SELECT count(e) FROM " + entityName + " e", Number.class)
@@ -108,8 +108,18 @@ public class EntityMgrDaoService<T, ID extends Serializable> implements Storable
 		if (fromIndex >= count) {
 			return new PagedContent<T>(Collections.emptyList(), count, totalPages);
 		} else {
-			List<T> result = entityManager.createQuery("FROM " + entityName, entityClass).setFirstResult(fromIndex)
-					.setMaxResults(size).getResultList();
+			String JPL = "FROM " + entityName;
+			if (orderBy != null) {
+				if (orderBy.startsWith("-")) {
+					JPL += " e ORDER BY e." + orderBy.substring(1) + " DESC";
+				} else if (orderBy.startsWith("+")) {
+					JPL += " e ORDER BY e." + orderBy.substring(1) + " ASC";
+				} else {
+					JPL += " e ORDER BY e." + orderBy;
+				}
+			}
+			List<T> result = entityManager.createQuery(JPL, entityClass).setFirstResult(fromIndex).setMaxResults(size).getResultList();
+
 			return new PagedContent<T>(result, count, totalPages);
 		}
 	}
