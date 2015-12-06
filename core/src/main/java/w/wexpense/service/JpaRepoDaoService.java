@@ -93,7 +93,7 @@ public class JpaRepoDaoService<T, ID extends Serializable> implements StorableSe
 	@Override
 	public PagedContent<T> loadPage(int page, int size) {
 		Page<T> result = dao.findAll(new PageRequest(page, size));
-		return new PagedContent<>(result.getContent(), result.getTotalPages());
+		return new PagedContent<>(result.getContent(), result.getTotalElements(), result.getTotalPages());
 	}
 
 	@Override
