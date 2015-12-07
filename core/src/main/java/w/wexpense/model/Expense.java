@@ -27,7 +27,7 @@ import w.wexpense.validation.Warning;
 
 @Entity
 @Dtanized(groups=Warning.class)
-public class Expense extends DBable<Expense> {
+public class Expense extends DBable<Expense> implements Closable {
 
 	private static final long serialVersionUID = 2482940442245899869L;
 	
@@ -154,6 +154,11 @@ public class Expense extends DBable<Expense> {
 
 	public void setPayment(Payment payment) {
 		this.payment = payment;
+	}
+
+	@Override
+	public boolean isClosed() {
+		return getPayment()!=null && getPayment().isClosed();
 	}
 
 	public String getPayed() {

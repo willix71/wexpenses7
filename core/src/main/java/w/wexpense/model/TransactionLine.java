@@ -20,52 +20,50 @@ import w.wexpense.model.enums.TransactionLineEnum;
 import w.wexpense.validation.ExchangeRateTransactionLineized;
 
 @Entity
-@TypeDefs({
-	@TypeDef(name = "amountValueType", typeClass = w.wexpense.persistence.type.AmountValueType.class),
-	@TypeDef(name = "accountPeriodType", typeClass = w.wexpense.persistence.type.AccountPeriodType.class),
-	@TypeDef(name = "transactionLineEnumType", typeClass = w.wexpense.persistence.type.TransactionLineEnumType.class)
-	})
+@TypeDefs({ @TypeDef(name = "amountValueType", typeClass = w.wexpense.persistence.type.AmountValueType.class),
+		@TypeDef(name = "accountPeriodType", typeClass = w.wexpense.persistence.type.AccountPeriodType.class),
+		@TypeDef(name = "transactionLineEnumType", typeClass = w.wexpense.persistence.type.TransactionLineEnumType.class) })
 @ExchangeRateTransactionLineized
-public class TransactionLine extends DBable<TransactionLine> {
+public class TransactionLine extends DBable<TransactionLine> implements Closable {
 
 	private static final long serialVersionUID = 2482940442245899869L;
-		
-	@Type(type="accountPeriodType")
+
+	@Type(type = "accountPeriodType")
 	private AccountPeriod period;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Expense expense;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Discriminator discriminator;
-	
+
 	@NotNull
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Account account;
-	
+
 	@NotNull
-	@Type(type="transactionLineEnumType")
+	@Type(type = "transactionLineEnumType")
 	private TransactionLineEnum factor = TransactionLineEnum.OUT;
-	
+
 	@NotNull
 	private BigDecimal amount;
-	    
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	private ExchangeRate exchangeRate;
-	
+
 	@NotNull
 	private BigDecimal value;
-	
+
 	private BigDecimal balance;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
-	
+
 	@ManyToOne
 	private Consolidation consolidation;
-	   
+
 	private String description;
-	
+
 	public Expense getExpense() {
 		return expense;
 	}
@@ -74,11 +72,12 @@ public class TransactionLine extends DBable<TransactionLine> {
 		this.expense = expense;
 	}
 
-	// TODO Remove once figured out a way to get Nested properties out of a BeanItemContainer
+	// TODO Remove once figured out a way to get Nested properties out of a
+	// BeanItemContainer
 	public Payee getPayee() {
-		return expense==null?null:expense.getPayee();
+		return expense == null ? null : expense.getPayee();
 	}
-	
+
 	public Discriminator getDiscriminator() {
 		return discriminator;
 	}
@@ -112,28 +111,29 @@ public class TransactionLine extends DBable<TransactionLine> {
 	}
 
 	/**
-	 * automatically calculates the amountValue based on the amount, 
-	 * the exchange rate and the currency rounding factor
+	 * automatically calculates the amountValue based on the amount, the
+	 * exchange rate and the currency rounding factor
 	 */
 	public void updateValue() {
-		// using double because it will be rounded by the AmountValue object anyway
+		// using double because it will be rounded by the AmountValue object
+		// anyway
 		// so we don't need the precision of a BigDecimal
-		
+
 		if (amount == null) {
 			value = null;
 			return;
 		}
 		BigDecimal v = amount;
-		
+
 		Currency currency = null;
 		if (exchangeRate != null) {
-			v = v.multiply(BigDecimal.valueOf(exchangeRate.getRate()));			
+			v = v.multiply(BigDecimal.valueOf(exchangeRate.getRate()));
 			if (exchangeRate.getFee() != null) {
-				v = v.multiply(BigDecimal.valueOf(1+exchangeRate.getFee()));
+				v = v.multiply(BigDecimal.valueOf(1 + exchangeRate.getFee()));
 			}
-			
+
 			if (exchangeRate.getFixFee() != null) {
-			   v = v.add(BigDecimal.valueOf(exchangeRate.getFixFee()));
+				v = v.add(BigDecimal.valueOf(exchangeRate.getFixFee()));
 			}
 			// get the currency of the exchange rate
 			currency = exchangeRate.getToCurrency();
@@ -155,7 +155,7 @@ public class TransactionLine extends DBable<TransactionLine> {
 	public void preupdate() {
 		super.preupdate();
 	}
-	
+
 	public BigDecimal getValue() {
 		return value;
 	}
@@ -165,13 +165,13 @@ public class TransactionLine extends DBable<TransactionLine> {
 	}
 
 	public BigDecimal getInValue() {
-		return TransactionLineEnum.IN==factor?getValue():null;
+		return TransactionLineEnum.IN == factor ? getValue() : null;
 	}
 
 	public BigDecimal getOutValue() {
-		return TransactionLineEnum.OUT==factor?getValue():null;
+		return TransactionLineEnum.OUT == factor ? getValue() : null;
 	}
-	
+
 	public TransactionLineEnum getFactor() {
 		return factor;
 	}
@@ -211,7 +211,7 @@ public class TransactionLine extends DBable<TransactionLine> {
 	public void setPeriod(AccountPeriod period) {
 		this.period = period;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -219,24 +219,29 @@ public class TransactionLine extends DBable<TransactionLine> {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
+	@Override
+	public boolean isClosed() {
+		return getConsolidation() != null && getConsolidation().isClosed();
+	}
+
 	@Override
 	public String toString() {
 		String s = account == null ? " " : account.toString();
 		if (discriminator != null) {
 			s += "/" + discriminator.toString();
 		}
-		return MessageFormat.format("{0} {1} {2,number, 0.00}", s , factor, amount );
+		return MessageFormat.format("{0} {1} {2,number, 0.00}", s, factor, amount);
 	}
-	
+
 	@Override
-   public TransactionLine duplicate() {
+	public TransactionLine duplicate() {
 		TransactionLine klone = super.duplicate();
 		klone.setConsolidation(null);
 		return klone;
-   }
-	
-	public boolean validate() {		
+	}
+
+	public boolean validate() {
 		if (exchangeRate != null && account.getCurrency() != null) {
 			if (!account.getCurrency().equals(exchangeRate.getToCurrency())) {
 				throw new ValidationException("transaction line's account and exchange rate currencies don't match");
