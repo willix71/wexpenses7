@@ -9,5 +9,5 @@ import w.junit.extras.OrderedSpringJUnit4ClassRunner;
 @RunWith(OrderedSpringJUnit4ClassRunner.class)
 @TransactionConfiguration(defaultRollback = false)
 @ContextConfiguration(classes = { TestDatabaseConfiguror.class, TestServiceConfiguror.class })
-public class AbstractTest { }
+public abstract class AbstractTest { }
 
