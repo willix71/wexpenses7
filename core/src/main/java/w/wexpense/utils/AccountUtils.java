@@ -38,6 +38,7 @@ public class AccountUtils {
 				}
 			}
 		}
+		account.updateFullNameAndNumber();
 		return account;
 	}
 

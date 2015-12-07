@@ -2,6 +2,7 @@ package w.wexpense.test.populator;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -29,6 +30,11 @@ public class TestDatabasePopulator {
 		return entityPopulator;
 	}
 
+	public <T> Collection<T> addAll(Collection<T> c) {
+		population.addAll(c);
+		return c;
+	}
+	
 	public <T> T add(T t) {
 		population.add(t);
 		return t;

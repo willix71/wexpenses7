@@ -57,6 +57,13 @@ public class ExpenseUtils {
             throw new IllegalArgumentException("Don't knoe what to do for a new expense with a " + args.getClass());
          }
       }
+      
+		try {
+			x.setPayed(PaymentDtaUtils.getDtaFormater(x).payee(x));
+		} catch (Exception e) {
+			x.setPayed(x.getPayee() == null ? null : x.getPayee().toString());
+		}
+		
       return x;
    }
 

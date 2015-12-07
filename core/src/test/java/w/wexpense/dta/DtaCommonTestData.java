@@ -11,6 +11,7 @@ import w.wexpense.model.Expense;
 import w.wexpense.model.ExpenseType;
 import w.wexpense.model.Payee;
 import w.wexpense.model.Payment;
+import w.wexpense.utils.PayeeUtils;
 
 public class DtaCommonTestData {
 
@@ -25,14 +26,7 @@ public class DtaCommonTestData {
 	public static final ExpenseType bvr = new ExpenseType("bvr", true, BvrDtaFormater.class.getName());
 	public static final ExpenseType iban = new ExpenseType("iban", true, IbanDtaFormater.class.getName());
 	
-	public static final Payee williamKeyser;
-	static {
-		williamKeyser = new Payee();
-		williamKeyser.setName("William Keyser");
-		williamKeyser.setAddress1("11 ch du Grand Noyer");
-		williamKeyser.setCity(prangins);
-		williamKeyser.setIban("CH650022822851333340B");
-	}
+	public static final Payee williamKeyser = PayeeUtils.newPayee("William Keyser","11 ch du Grand Noyer", prangins, ((String) null), "CH650022822851333340B");
 	
 	public static Payment createPaymentData(int day, int month, int year, String filename, Expense ...expenses) {
 		// === Payment ===

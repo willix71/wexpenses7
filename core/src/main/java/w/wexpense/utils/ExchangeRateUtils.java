@@ -13,6 +13,7 @@ public class ExchangeRateUtils {
 	}
 
 	public static ExchangeRate fillExchangeRate(ExchangeRate rate, Object... args) {
+		int numberCount = 0;
 		for (Object arg : args) {
 			if (arg instanceof Payee) {
 				rate.setInstitution((Payee) arg);
@@ -25,11 +26,12 @@ public class ExchangeRateUtils {
 					rate.setToCurrency((Currency) arg);
 				}
 			} else if (arg instanceof Number) {
+				numberCount++;
 				if (rate.getRate() == null) {
 					rate.setRate(((Number) arg).doubleValue());
-				} else if (rate.getFee() == null) {
+				} else if (rate.getFee() == null && numberCount <= 2) {
 					rate.setFee(((Number) arg).doubleValue());
-				} else if (rate.getFixFee() == null) {
+				} else if (rate.getFixFee() == null && numberCount <=3) {
 					rate.setFixFee(((Number) arg).doubleValue());
 				}
 			}
