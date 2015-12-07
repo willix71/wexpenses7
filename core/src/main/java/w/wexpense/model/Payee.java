@@ -31,13 +31,13 @@ public class Payee extends DBable<Payee> {
     
     @ManyToOne(fetch = FetchType.EAGER)
     private City city;
+
+    @Pattern(regexp="|\\d{1,2}-\\d{1,6}-\\d")
+    private String postalAccount;
     
     @Ibanized
     private String iban;
     
-    @Pattern(regexp="|\\d{1,2}-\\d{1,6}-\\d")
-    private String postalAccount;
-       
     @ManyToOne(fetch = FetchType.EAGER)
     private Payee bankDetails;
    

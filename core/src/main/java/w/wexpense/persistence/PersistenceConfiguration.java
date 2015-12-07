@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+//import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -44,13 +45,26 @@ public class PersistenceConfiguration {
 	
 	@Bean
 	public DataSource wxDataSource() {
-		final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		final DriverManagerDataSource dataSource = new DriverManagerDataSource();		 
 		dataSource.setDriverClassName(driverClassName);
 		dataSource.setUsername(username);
 		dataSource.setPassword(password);
 		dataSource.setUrl(url);
 		return dataSource;
 	}
+	
+//	@Bean
+//	public DataSource wxDataSource() {
+//		final SingleConnectionDataSource dataSource = new SingleConnectionDataSource();		 
+//		dataSource.setDriverClassName(driverClassName);
+//		dataSource.setUsername(username);
+//		dataSource.setPassword(password);
+//		dataSource.setUrl(url);
+//		dataSource.setSuppressClose(true);
+//		dataSource.setAutoCommit(true);
+//		return dataSource;
+//	}
+	
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {	

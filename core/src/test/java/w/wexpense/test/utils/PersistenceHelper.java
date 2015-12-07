@@ -1,5 +1,6 @@
 package w.wexpense.test.utils;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -33,7 +34,12 @@ public class PersistenceHelper {
       this.transactionManager = transactionManager;
    }
 
-
+   public void persist(final Collection<?>  objs) {
+      for (Object o : objs) {
+         entityManager.persist(o);
+      }
+   }
+   
    public void persist(final Object... objs) {
       for (Object o : objs) {
          entityManager.persist(o);

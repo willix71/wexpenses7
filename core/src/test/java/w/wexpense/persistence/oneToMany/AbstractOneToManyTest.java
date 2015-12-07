@@ -1,27 +1,21 @@
 package w.wexpense.persistence.oneToMany;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import w.junit.extras.OrderedSpringJUnit4ClassRunner;
 import w.wexpense.dta.BvoDtaFormater;
 import w.wexpense.model.Account;
 import w.wexpense.model.City;
@@ -32,76 +26,43 @@ import w.wexpense.model.ExpenseType;
 import w.wexpense.model.Payee;
 import w.wexpense.model.TransactionLine;
 import w.wexpense.model.enums.TransactionLineEnum;
-import w.wexpense.persistence.oneToMany.AbstractOneToManyTest.OneToManyConfiguror;
+import w.wexpense.test.config.AbstractTest;
+import w.wexpense.test.populator.TestDatabasePopulator;
 import w.wexpense.test.utils.PersistenceHelper;
-import w.wexpense.test.utils.TestDatabaseConfiguror;
-import w.wexpense.test.utils.TestDatabasePopulator;
-import w.wexpense.test.utils.TestServiceConfiguror;
+import w.wexpense.utils.AccountUtils;
 import w.wexpense.utils.ExpenseUtils;
+import w.wexpense.utils.PayeeUtils;
 
-@RunWith(OrderedSpringJUnit4ClassRunner.class)
-@TransactionConfiguration(defaultRollback = false)
-@ContextConfiguration(classes = { TestDatabaseConfiguror.class, OneToManyConfiguror.class, TestServiceConfiguror.class })
-public abstract class AbstractOneToManyTest {
+@Configuration
+class OneToManyConfiguror  extends TestDatabasePopulator {
+   public OneToManyConfiguror() {
+      Currency chf = add(new Currency("CHF", "Swiss Francs", 100));
+      Country ch = add(new Country("CH", "Swiss", chf));
+      City c = add(new City("1010", "testCity", ch));
+
+      add(new ExpenseType("BVO", true, BvoDtaFormater.class.getName()));
+      
+      add(PayeeUtils.newPayee("testPayee", c, "1-11111-1"));
+      
+      add(AccountUtils.newAccount(1, "in", "123123123123123"));
+      
+      add(AccountUtils.newAccount(2, "out","321321321321321", add(PayeeUtils.newPayee("wk", c, "1-123-1", "CH120022822877005740J"))));
+    };
+}
+
+@ContextConfiguration(classes = { OneToManyConfiguror.class })
+public abstract class AbstractOneToManyTest extends AbstractTest {
 
    public static final Logger logger = LoggerFactory.getLogger(PaymentOneToManyTest.class);
-
-   @Configuration
-   public static class OneToManyConfiguror  extends TestDatabasePopulator {
-      @Override
-      public List<Object> getPopulation() {
-         List<Object> entities = new ArrayList<Object>();
-         
-         Currency chf = new Currency("CHF", "Swiss Francs", 100);
-         entities.add(chf);
-         Country ch = new Country("CH", "Swiss", chf);
-         entities.add(ch);
-         City c = new City("1010", "testCity", ch);
-         entities.add(c);
-         
-         ExpenseType bvo = new ExpenseType("BVO", true, BvoDtaFormater.class.getName());
-         entities.add(bvo);
-         
-         Payee payee = new Payee();
-         payee.setName("testPayee");
-         payee.setPostalAccount("1-11111-1");
-         payee.setCity(c);
-         entities.add(payee);
-         
-         Payee wk = new Payee();
-         wk.setName("wk");
-         wk.setPostalAccount("1-123-1");
-         wk.setCity(c);
-         wk.setIban("CH120022822877005740J");
-         entities.add(wk);
-         
-         Account inAccount = new Account();
-         inAccount.setName("in");
-         inAccount.setExternalReference("123123123123123");
-         entities.add(inAccount);
-         
-         Account outAccount = new Account();
-         outAccount.setName("out");
-         outAccount.setExternalReference("321321321321321");
-         outAccount.setOwner(wk);
-         entities.add(outAccount);
-         
-         return entities;
-      };
-   }
-   
+  
    @PersistenceContext
    protected EntityManager entityManager;
-
+   
+   @Autowired
+   protected PersistenceHelper persistenceHelper;
+   
    @Autowired
    protected PlatformTransactionManager transactionManager;
-
-   protected PersistenceHelper persistenceHelper;
-
-   @PostConstruct
-   public void postConstuct() {
-      persistenceHelper = new PersistenceHelper(entityManager, transactionManager);            
-   }
    
    protected Country CH() { return persistenceHelper.get(Country.class, "CH"); }
 

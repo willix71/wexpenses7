@@ -43,11 +43,11 @@ public class Account extends AbstractType<Account> implements Parentable<Account
 	private String display;
 
 	// Iban, card number
-	private String externalReference; 
-	   
-   @ManyToOne(fetch = FetchType.EAGER)
-   private Payee owner;  
-   
+	private String externalReference;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Payee owner;
+
 	public Account() {
 		super();
 	}
@@ -62,17 +62,17 @@ public class Account extends AbstractType<Account> implements Parentable<Account
 	}
 
 	public void updateFullNameAndNumber() {
-		String number = getNumber() != null?getNumber():"-";
-		
+		String number = getNumber() != null ? getNumber() : "-";
+
 		if (getParent() == null) {
 			this.fullName = getName();
 			this.fullNumber = number;
 		} else {
 			this.fullName = getParent().getFullName() + ":" + getName();
-			this.fullNumber = getParent().getFullNumber() + ":" + number;			
-		}	
+			this.fullNumber = getParent().getFullNumber() + ":" + number;
+		}
 	}
-	
+
 	@PreUpdate
 	public void preupdate() {
 		display = fullNumber + " " + fullName;
@@ -82,14 +82,17 @@ public class Account extends AbstractType<Account> implements Parentable<Account
 		return display;
 	}
 
+	@Override
 	public Account getParent() {
 		return parent;
 	}
 
+	@Override
 	public void setParent(Account parent) {
 		this.parent = parent;
 	}
 
+	@Override
 	public List<Account> getChildren() {
 		return children;
 	}
@@ -137,7 +140,7 @@ public class Account extends AbstractType<Account> implements Parentable<Account
 	public void setCurrency(Currency currency) {
 		this.currency = currency;
 	}
-	
+
 	public String getExternalReference() {
 		return externalReference;
 	}
@@ -145,7 +148,7 @@ public class Account extends AbstractType<Account> implements Parentable<Account
 	public void setExternalReference(String externalReference) {
 		this.externalReference = externalReference;
 	}
-	
+
 	public Payee getOwner() {
 		return owner;
 	}
@@ -160,19 +163,19 @@ public class Account extends AbstractType<Account> implements Parentable<Account
 	}
 
 	@Override
-   public Account duplicate() {
+	public Account duplicate() {
 		Account klone = super.duplicate();
 		klone.setChildren(new ArrayList<Account>());
 		return klone;
-   }
+	}
 
 	@Override
-   public Account klone() {
+	public Account klone() {
 		Account klone = super.klone();
-		if (klone.getChildren()!=null) {
+		if (klone.getChildren() != null) {
 			klone.setChildren(new ArrayList<Account>(klone.getChildren()));
 		}
 		return klone;
-   }
+	}
 
 }

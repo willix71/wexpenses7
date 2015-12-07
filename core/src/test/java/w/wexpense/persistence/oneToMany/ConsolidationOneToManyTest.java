@@ -22,10 +22,10 @@ import w.wexpense.service.StorableService;
 @ActiveProfiles("ConsolidationOneToManyTest")
 public class ConsolidationOneToManyTest extends AbstractOneToManyTest {
 
-    @Autowired
-    @Qualifier("expenseService")
-    protected StorableService<Expense, Long> expenseService;
-   
+	@Autowired
+	@Qualifier("expenseService")
+	protected StorableService<Expense, Long> expenseService;
+
 	@Autowired
 	@Qualifier("consolidationService")
 	private StorableService<Consolidation, Long> consolidationService;
@@ -35,7 +35,7 @@ public class ConsolidationOneToManyTest extends AbstractOneToManyTest {
 	@Test
 	@Order(1)
 	public void setup() {
-	   Assert.assertNotNull(expenseService);
+		Assert.assertNotNull(expenseService);
 		Assert.assertNotNull(consolidationService);
 	}
 
@@ -47,27 +47,28 @@ public class ConsolidationOneToManyTest extends AbstractOneToManyTest {
 		CONSOLIDATION.setInstitution(testPayee());
 		CONSOLIDATION.setDate(new Date());
 
-		// we need to save it first because consolidation deal with transaction lines and not expenses
-		Expense expense = expenseService.save(newExpense("100"));		
+		// we need to save it first because consolidation deal with transaction
+		// lines and not expenses
+		Expense expense = expenseService.save(newExpense("100"));
 		CONSOLIDATION.addTransaction(expense.getTransactions().get(0));
-		
+
 		Consolidation consolidation2 = saveConsolidation(CONSOLIDATION);
 
 		Assert.assertNotNull("Id has not been set", CONSOLIDATION.getId());
-		
-		Assert.assertEquals(CONSOLIDATION,consolidation2);
+
+		Assert.assertEquals(CONSOLIDATION, consolidation2);
 		Assert.assertSame(CONSOLIDATION, consolidation2);
-		
+
 		Consolidation consolidation3 = saveConsolidation(consolidation2);
-		
-		Assert.assertEquals(CONSOLIDATION,consolidation3);
-      Assert.assertNotSame(CONSOLIDATION, consolidation3);
+
+		Assert.assertEquals(CONSOLIDATION, consolidation3);
+		Assert.assertNotSame(CONSOLIDATION, consolidation3);
 
 		List<TransactionLine> lines = consolidation3.getTransactions();
 		Assert.assertEquals(1, lines.size());
-		
+
 		checkNumberOfTransaction(CONSOLIDATION.getUid(), 1);
-		
+
 		Assert.assertEquals(2, persistenceHelper.count(TransactionLine.class));
 	}
 
@@ -76,24 +77,24 @@ public class ConsolidationOneToManyTest extends AbstractOneToManyTest {
 	public void updateExistingConsolidation() {
 		logger.info("================ STEP 2 insert new expense in existing consolidation ================");
 		Consolidation consolidation2 = loadConsolidation(CONSOLIDATION.getId());
-		
+
 		Expense expense = expenseService.save(newExpense("200"));
 		final TransactionLine line = expense.getTransactions().get(0);
 		consolidation2.addTransaction(line);
-		
+
 		final String trDescription = "test expense";
 		line.setDescription(trDescription);
-		
+
 		Consolidation consolidation3 = saveConsolidation(consolidation2);
 
-      Assert.assertEquals(consolidation2,consolidation3);
-      Assert.assertNotSame(consolidation2, consolidation3);
+		Assert.assertEquals(consolidation2, consolidation3);
+		Assert.assertNotSame(consolidation2, consolidation3);
 
 		List<TransactionLine> lines = consolidation3.getTransactions();
 		Assert.assertEquals(2, lines.size());
-		
+
 		checkNumberOfTransaction(CONSOLIDATION.getUid(), 2);
-		
+
 		new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -102,7 +103,7 @@ public class ConsolidationOneToManyTest extends AbstractOneToManyTest {
 
 			}
 		});
-		
+
 		Assert.assertEquals(4, persistenceHelper.count(TransactionLine.class));
 	}
 
@@ -111,33 +112,32 @@ public class ConsolidationOneToManyTest extends AbstractOneToManyTest {
 	public void removeExistingConsolidationTransactionLine() {
 		logger.info("================ STEP 2.2 update expense in existing consolidation ================");
 		Consolidation consolidation2 = loadConsolidation(CONSOLIDATION.getId());
-		
-		List<TransactionLine> lines = consolidation2.getTransactions();		
+
+		List<TransactionLine> lines = consolidation2.getTransactions();
 		Assert.assertEquals("number of transcation lines", 2, lines.size());
-		
+
 		TransactionLine line = lines.get(0);
 		consolidation2.removeTransaction(line);
-				
+
 		Assert.assertNull(line.getConsolidation());
 		Assert.assertFalse(consolidation2.getTransactions().contains(line));
-		
+
 		Consolidation consolidation3 = saveConsolidation(consolidation2);
 
-      Assert.assertEquals(consolidation2,consolidation3);
-      Assert.assertNotSame(consolidation2, consolidation3);
+		Assert.assertEquals(consolidation2, consolidation3);
+		Assert.assertNotSame(consolidation2, consolidation3);
 
 		List<TransactionLine> lines2 = consolidation3.getTransactions();
 		Assert.assertEquals(1, lines2.size());
-		
+
 		checkNumberOfTransaction(CONSOLIDATION.getUid(), 1);
-		
+
 		TransactionLine line2 = persistenceHelper.getByUid(TransactionLine.class, line.getUid());
 		Assert.assertNotNull("No transaction line", line2);
 		Assert.assertNull("transaction line has a consolidation", line2.getConsolidation());
-		
+
 		Assert.assertEquals(4, persistenceHelper.count(TransactionLine.class));
 	}
-
 
 	//
 	// ========================================================================
@@ -170,7 +170,8 @@ public class ConsolidationOneToManyTest extends AbstractOneToManyTest {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				Consolidation conso = persistenceHelper.getByUid(Consolidation.class, uid);
-				Assert.assertEquals("Wrong number of transaction lines", expectedNumber, conso.getTransactions().size());
+				Assert.assertEquals("Wrong number of transaction lines", expectedNumber,
+						conso.getTransactions().size());
 			}
 		});
 	}

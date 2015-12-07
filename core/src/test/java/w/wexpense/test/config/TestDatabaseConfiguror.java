@@ -1,4 +1,4 @@
-package w.wexpense.test.utils;
+package w.wexpense.test.config;
 
 import java.util.Properties;
 
@@ -14,10 +14,17 @@ import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import w.wexpense.test.utils.PersistenceHelper;
+
 @Configuration
 @EnableTransactionManagement
 public class TestDatabaseConfiguror  {
    
+	@Bean
+	public PersistenceHelper persistenceHelper() {
+		return new PersistenceHelper();
+	}
+	
    @Bean
    public DataSource dataSource() {
       EmbeddedDatabaseFactory dbFactory = new EmbeddedDatabaseFactory();

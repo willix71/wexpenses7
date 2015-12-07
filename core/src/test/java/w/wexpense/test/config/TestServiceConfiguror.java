@@ -1,4 +1,4 @@
-package w.wexpense.test.utils;
+package w.wexpense.test.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;

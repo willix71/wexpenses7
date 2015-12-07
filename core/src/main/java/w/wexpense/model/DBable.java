@@ -19,7 +19,6 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
-//import javax.persistence.Version;
 
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -27,28 +26,28 @@ public abstract class DBable<T extends DBable<T>> implements Serializable, Dupli
 
 	private static final long serialVersionUID = 2482940442245899869L;
 
-	public static final List<String> SYSTEM_PROPERTIES = Arrays.asList(
-			"id", "version", "fullId", "uid", "modifiedTs", "createdTs");
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+	public static final List<String> SYSTEM_PROPERTIES = Arrays.asList("id", "version", "fullId", "uid", "modifiedTs", "createdTs");
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+
 	@Version
 	private Long version;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedTs;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdTs;
 
-	@Column(name = "uid", unique=true, nullable=false, updatable=false)
+	@Column(name = "uid", unique = true, nullable = false, updatable = false)
 	private String uid;
 
 	public static String newUid() {
 		return UUID.randomUUID().toString();
 	}
-	
+
 	public DBable() {
 		uid = newUid();
 		createdTs = new Date();
@@ -59,7 +58,7 @@ public abstract class DBable<T extends DBable<T>> implements Serializable, Dupli
 	public void preupdate() {
 		modifiedTs = new Date();
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -77,8 +76,9 @@ public abstract class DBable<T extends DBable<T>> implements Serializable, Dupli
 	}
 
 	public String getFullId() {
-		return (id == null?0:id)+"."+(version == null?0:version);
+		return (id == null ? 0 : id) + "." + (version == null ? 0 : version);
 	}
+
 	public String getUid() {
 		return uid;
 	}
@@ -106,7 +106,7 @@ public abstract class DBable<T extends DBable<T>> implements Serializable, Dupli
 	public boolean isNew() {
 		return id == null;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -123,49 +123,48 @@ public abstract class DBable<T extends DBable<T>> implements Serializable, Dupli
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		
+
 		@SuppressWarnings("rawtypes")
-      DBable other = (DBable) obj;
+		DBable other = (DBable) obj;
 		if (uid == null) {
-			if (other.uid != null) return false;
-		} 			
+			if (other.uid != null)
+				return false;
+		}
 		return (uid.equals(other.uid));
 	}
-	
+
 	@Override
-	public String toString() {		
+	public String toString() {
 		return MessageFormat.format("{0}{{1}}", this.getClass().getSimpleName(), uid);
 	}
 
 	@Override
-   public T duplicate() {
-	   T t = cloneInternal();
-	   t.setId(null);
-	   t.setModifiedTs(null);
-	   t.setCreatedTs(new Date());
-	   t.setUid(newUid());
-	   return t;
+	public T duplicate() {
+		T t = cloneInternal();
+		t.setId(null);
+		t.setModifiedTs(null);
+		t.setCreatedTs(new Date());
+		t.setUid(newUid());
+		return t;
 	}
 
-
-   @Override
-   public T klone() {
+	@Override
+	public T klone() {
 		return cloneInternal();
-   }
-	
+	}
+
 	@SuppressWarnings("unchecked")
 	protected T cloneInternal() {
-	   try {
-	   	return (T) clone();
-	   }
-	   catch(CloneNotSupportedException e) {
-	   	throw new RuntimeException("Can not clone " + this.getClass().getName(), e);
-	   }
+		try {
+			return (T) clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException("Can not clone " + this.getClass().getName(), e);
+		}
 	}
-	
+
 	@Override
-   protected Object clone() throws CloneNotSupportedException {
-	   return super.clone();
-   }
-	
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
 }
