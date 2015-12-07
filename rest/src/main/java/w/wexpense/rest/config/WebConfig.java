@@ -13,10 +13,9 @@ import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-
 @Configuration
 @EnableWebMvc
-@ComponentScan("w.wexpense.rest")
+@ComponentScan({"w.wexpense.rest","w.expense.rest.events.listener"}) // TODO figure out why listeners are not included in the scan
 public class WebConfig extends WebMvcConfigurerAdapter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
 	
@@ -41,5 +40,4 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 		xmlConverter.setUnmarshaller(xstreamMarshaller);
 		return xmlConverter;
 	}
-
 }

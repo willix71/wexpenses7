@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.vaadin.event.Action;
@@ -43,7 +41,7 @@ public class ActionHandler implements Action.Handler, ItemClickListener {
 	public Action[] getActions(final Object target, final Object sender) {	
 		Collection<ListViewAction> c = Collections2.filter(actions,
 				new Predicate<ListViewAction>() {
-					public boolean apply(@Nullable ListViewAction action) {
+					public boolean apply(ListViewAction action) {
 						return enabled && action.canHandle(target, sender);
 					}
 				});
