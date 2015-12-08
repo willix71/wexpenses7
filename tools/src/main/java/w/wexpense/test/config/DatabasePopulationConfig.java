@@ -1,4 +1,4 @@
-package w.wexpense.test.populator;
+package w.wexpense.test.config;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,11 +14,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import w.dao.populator.entity.EntityDatabasePopulator;
+import w.wexpense.test.populator.AccountPeriodPopulator;
+import w.wexpense.test.populator.CodableFieldPopulator;
+import w.wexpense.test.populator.DBableFieldPopulator;
+import w.wexpense.test.populator.TransactionLineEnumPopulator;
 
 @Configuration
-public class TestDatabasePopulator {
+public class DatabasePopulationConfig {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestDatabasePopulator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatabasePopulationConfig.class);
 	
 	@Autowired
 	private DataSource dataSource;

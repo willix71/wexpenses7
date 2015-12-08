@@ -26,13 +26,13 @@ import w.wexpense.model.Expense;
 import w.wexpense.model.Payee;
 import w.wexpense.model.TransactionLine;
 import w.wexpense.test.config.AbstractTest;
-import w.wexpense.test.populator.TestDatabasePopulator;
+import w.wexpense.test.config.DatabasePopulationConfig;
 import w.wexpense.test.utils.PersistenceHelper;
 import w.wexpense.utils.ExpenseUtils;
 
 @Configuration
-class PersistenceTestConfiguror extends TestDatabasePopulator {
-	public PersistenceTestConfiguror() {
+class PersistenceTestConfig extends DatabasePopulationConfig {
+	public PersistenceTestConfig() {
 		Currency chf = add(new Currency("CHF", "Swiss Francs", 20));
 		Currency euro = add(new Currency("EUR", "Euro", 100));
 		Currency usd = add(new Currency("USD", "US Dollar", 100));
@@ -50,7 +50,7 @@ class PersistenceTestConfiguror extends TestDatabasePopulator {
 	};
 }
 
-@ContextConfiguration(classes = { PersistenceTestConfiguror.class })
+@ContextConfiguration(classes = { PersistenceTestConfig.class })
 public class PersistenceTest extends AbstractTest {
 
 	@Autowired

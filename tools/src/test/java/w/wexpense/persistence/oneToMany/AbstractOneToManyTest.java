@@ -27,15 +27,15 @@ import w.wexpense.model.Payee;
 import w.wexpense.model.TransactionLine;
 import w.wexpense.model.enums.TransactionLineEnum;
 import w.wexpense.test.config.AbstractTest;
-import w.wexpense.test.populator.TestDatabasePopulator;
+import w.wexpense.test.config.DatabasePopulationConfig;
 import w.wexpense.test.utils.PersistenceHelper;
 import w.wexpense.utils.AccountUtils;
 import w.wexpense.utils.ExpenseUtils;
 import w.wexpense.utils.PayeeUtils;
 
 @Configuration
-class OneToManyConfiguror  extends TestDatabasePopulator {
-   public OneToManyConfiguror() {
+class OneToManyConfig  extends DatabasePopulationConfig {
+   public OneToManyConfig() {
       Currency chf = add(new Currency("CHF", "Swiss Francs", 100));
       Country ch = add(new Country("CH", "Swiss", chf));
       City c = add(new City("1010", "testCity", ch));
@@ -50,7 +50,7 @@ class OneToManyConfiguror  extends TestDatabasePopulator {
     };
 }
 
-@ContextConfiguration(classes = { OneToManyConfiguror.class })
+@ContextConfiguration(classes = { OneToManyConfig.class })
 public abstract class AbstractOneToManyTest extends AbstractTest {
 
    public static final Logger logger = LoggerFactory.getLogger(PaymentOneToManyTest.class);

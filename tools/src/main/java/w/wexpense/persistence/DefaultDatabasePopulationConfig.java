@@ -15,15 +15,15 @@ import w.wexpense.model.ExpenseType;
 import w.wexpense.model.Payee;
 import w.wexpense.model.PayeeType;
 import w.wexpense.model.enums.AccountEnum;
-import w.wexpense.test.populator.TestDatabasePopulator;
+import w.wexpense.test.config.DatabasePopulationConfig;
 import w.wexpense.utils.AccountUtils;
 import w.wexpense.utils.ExchangeRateUtils;
 import w.wexpense.utils.ExpenseUtils;
 import w.wexpense.utils.PayeeUtils;
 
 @Configuration
-public class DatabasePopulatorConfiguror extends TestDatabasePopulator {
-	public DatabasePopulatorConfiguror() {
+public class DefaultDatabasePopulationConfig extends DatabasePopulationConfig {
+	public DefaultDatabasePopulationConfig() {
 		Currency chf = add(new Currency("CHF", "Swiss Francs", 20));
 		Currency euro = add(new Currency("EUR", "Euro", 100));
 		Currency usd = add(new Currency("USD", "US Dollar", 100));

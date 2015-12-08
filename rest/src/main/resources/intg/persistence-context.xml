@@ -20,5 +20,5 @@
 		</property>
 	</bean>
 				    
-    <bean class=" w.wexpense.persistence.DatabasePopulatorConfiguror" />
+    <bean class=" w.wexpense.persistence.DefaultDatabasePopulationConfig" />
 </beans>

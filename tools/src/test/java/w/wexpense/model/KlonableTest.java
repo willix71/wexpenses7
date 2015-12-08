@@ -17,11 +17,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import w.wexpense.test.config.AbstractTest;
-import w.wexpense.test.populator.TestDatabasePopulator;
+import w.wexpense.test.config.DatabasePopulationConfig;
 
 @Configuration
-class KlonableTestConfigurator extends TestDatabasePopulator {
-	public KlonableTestConfigurator() {
+class KlonableTestConfig extends DatabasePopulationConfig {
+	public KlonableTestConfig() {
 		Currency chf = add(new Currency("CHF", "Swiss Francs", 20));
 		Currency euro = add(new Currency("EUR", "Euro", 100));
 		Country ch = add(new Country("CH", "Switzerland", chf));
@@ -33,7 +33,7 @@ class KlonableTestConfigurator extends TestDatabasePopulator {
 	};
 }
 
-@ContextConfiguration(classes = { KlonableTestConfigurator.class })
+@ContextConfiguration(classes = { KlonableTestConfig.class })
 public class KlonableTest extends AbstractTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(KlonableTest.class);

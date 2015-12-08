@@ -14,8 +14,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import w.wexpense.test.config.TestPersistenceConfiguration;
 import w.wexpense.test.config.TestServiceConfiguration;
 
-public class DatabasePopulator {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DatabasePopulator.class);
+public class DatabasePopulationScriptWriter {
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatabasePopulationScriptWriter.class);
 
 	public static void main(String[] args) throws Exception {
 		LOGGER.info("Application started by {} at {} ", System.getProperty("user.name"), new Date());
@@ -26,7 +26,7 @@ public class DatabasePopulator {
 		
 		// Start the Spring container
 		ApplicationContext context = new AnnotationConfigApplicationContext(
-				TestPersistenceConfiguration.class, TestServiceConfiguration.class, DatabasePopulatorConfiguror.class);
+				TestPersistenceConfiguration.class, TestServiceConfiguration.class, DefaultDatabasePopulationConfig.class);
 
 		Connection connection = context.getBean(DataSource.class).getConnection();
 		Statement stat = connection.createStatement();
