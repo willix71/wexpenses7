@@ -10,16 +10,12 @@
    		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
    		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<context:annotation-config />
-	
-	<context:property-override location="classpath:${wexpenses_env:dev}/persistence.properties" />
-
-	<bean id="jdbc" class="w.wexpense.persistence.PersistenceConfiguration" >
+	<bean id="jdbc" class="w.wexpense.rest.test.config.TestRestPersistenceConfiguration" >
 		<property name="jpaAdapterProperties">
 			<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-				<property name="location" value="classpath:${wexpenses_env:dev}/Hibernate.properties" />
+				<property name="location" value="classpath:intg/Hibernate.properties" />
 			</bean>
 		</property>
 	</bean>
-		
+				
 </beans>

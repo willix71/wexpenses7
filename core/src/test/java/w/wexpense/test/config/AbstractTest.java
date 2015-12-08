@@ -8,6 +8,6 @@ import w.junit.extras.OrderedSpringJUnit4ClassRunner;
 
 @RunWith(OrderedSpringJUnit4ClassRunner.class)
 @TransactionConfiguration(defaultRollback = false)
-@ContextConfiguration(classes = { TestDatabaseConfiguror.class, TestServiceConfiguror.class })
+@ContextConfiguration(classes = { TestPersistenceConfiguration.class, TestServiceConfiguration.class })
 public abstract class AbstractTest { }
 

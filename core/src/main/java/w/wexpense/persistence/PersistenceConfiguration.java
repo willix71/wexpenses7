@@ -10,8 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.orm.jpa.JpaDialect;
 //import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -19,6 +21,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
+@EnableJpaRepositories(basePackages="w.wexpense.persistence.dao") // equivalent to <jpa:repositories base-package="w.wexpense.persistence.dao" />
 @EnableTransactionManagement
 public class PersistenceConfiguration {
 	
@@ -67,8 +70,9 @@ public class PersistenceConfiguration {
 		factoryBean.setDataSource( wxDataSource() );
 		factoryBean.setPackagesToScan( new String[ ] { "w.wexpense.model" } );
 		
+		factoryBean.setJpaDialect( getJpaDialect());
 		factoryBean.setJpaVendorAdapter( getJpaVendorAdapter() );
-		factoryBean.setJpaProperties( getJpaAdapterProperties( ));
+		factoryBean.setJpaProperties( getJpaAdapterProperties() );
 
 		return factoryBean;
 	}
@@ -91,6 +95,15 @@ public class PersistenceConfiguration {
 		LOGGER.debug("JpaVendorAdapter class name {}", jpaAdapterClassName);
 		@SuppressWarnings("unchecked")
 		Class <JpaVendorAdapter> clazz = (Class<JpaVendorAdapter>) Class.forName(jpaAdapterClassName);	
+		return clazz.newInstance() ;
+	}
+	
+	protected JpaDialect getJpaDialect() throws Exception {
+		String jpaDialectClassName = "org.springframework.orm.jpa.vendor." + jpaAdapterName + "JpaDialect";
+
+		LOGGER.debug("JpaDialect class name {}", jpaDialectClassName);
+		@SuppressWarnings("unchecked")
+		Class <JpaDialect> clazz = (Class<JpaDialect>) Class.forName(jpaDialectClassName);	
 		return clazz.newInstance() ;
 	}
 	

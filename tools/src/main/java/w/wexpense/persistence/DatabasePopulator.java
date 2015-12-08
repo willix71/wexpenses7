@@ -25,8 +25,8 @@ import w.wexpense.model.ExpenseType;
 import w.wexpense.model.Payee;
 import w.wexpense.model.PayeeType;
 import w.wexpense.model.enums.AccountEnum;
-import w.wexpense.test.config.TestDatabaseConfiguror;
-import w.wexpense.test.config.TestServiceConfiguror;
+import w.wexpense.test.config.TestPersistenceConfiguration;
+import w.wexpense.test.config.TestServiceConfiguration;
 import w.wexpense.test.populator.TestDatabasePopulator;
 import w.wexpense.utils.AccountUtils;
 import w.wexpense.utils.ExchangeRateUtils;
@@ -103,7 +103,7 @@ public class DatabasePopulator {
 		
 		// Start the Spring container
 		ApplicationContext context = new AnnotationConfigApplicationContext(
-				TestDatabaseConfiguror.class, TestServiceConfiguror.class, DatabasePopulatorConfiguror.class);
+				TestPersistenceConfiguration.class, TestServiceConfiguration.class, DatabasePopulatorConfiguror.class);
 
 		Connection connection = context.getBean(DataSource.class).getConnection();
 		Statement stat = connection.createStatement();
