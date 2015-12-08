@@ -24,7 +24,7 @@ public class TestDatabasePopulator {
 	@Bean
 	public EntityDatabasePopulator populateDatabase() throws SQLException {
 		EntityDatabasePopulator entityPopulator = new EntityDatabasePopulator();
-		entityPopulator.addPopulatatorClasses(CodableFieldPopulator.class, DBableFieldPopulator.class);
+		entityPopulator.addPopulatatorClasses(CodableFieldPopulator.class, DBableFieldPopulator.class, AccountPeriodPopulator.class, TransactionLineEnumPopulator.class);
 		entityPopulator.addAllEntities(getPopulation());
 		entityPopulator.populate(dataSource.getConnection());
 		return entityPopulator;

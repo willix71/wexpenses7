@@ -83,8 +83,8 @@ class DatabasePopulatorConfiguror extends TestDatabasePopulator {
 		Account car = add(AccountUtils.newAccount(xs, 5,"Car", AccountEnum.EXPENSE, chf));
 		Account misc = add(AccountUtils.newAccount(xs, 6,"Misc", AccountEnum.EXPENSE, chf));
 		
-//		Expense x1 = add(ExpenseUtils.newExpense(recu, DateUtils.toDate(1,2,2015), 100, migros, cash, car ));
-//		addAll(x1.getTransactions());
+		Expense x1 = add(ExpenseUtils.newExpense(recu, DateUtils.toDate(1,2,2015), 100, migros, cash, car ));
+		addAll(x1.getTransactions());
 //
 //		Expense x2 =  add(ExpenseUtils.newExpense(recu, DateUtils.toDate(2,2,2015), 86, migros, cash, misc ));
 //		addAll(x2.getTransactions());
