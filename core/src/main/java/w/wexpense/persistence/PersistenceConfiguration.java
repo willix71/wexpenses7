@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 //import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -22,6 +23,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class PersistenceConfiguration {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PersistenceConfiguration.class);
+	
+	private String driverManagerClassName = DriverManagerDataSource.class.getName();
 	
 	//@Value( "${jdbc.driverClassName}" ) 
 	private String driverClassName;
@@ -44,27 +47,19 @@ public class PersistenceConfiguration {
 	private Properties jpaAdapterProperties;
 	
 	@Bean
-	public DataSource wxDataSource() {
-		final DriverManagerDataSource dataSource = new DriverManagerDataSource();		 
+	public DataSource wxDataSource() throws Exception {
+		final DriverManagerDataSource  dataSource = (DriverManagerDataSource) Class.forName(driverManagerClassName).newInstance();		 
 		dataSource.setDriverClassName(driverClassName);
 		dataSource.setUsername(username);
 		dataSource.setPassword(password);
 		dataSource.setUrl(url);
+		
+		if (dataSource instanceof SingleConnectionDataSource) {
+			((SingleConnectionDataSource) dataSource).setSuppressClose(true);
+		}
+		
 		return dataSource;
 	}
-	
-//	@Bean
-//	public DataSource wxDataSource() {
-//		final SingleConnectionDataSource dataSource = new SingleConnectionDataSource();		 
-//		dataSource.setDriverClassName(driverClassName);
-//		dataSource.setUsername(username);
-//		dataSource.setPassword(password);
-//		dataSource.setUrl(url);
-//		dataSource.setSuppressClose(true);
-//		dataSource.setAutoCommit(true);
-//		return dataSource;
-//	}
-	
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {	
@@ -124,6 +119,10 @@ public class PersistenceConfiguration {
 	
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public void setDriverManagerClassName(String driverManagerClassName) {
+		this.driverManagerClassName = driverManagerClassName;
 	}
 
 	public void setDriverClassName(String driverClassName) {

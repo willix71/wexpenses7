@@ -110,5 +110,7 @@ public class DatabasePopulator {
 		stat.execute("SCRIPT TO '" + fileName + "'");
 
 		LOGGER.info("Done");
+		
+		System.exit(0);
 	}
 }
