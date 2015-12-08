@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import w.dao.populator.entity.EntityDatabasePopulator;
-import w.wexpense.persistence.PersistenceConfiguration;
 
 @Configuration
 public class TestDatabasePopulator {

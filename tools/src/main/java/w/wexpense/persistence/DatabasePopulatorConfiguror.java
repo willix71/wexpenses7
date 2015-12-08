@@ -1,4 +1,4 @@
-package w.wexpense.rest.config;
+package w.wexpense.persistence;
 
 import org.springframework.context.annotation.Configuration;
 
@@ -22,8 +22,8 @@ import w.wexpense.utils.ExpenseUtils;
 import w.wexpense.utils.PayeeUtils;
 
 @Configuration
-public class IntgDatabaseConfig extends TestDatabasePopulator {
-	public IntgDatabaseConfig() {
+public class DatabasePopulatorConfiguror extends TestDatabasePopulator {
+	public DatabasePopulatorConfiguror() {
 		Currency chf = add(new Currency("CHF", "Swiss Francs", 20));
 		Currency euro = add(new Currency("EUR", "Euro", 100));
 		Currency usd = add(new Currency("USD", "US Dollar", 100));
@@ -78,4 +78,3 @@ public class IntgDatabaseConfig extends TestDatabasePopulator {
 //		addAll(x2.getTransactions());
 	};
 }
-

@@ -74,6 +74,12 @@
 				<version>${project.version}</version>
 			</dependency>
 			
+            <dependency>
+                <groupId>w.wexpense</groupId>
+                <artifactId>wexpenses-tools</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            			
 			<dependency>
 			  	<groupId>w.utils</groupId>
 	  			<artifactId>Extras</artifactId>

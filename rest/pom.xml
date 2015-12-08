@@ -31,9 +31,7 @@
 		
 		<dependency>
 			<groupId>w.wexpense</groupId>
-			<artifactId>wexpenses-core</artifactId>
-			<version>${project.version}</version>
-			<type>test-jar</type>
+			<artifactId>wexpenses-tools</artifactId>
 		</dependency>
 				
 		<dependency>
