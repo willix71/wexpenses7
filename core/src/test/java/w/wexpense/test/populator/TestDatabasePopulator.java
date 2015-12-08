@@ -7,15 +7,20 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import w.dao.populator.entity.EntityDatabasePopulator;
+import w.wexpense.persistence.PersistenceConfiguration;
 
 @Configuration
 public class TestDatabasePopulator {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestDatabasePopulator.class);
+	
 	@Autowired
 	private DataSource dataSource;
 
@@ -23,6 +28,8 @@ public class TestDatabasePopulator {
 
 	@Bean
 	public EntityDatabasePopulator populateDatabase() throws SQLException {
+		LOGGER.info("populateDatabase...");
+		
 		EntityDatabasePopulator entityPopulator = new EntityDatabasePopulator();
 		entityPopulator.addPopulatatorClasses(CodableFieldPopulator.class, DBableFieldPopulator.class, AccountPeriodPopulator.class, TransactionLineEnumPopulator.class);
 		entityPopulator.addAllEntities(getPopulation());
