@@ -62,9 +62,9 @@ class DatabasePopulatorConfiguror extends TestDatabasePopulator {
 	    add(new ExpenseType("iban", true, IbanDtaFormater.class.getName()));
 	    ExpenseType recu = add(new ExpenseType("recu", true, null));
 	    
-		add(ExchangeRateUtils.newExchangeRate(euro,chf,DateUtils.getDate(1,1,2000),1.6));
-		add(ExchangeRateUtils.newExchangeRate(euro,chf,DateUtils.getDate(1,1,2015),1.2));
-		add(ExchangeRateUtils.newExchangeRate(gbp,chf,DateUtils.getDate(1,1,2015),1.48315));
+		add(ExchangeRateUtils.newExchangeRate(euro,chf,DateUtils.toDate(1,1,2000),1.6));
+		add(ExchangeRateUtils.newExchangeRate(euro,chf,DateUtils.toDate(1,1,2015),1.2));
+		add(ExchangeRateUtils.newExchangeRate(gbp,chf,DateUtils.toDate(1,1,2015),1.48315));
 		
 		PayeeType phone = add(new PayeeType("Phone"));
 		PayeeType wine = add(new PayeeType("Wine"));
@@ -83,10 +83,10 @@ class DatabasePopulatorConfiguror extends TestDatabasePopulator {
 		Account car = add(AccountUtils.newAccount(xs, 5,"Car", AccountEnum.EXPENSE, chf));
 		Account misc = add(AccountUtils.newAccount(xs, 6,"Misc", AccountEnum.EXPENSE, chf));
 		
-//		Expense x1 = add(ExpenseUtils.newExpense(recu, DateUtils.getDate(1,2,2015), 100, migros, cash, car ));
+//		Expense x1 = add(ExpenseUtils.newExpense(recu, DateUtils.toDate(1,2,2015), 100, migros, cash, car ));
 //		addAll(x1.getTransactions());
 //
-//		Expense x2 =  add(ExpenseUtils.newExpense(recu, DateUtils.getDate(2,2,2015), 86, migros, cash, misc ));
+//		Expense x2 =  add(ExpenseUtils.newExpense(recu, DateUtils.toDate(2,2,2015), 86, migros, cash, misc ));
 //		addAll(x2.getTransactions());
 	};
 }

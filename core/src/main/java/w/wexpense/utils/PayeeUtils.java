@@ -20,8 +20,8 @@ public class PayeeUtils {
 			} else if (arg instanceof City) {
 				payee.setCity((City) arg);
 				// skip rest of address once the city is filled
-				stringCount = 5;
-			} else if (arg instanceof String) {
+				stringCount = 4;
+			} else { // don't check type because null is not an instance of String so it want skip a param
 				stringCount++;
 				if (payee.getName() == null) {
 					payee.setName((String) arg); // first string is name

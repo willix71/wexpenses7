@@ -25,7 +25,7 @@ public class ExchangeRateUtils {
 				} else if (rate.getToCurrency() == null) {
 					rate.setToCurrency((Currency) arg);
 				}
-			} else if (arg instanceof Number) {
+			} else { // don't check type because null is not an instance of something
 				numberCount++;
 				if (rate.getRate() == null) {
 					rate.setRate(((Number) arg).doubleValue());

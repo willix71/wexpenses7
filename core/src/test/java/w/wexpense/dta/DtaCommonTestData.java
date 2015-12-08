@@ -26,7 +26,8 @@ public class DtaCommonTestData {
 	public static final ExpenseType bvr = new ExpenseType("bvr", true, BvrDtaFormater.class.getName());
 	public static final ExpenseType iban = new ExpenseType("iban", true, IbanDtaFormater.class.getName());
 	
-	public static final Payee williamKeyser = PayeeUtils.newPayee("William Keyser","11 ch du Grand Noyer", prangins, ((String) null), "CH650022822851333340B");
+	static final String NULL = null;
+	public static final Payee williamKeyser = PayeeUtils.newPayee("William Keyser","11 ch du Grand Noyer", prangins, NULL, "CH650022822851333340B");
 	
 	public static Payment createPaymentData(int day, int month, int year, String filename, Expense ...expenses) {
 		// === Payment ===

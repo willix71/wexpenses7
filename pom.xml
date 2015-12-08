@@ -6,7 +6,7 @@
 	<artifactId>wexpenses</artifactId>
 	<packaging>pom</packaging>
 	<version>2.4.0-SNAPSHOT</version>
-	<name>Vaadin JPAContainer Web Application</name>
+	<name>wexpenses</name>
 
 	<properties>
 		<!-- does'nt work for modules -->

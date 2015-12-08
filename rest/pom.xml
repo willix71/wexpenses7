@@ -11,7 +11,7 @@
 
 	<packaging>war</packaging>
 
-	<name>REST wexpenes</name>
+	<name>REST wexpenses</name>
 
   	<properties>
 		<!-- marshalling -->
