@@ -1,4 +1,4 @@
-package w.expense.rest.dto;
+package w.wexpense.rest.dto;
 
 public class CityDTO extends DBableDTO {
 	private static final long serialVersionUID = 1L;

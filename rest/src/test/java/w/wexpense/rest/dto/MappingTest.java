@@ -5,15 +5,15 @@ import org.junit.Test;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 
-import w.expense.rest.dto.AccountDTO;
-import w.expense.rest.dto.CodableDTO;
-import w.expense.rest.dto.CountryDTO;
-import w.expense.rest.dto.CurrencyDTO;
-import w.expense.rest.dto.DBableDTO;
 import w.wexpense.model.Account;
 import w.wexpense.model.Country;
 import w.wexpense.model.Currency;
 import w.wexpense.model.enums.AccountEnum;
+import w.wexpense.rest.dto.AccountDTO;
+import w.wexpense.rest.dto.CodableDTO;
+import w.wexpense.rest.dto.CountryDTO;
+import w.wexpense.rest.dto.CurrencyDTO;
+import w.wexpense.rest.dto.DBableDTO;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

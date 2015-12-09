@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import w.expense.rest.dto.CityDTO;
 import w.wexpense.model.City;
+import w.wexpense.rest.dto.CityDTO;
 import w.wexpense.service.StorableService;
 
 @Controller

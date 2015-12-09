@@ -1,4 +1,4 @@
-package w.expense.rest.dto;
+package w.wexpense.rest.dto;
 
 import java.util.Date;
 

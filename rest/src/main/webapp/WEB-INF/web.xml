@@ -13,7 +13,7 @@
 	</context-param>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>w.wexpense.rest.config.ApplicationConfig</param-value>
+		<param-value>w.wexpense.config.ApplicationConfig</param-value>
 	</context-param>
 
 	<listener>

@@ -1,4 +1,4 @@
-package w.expense.rest.events.listener;
+package w.wexpense.rest.events.listener;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,7 +9,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.google.common.base.Preconditions;
 import com.google.common.net.HttpHeaders;
 
-import w.expense.rest.events.PaginatedResultsRetrievedEvent;
+import w.wexpense.rest.events.PaginatedResultsRetrievedEvent;
 import w.wexpense.rest.utils.LinkUtil;
 
 @Component

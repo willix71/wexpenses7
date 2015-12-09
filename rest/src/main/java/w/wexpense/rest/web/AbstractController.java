@@ -24,9 +24,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.common.base.Preconditions;
 
-import w.expense.rest.events.PaginatedResultsRetrievedEvent;
-import w.expense.rest.events.ResourceCreatedEvent;
-import w.expense.rest.events.SingleResourceRetrievedEvent;
+import w.wexpense.rest.events.PaginatedResultsRetrievedEvent;
+import w.wexpense.rest.events.ResourceCreatedEvent;
+import w.wexpense.rest.events.SingleResourceRetrievedEvent;
 import w.wexpense.rest.exception.MyResourceNotFoundException;
 import w.wexpense.rest.utils.LinkUtil;
 import w.wexpense.rest.utils.RestPreconditions;
@@ -56,7 +56,7 @@ public abstract class AbstractController <T, D , ID extends Serializable> {
     	this.clazz=clazz;
     	
     	try {
-    		this.clazzDTO= (Class<D>) Class.forName("w.expense.rest.dto." + clazz.getSimpleName() + "DTO");
+    		this.clazzDTO= (Class<D>) Class.forName("w.wexpense.rest.dto." + clazz.getSimpleName() + "DTO");
     	}catch(Exception e) {
     		throw new RuntimeException(e);
     	}

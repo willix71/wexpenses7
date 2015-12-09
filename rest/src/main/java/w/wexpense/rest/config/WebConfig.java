@@ -2,8 +2,10 @@ package w.wexpense.rest.config;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -15,7 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 @Configuration
 @EnableWebMvc
-@ComponentScan({ "w.wexpense.rest", "w.expense.rest.events.listener" }) // TODO figure out why listeners are not included in the scan
+@ComponentScan({ "w.wexpense.rest"})
 public class WebConfig extends WebMvcConfigurerAdapter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
 	
@@ -41,4 +43,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 		return xmlConverter;
 	}
 
+
+	@Bean
+	public ModelMapper modelMapper() {
+	    return new ModelMapper();
+	}	
 }

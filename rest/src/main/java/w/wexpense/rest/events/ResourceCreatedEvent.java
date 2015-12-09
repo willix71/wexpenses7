@@ -1,4 +1,4 @@
-package w.expense.rest.events;
+package w.wexpense.rest.events;
 
 
 import javax.servlet.http.HttpServletResponse;

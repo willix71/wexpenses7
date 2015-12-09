@@ -1,4 +1,4 @@
-package w.expense.rest.events.listener;
+package w.wexpense.rest.events.listener;
 
 import java.net.URI;
 
@@ -11,7 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.common.base.Preconditions;
 
-import w.expense.rest.events.ResourceCreatedEvent;
+import w.wexpense.rest.events.ResourceCreatedEvent;
 
 @Component
 public class ResourceCreatedDiscoverabilityListener implements ApplicationListener<ResourceCreatedEvent> {
