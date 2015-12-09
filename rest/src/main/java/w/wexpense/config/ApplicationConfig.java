@@ -5,6 +5,6 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@ImportResource({"classpath:rest-persistence-context.xml","classpath:service-context.xml"})
+@ImportResource({"classpath:rest-context.xml","classpath:persistence-context.xml","classpath:service-context.xml"})
 @PropertySource("classpath:wexpenses.properties")
 public class ApplicationConfig { }

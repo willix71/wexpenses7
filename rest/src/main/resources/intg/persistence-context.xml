@@ -10,15 +10,13 @@
    		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
    		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-override location="classpath:intg/persistence.properties" />
-
-	<bean id="jdbc" class="w.wexpense.persistence.PersistenceConfiguration" >
-		<property name="jpaAdapterProperties">
-			<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-				<property name="location" value="classpath:intg/Hibernate.properties" />
+	<bean class="org.springframework.jdbc.datasource.init.DataSourceInitializer" >
+		<property name="dataSource" ref="wxDataSource"/>
+		<property name="databasePopulator">
+			<bean class="org.springframework.jdbc.datasource.init.ResourceDatabasePopulator">
+				<property name="scripts" value="classpath:intg/init_db.sql"/>
 			</bean>
 		</property>
 	</bean>
-				    
-    <bean class=" w.wexpense.persistence.DefaultDatabasePopulationConfig" />
+
 </beans>
