@@ -91,7 +91,7 @@ public class OneToManyField<T> extends CustomField<Collection<T>> {
 	
 	@Override	
 	public Class<? extends Collection<T>> getType() {
-		return (Class<? extends Collection<T>>) Collection.class;
+		return (Class) Collection.class;
 	}
 
 	public ActionHandler getActionHandler() {
