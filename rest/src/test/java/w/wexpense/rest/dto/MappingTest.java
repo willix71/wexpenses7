@@ -41,7 +41,7 @@ public class MappingTest {
 	}
 
 	@Test
-	@Ignore //TODO
+	@Ignore //TODO parent is not mapped correctly
 	public void whenConvertAccountEntityToDTO() {
 		Currency chf = new Currency("CHF", "Swiss Francs", null);
 		Account parent = new Account(null, 1, "asset", AccountEnum.ASSET, chf);

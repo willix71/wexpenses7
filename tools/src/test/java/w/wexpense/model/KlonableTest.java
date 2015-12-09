@@ -16,7 +16,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import w.wexpense.test.config.AbstractTest;
+import w.wexpense.AbstractTest;
 import w.wexpense.test.config.DatabasePopulationConfig;
 
 @Configuration

@@ -16,6 +16,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import w.wexpense.AbstractTest;
 import w.wexpense.dta.BvoDtaFormater;
 import w.wexpense.model.Account;
 import w.wexpense.model.City;
@@ -26,7 +27,6 @@ import w.wexpense.model.ExpenseType;
 import w.wexpense.model.Payee;
 import w.wexpense.model.TransactionLine;
 import w.wexpense.model.enums.TransactionLineEnum;
-import w.wexpense.test.config.AbstractTest;
 import w.wexpense.test.config.DatabasePopulationConfig;
 import w.wexpense.test.utils.PersistenceHelper;
 import w.wexpense.utils.AccountUtils;

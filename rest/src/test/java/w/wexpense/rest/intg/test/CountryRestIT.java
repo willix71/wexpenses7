@@ -5,13 +5,23 @@ import static w.wexpense.rest.intg.test.ConfigTest.BASE_URI;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import w.expense.rest.dto.CountryDTO;
 
 public class CountryRestIT {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CountryRestIT.class);
 
+	@BeforeClass
+	public static void setUp() {
+		LOGGER.info("baseURI set to " + ConfigTest.BASE_URI);
+	}
+	
 	@Test
 	public void testGetCountry() {
 		String URI = BASE_URI +"/country/{id}";

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import w.wexpense.AbstractTest;
 import w.wexpense.model.Account;
 import w.wexpense.model.City;
 import w.wexpense.model.Country;
@@ -25,7 +26,6 @@ import w.wexpense.model.Currency;
 import w.wexpense.model.Expense;
 import w.wexpense.model.Payee;
 import w.wexpense.model.TransactionLine;
-import w.wexpense.test.config.AbstractTest;
 import w.wexpense.test.config.DatabasePopulationConfig;
 import w.wexpense.test.utils.PersistenceHelper;
 import w.wexpense.utils.ExpenseUtils;

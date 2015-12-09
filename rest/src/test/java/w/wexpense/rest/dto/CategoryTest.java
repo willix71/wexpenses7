@@ -7,7 +7,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
 
-@Ignore
 public class CategoryTest {
 
 	public static class Category {
@@ -58,6 +57,7 @@ public class CategoryTest {
 	}
 	
 	@Test
+	@Ignore //TODO parent is not mapped correctly
 	public void withParentTest() {
 		Category dto = new Category("child",new Category("root", null));
 
@@ -65,6 +65,7 @@ public class CategoryTest {
 		
 		Assert.assertEquals("child", entity.getName());
 		Assert.assertEquals(dto.getUid(), entity.getUid());
+		
 		Assert.assertNotNull(entity.getParent());
 		Assert.assertEquals("root", entity.getParent().getName());
 	}
