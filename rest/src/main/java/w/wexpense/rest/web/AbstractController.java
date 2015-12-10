@@ -27,7 +27,7 @@ import com.google.common.base.Preconditions;
 import w.wexpense.rest.events.PaginatedResultsRetrievedEvent;
 import w.wexpense.rest.events.ResourceCreatedEvent;
 import w.wexpense.rest.events.SingleResourceRetrievedEvent;
-import w.wexpense.rest.exception.MyResourceNotFoundException;
+import w.wexpense.rest.exception.ResourceNotFoundException;
 import w.wexpense.rest.utils.LinkUtil;
 import w.wexpense.rest.utils.RestPreconditions;
 import w.wexpense.service.PagedContent;
@@ -122,7 +122,7 @@ public abstract class AbstractController <T, D , ID extends Serializable> {
     	PagedContent<T> resultPage = service.loadPage(page,size, orderBy);
     	
     	if( page >= resultPage.getTotalPages() ){
-    	      throw new MyResourceNotFoundException();
+    	      throw new ResourceNotFoundException();
     	   }
     	
         eventPublisher.publishEvent(new PaginatedResultsRetrievedEvent(this, LinkUtil.getRequestMapping(uriBuilder, this.getClass()), response, size, page, resultPage.getTotalPages(), orderBy));

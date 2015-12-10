@@ -4,23 +4,23 @@ package w.wexpense.rest.exception;
 //import org.springframework.web.bind.annotation.ResponseStatus;
 //@ResponseStatus( value = HttpStatus.NOT_FOUND )
 
-public final class MyResourceNotFoundException extends RuntimeException {
+public final class ResourceNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = 3691642349894840127L;
 
-	public MyResourceNotFoundException() {
+	public ResourceNotFoundException() {
         super();
     }
 
-    public MyResourceNotFoundException(final String message, final Throwable cause) {
+    public ResourceNotFoundException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public MyResourceNotFoundException(final String message) {
+    public ResourceNotFoundException(final String message) {
         super(message);
     }
 
-    public MyResourceNotFoundException(final Throwable cause) {
+    public ResourceNotFoundException(final Throwable cause) {
         super(cause);
     }
 

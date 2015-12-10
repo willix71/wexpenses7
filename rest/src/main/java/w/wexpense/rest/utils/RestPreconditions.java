@@ -2,7 +2,7 @@ package w.wexpense.rest.utils;
 
 import org.springframework.http.HttpStatus;
 
-import w.wexpense.rest.exception.MyResourceNotFoundException;
+import w.wexpense.rest.exception.ResourceNotFoundException;
 
 /**
  * Simple static methods to be called at the start of your own methods to verify correct arguments and state. If the Precondition fails, an {@link HttpStatus} code is thrown
@@ -20,12 +20,12 @@ public final class RestPreconditions {
      * 
      * @param expression
      *            has value true if found, otherwise false
-     * @throws MyResourceNotFoundException
+     * @throws ResourceNotFoundException
      *             if expression is false, means value not found.
      */
     public static void checkFound(final boolean expression) {
         if (!expression) {
-            throw new MyResourceNotFoundException();
+            throw new ResourceNotFoundException();
         }
     }
 
@@ -34,12 +34,12 @@ public final class RestPreconditions {
      * 
      * @param expression
      *            has value true if found, otherwise false
-     * @throws MyResourceNotFoundException
+     * @throws ResourceNotFoundException
      *             if expression is false, means value not found.
      */
     public static <T> T checkFound(final T resource) {
         if (resource == null) {
-            throw new MyResourceNotFoundException();
+            throw new ResourceNotFoundException();
         }
 
         return resource;
