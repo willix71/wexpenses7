@@ -2,6 +2,7 @@ package w.wexpense.rest.intg.test;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,15 +25,56 @@ public class CountryRestAssuredIT {
 	@Test
 	public void testGetSingleUser() {
 	  expect().
-	    statusCode(200).
+	    statusCode(200). // default mapping is json
 	    contentType("application/json").
 	    body(
 	      "code", equalTo("CH"),
 	      "name", equalTo("Switzerland"),
 	      "currency.code",equalTo("CHF"),
 	      "currency.name",equalTo("Swiss Francs")).
-	    when().
-	    with().header("Accept","application/json").
-	    get("/country/CH");
+	    when().get("/country/CH");
 	}
+	
+	@Test
+	public void testGetUnknownUser() {
+	  expect().
+	    statusCode(404). // default mapping is json
+	    when().get("/country/xx");
+	}
+	
+	@Test
+	public void testGetAllUser() {
+	  expect().
+	    statusCode(200).
+	    contentType("application/json"). 
+	    body("code", hasItems("CH","UK","FR","IT","DE","US")).
+	    when().get("/country");
+	}
+	
+	@Test
+	public void testGetPagedUser() {
+	  expect().
+	    statusCode(200).
+	    contentType("application/json").
+	    body("code", hasItems("CH","DE","FR")).
+	    when().get("/country?page=0&size=3&orderBy=code");
+	  
+	  expect().
+	    statusCode(200).
+	    body("code", hasItems("IT","UK","US")).
+	    when().get("/country?page=1&size=3&orderBy=code");
+	  
+	  expect().statusCode(404).when().get("/country?page=2&size=3&orderBy=code");
+	}
+	
+	@Test
+	public void testGetCreateUser() {
+	  expect().
+	    statusCode(201).
+	    when().given().
+	    header("Content-Type", "application/json").
+	    body("{\"code\":\"WK\",\"name\":\"Williams country\",\"currency\": {\"code\":\"CHF\"}}").
+	    post("/country");
+	}
+	
 }
