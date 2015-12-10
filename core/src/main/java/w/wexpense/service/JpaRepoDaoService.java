@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import w.wexpense.persistence.dao.IDBableJpaDao;
 import w.wexpense.service.instanciator.Initializor;
 
 public class JpaRepoDaoService<T, ID extends Serializable> implements StorableService<T, ID> {
@@ -84,6 +85,16 @@ public class JpaRepoDaoService<T, ID extends Serializable> implements StorableSe
 	@Override
 	public T load(ID id) {
 		return dao.findOne(id);
+	}
+
+	@Override
+	public T loadByUid(String uid) {
+		if (dao instanceof IDBableJpaDao) {
+			@SuppressWarnings("unchecked")
+			IDBableJpaDao<T> idBableJpaDao = (IDBableJpaDao<T>) dao;
+			return idBableJpaDao.findByUid(uid);
+		}
+		return null;
 	}
 
 	@Override

@@ -13,6 +13,8 @@ public interface StorableService<T, ID extends Serializable> {
 
 	T load(ID id);
 
+	T loadByUid(String uid);
+	
 	List<T> loadAll();
 	
 	PagedContent<T> loadPage(final int page, final int size, final String orderBy);

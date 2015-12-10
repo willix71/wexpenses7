@@ -5,8 +5,10 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +89,18 @@ public class EntityMgrDaoService<T, ID extends Serializable> implements Storable
 		return entityManager.find(entityClass, id);
 	}
 
+	@Override
+	public T loadByUid(String uid) {
+		try {
+		String entityName = entityClass.getSimpleName();
+		TypedQuery<T> query = entityManager.createQuery("FROM " + entityName + " WHERE uid = :uid", entityClass);
+		query.setParameter("uid", uid);		
+		return query.getSingleResult();
+		} catch(NoResultException nre) {
+			return null; // to be consistent with JpaRepoDaoService
+		}
+	}
+	
 	@Override
 	public List<T> loadAll() {
 		String entityName = entityClass.getSimpleName();
