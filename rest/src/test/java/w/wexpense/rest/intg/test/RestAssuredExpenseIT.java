@@ -33,8 +33,8 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	    statusCode(200).
 	    contentType("application/json").
 	    body(
-	      "name", equalTo("Phone"),
-	      "selectable",equalTo(true)).
+	      "date", equalTo("20150201 000000"),
+	      "currency.code",equalTo("CHF")).
 	    when().get("/expense/"+expenseId);
 	}
 	

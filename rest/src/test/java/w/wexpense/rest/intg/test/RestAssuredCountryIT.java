@@ -120,6 +120,17 @@ public class RestAssuredCountryIT extends AbstractRestAssured {
 	
 	@Test
 	@Order(6)
+	public void testPatchUpdateUser2() {
+		expect().statusCode(204).when().given().header("Content-Type", "application/json")
+				.body("{\"currency\":{\"code\":\"EUR\"}}").patch("/country/WK");
+
+		expect().statusCode(200).
+		body("code", equalTo("WK"), "name", equalTo("My other country"), "currency.code", equalTo("EUR"), "currency.name", equalTo("Euro")).
+		when().get("/country/WK");
+	}
+	
+	@Test
+	@Order(7)
 	public void testGetDeleteUser() {
 		// created at previous test
 		expect().statusCode(200).when().get("/country/WK");

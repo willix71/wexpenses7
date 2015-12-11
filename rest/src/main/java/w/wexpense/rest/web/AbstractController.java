@@ -110,6 +110,7 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
+	@Transactional
 	public List<D> findAll() {
 		return toDtos(service.loadAll());
 	}
@@ -120,6 +121,7 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	 */
 	@RequestMapping(params = { "page" }, method = RequestMethod.GET)
 	@ResponseBody
+	@Transactional
 	public List<D> findPaginated(@RequestParam("page") final int page,
 			@RequestParam(value = "size", defaultValue = "10") final int size,
 			@RequestParam(value = "orderBy", required = false) final String orderBy,
@@ -184,7 +186,6 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@Transactional
 	public void patch(@PathVariable("id") final ID id, @RequestBody final Map<String,?> resource) {
 		Preconditions.checkNotNull(resource);
 
