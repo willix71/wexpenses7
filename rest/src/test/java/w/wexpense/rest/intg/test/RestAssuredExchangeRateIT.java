@@ -23,6 +23,8 @@ import com.jayway.restassured.response.Response;
  */
 public class RestAssuredExchangeRateIT extends AbstractRestAssured {
 
+	private static final int xRateId = 25;
+
 	@Test
 	public void testGetSingleUser() {
 	  expect().
@@ -33,14 +35,14 @@ public class RestAssuredExchangeRateIT extends AbstractRestAssured {
 	      "toCurrency.code", equalTo("CHF"),
 	      "rate",equalTo(1.6f), // a float ???
 	      "date",equalTo("20000101 000000")).
-	    when().get("/exchangeRate/25");
+	    when().get("/exchangeRate/" + xRateId);
 	}
 	
 	@Test
 	public void testGetSingleUserByUid() {
 		
 		Response response = 
-				when().get("/exchangeRate/25").
+				when().get("/exchangeRate/" + xRateId).
 				then().statusCode(200).extract().response();
 		
 		String uid = response.path("uid"); // extract uid

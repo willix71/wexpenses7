@@ -23,6 +23,8 @@ import com.jayway.restassured.response.Response;
  */
 public class RestAssuredCityIT extends AbstractRestAssured {
 
+	private static final int londonId = 1;
+	
 	@Test
 	public void testGetSingleUser() {
 	  expect().
@@ -31,14 +33,14 @@ public class RestAssuredCityIT extends AbstractRestAssured {
 	    body(
 	      "name", equalTo("London"),
 	      "country.code",equalTo("UK")).
-	    when().get("/city/1");
+	    when().get("/city/" + londonId);
 	}
 	
 	@Test
 	public void testGetSingleUserByUid() {
 		
 		Response response = 
-				when().get("/city/1").
+				when().get("/city/" + londonId).
 				then().statusCode(200).extract().response();
 		
 		String uid = response.path("uid"); // extract uid
