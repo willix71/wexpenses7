@@ -1,5 +1,8 @@
 package w.wexpense.rest.config;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.modelmapper.AbstractConverter;
@@ -66,6 +69,26 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 				if (source == null) return null;
 				DBableDTO dto =  new DBableDTO(source.getId(), source.getVersion(), source.getUid(), source.toString());
 				return dto;
+			}
+		});
+		modelMapper.addConverter(new AbstractConverter<Date, String>() {
+			SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HHmmss");
+			@Override
+			protected String convert(Date source) {
+				if (source == null) return null;
+				return format.format(source);
+			}
+		});
+		modelMapper.addConverter(new AbstractConverter<String, Date>() {
+			SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HHmmss");
+			@Override
+			protected Date convert(String source) {
+				if (source == null) return null;
+				try {
+					return format.parse(source);
+				}catch(ParseException e) {
+					throw new IllegalArgumentException(e);
+				}
 			}
 		});
 		return modelMapper;

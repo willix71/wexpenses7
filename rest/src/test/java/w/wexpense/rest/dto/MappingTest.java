@@ -8,11 +8,14 @@ import java.util.Map;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
 
+import w.utils.DateUtils;
 import w.wexpense.model.Account;
 import w.wexpense.model.Country;
 import w.wexpense.model.Currency;
+import w.wexpense.model.ExchangeRate;
 import w.wexpense.model.enums.AccountEnum;
 import w.wexpense.rest.config.WebConfig;
+import w.wexpense.utils.ExchangeRateUtils;
 
 public class MappingTest {
 
@@ -69,7 +72,6 @@ public class MappingTest {
 	}
 	
 	@Test
-	//@Ignore //TODO parent is not mapped correctly
 	public void whenConvertAccountEntityToDTO() {
 		Currency chf = new Currency("CHF", "Swiss Francs", null);
 		Account parent = new Account(null, 1, "asset", AccountEnum.ASSET, chf);
@@ -100,4 +102,17 @@ public class MappingTest {
 		assertThat(entity.getParent()).isNotNull();
 		assertThat(entity.getParent().getUid()).isEqualTo("1234567890");
 	}
+	
+	@Test
+	public void whenConvertExchangeRateEntityToDTO() {
+		ExchangeRate entity = ExchangeRateUtils.newExchangeRate(new Currency("CHF",null,null), new Currency("EUR",null,null), 1.234, DateUtils.toDate(1,2,3004,11,55));
+
+		ExchangeRateDTO dto = getModelMapper().map(entity, ExchangeRateDTO.class);
+		assertThat(dto.getFromCurrency().getCode()).isEqualTo("CHF");
+		assertThat(dto.getToCurrency().getCode()).isEqualTo("EUR");
+		assertThat(dto.getRate()).isEqualTo(1.234);
+		assertThat(dto.getDate()).isEqualTo("30040201 115500");
+	}
+
+
 }

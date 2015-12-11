@@ -1,12 +1,10 @@
 package w.wexpense.rest.dto;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import w.utils.DateUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
 public class SerialisationTest {
 
 	@Test
@@ -33,7 +31,7 @@ public class SerialisationTest {
 	
 	@Test
 	public void testDeserialisatioWithDate() throws Exception {
-		final String json = "{\"rate\":1.234,\"toCurrency\":{\"code\":\"EUR\"},\"fromCurrency\":{\"code\":\"CHF\"},\"date\":\"2001-06-23\"}";
+		final String json = "{\"rate\":1.234,\"toCurrency\":{\"code\":\"EUR\"},\"fromCurrency\":{\"code\":\"CHF\"},\"date\":\"20010623 000000\"}";
 		
 		ObjectMapper mapper = new ObjectMapper();
 		
@@ -42,7 +40,7 @@ public class SerialisationTest {
 		assertThat(xRateDto.getFromCurrency().getCode()).isEqualTo("CHF");
 		assertThat(xRateDto.getToCurrency().getCode()).isEqualTo("EUR");
 		assertThat(xRateDto.getRate()).isEqualTo(1.234);
-		// TODO assertThat(xRateDto.getDate()).isEqualTo(DateUtils.toDate(23,6,2001));
+		assertThat(xRateDto.getDate()).isEqualTo("20010623 000000");
 	}
 	
 	@Test
@@ -51,13 +49,14 @@ public class SerialisationTest {
 		x.setToCurrency(new CodableDTO("EUR", null));
 		x.setFromCurrency(new CodableDTO("CHF", null));
 		x.setRate(1.234);
-		// TODO x.setDate(DateUtils.toDate(2,3,2345,11,55));
+		x.setDate("20010623 000000");
 		
 		String json = new ObjectMapper().writeValueAsString(x); 
 		
 		assertThat(json).contains("\"rate\":1.234,");
 		assertThat(json).contains("\"toCurrency\":{\"code\":\"EUR\"");
 		assertThat(json).contains("\"fromCurrency\":{\"code\":\"CHF\"");
+		assertThat(json).contains("\"date\":\"20010623 000000\"");
 		System.out.println(json);
 	}
 }

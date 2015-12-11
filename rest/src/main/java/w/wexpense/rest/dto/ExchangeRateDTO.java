@@ -1,12 +1,10 @@
 package w.wexpense.rest.dto;
 
-import java.util.Date;
-
 public class ExchangeRateDTO extends DBableDTO {
 	private static final long serialVersionUID = 1L;
 
 	private DBableDTO institution;
-	private Date date;
+	private String date;
 	private CodableDTO toCurrency;
 	private CodableDTO fromCurrency;
 	private Double rate;
@@ -19,10 +17,10 @@ public class ExchangeRateDTO extends DBableDTO {
 	public void setInstitution(DBableDTO institution) {
 		this.institution = institution;
 	}
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 	public CodableDTO getToCurrency() {
