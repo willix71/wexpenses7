@@ -3,9 +3,9 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 
-@Ignore
 public class CategoryTest {
 
     public static class Category {
@@ -45,11 +45,29 @@ public class CategoryTest {
         public void setParent(AbstractDTO parent) {this.parent = parent;}
     }
 
+    private ModelMapper getModelMapper() {
+    	ModelMapper map = new ModelMapper();
+    	map.addConverter(new AbstractConverter<Category, AbstractDTO>() {
+
+			@Override
+			protected AbstractDTO convert(Category source) {
+				if (source == null) return null;
+				
+				AbstractDTO dto = new AbstractDTO();
+				dto.setUid(source.getUid());
+				dto.setName(source.getName());
+				return dto;
+			}
+    		
+		});
+    	return map;
+    }
+    
     @Test
     public void simpleTest() {
         Category dto = new Category("Test1",null);
 
-        CategoryDTO entity = new ModelMapper().map(dto, CategoryDTO.class);
+        CategoryDTO entity = getModelMapper().map(dto, CategoryDTO.class);
 
         Assert.assertEquals("Test1", entity.getName());
         Assert.assertEquals(dto.getUid(), entity.getUid());
@@ -59,8 +77,8 @@ public class CategoryTest {
     public void withParentTest() {
         Category dto = new Category("child",new Category("parent", new Category("root", null)));
 
-        CategoryDTO entity = new ModelMapper().map(dto, CategoryDTO.class);
-
+        CategoryDTO entity = getModelMapper().map(dto, CategoryDTO.class);
+        
         Assert.assertEquals("child", entity.getName());
         Assert.assertEquals(dto.getUid(), entity.getUid());
         Assert.assertNotNull(entity.getParent()); // my child should have a parent dto
