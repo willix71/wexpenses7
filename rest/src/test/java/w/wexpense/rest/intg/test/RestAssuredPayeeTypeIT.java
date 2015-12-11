@@ -15,6 +15,12 @@ import org.springframework.core.annotation.Order;
 
 import com.jayway.restassured.response.Response;
 
+/**
+ *  This test validates Dbable entities using a EntityMgrDaoService
+ *  
+ * @author willix
+ *
+ */
 public class RestAssuredPayeeTypeIT extends AbstractRestAssured {
 
 	private static final int phonePayeeTypeId = 31;

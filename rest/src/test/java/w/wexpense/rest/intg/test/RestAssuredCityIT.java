@@ -15,6 +15,12 @@ import org.springframework.core.annotation.Order;
 
 import com.jayway.restassured.response.Response;
 
+/**
+ *  This test validates Dbable entities using a JapRepoDaoService
+ *  
+ * @author willix
+ *
+ */
 public class RestAssuredCityIT extends AbstractRestAssured {
 
 	@Test

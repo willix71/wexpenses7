@@ -10,6 +10,12 @@ import static w.wexpense.rest.intg.test.ConfigTest.BASE_URI;
 import org.junit.Test;
 import org.springframework.core.annotation.Order;
 
+/**
+ * This test validates Codable entities.
+ * 
+ * @author willix
+ *
+ */
 public class RestAssuredCountryIT extends AbstractRestAssured {
 
 	@Test
