@@ -7,36 +7,17 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.iterableWithSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
-import static w.wexpense.rest.intg.test.ConfigTest.BASE_PATH;
-import static w.wexpense.rest.intg.test.ConfigTest.BASE_SVR;
 import static w.wexpense.rest.intg.test.ConfigTest.BASE_URI;
 
-import org.junit.BeforeClass;
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 
-import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 
-import w.junit.extras.OrderedJUnit4ClassRunner;
+public class RestAssuredPayeeTypeIT extends AbstractRestAssured {
 
-@RunWith(OrderedJUnit4ClassRunner.class)
-public class RestAssuredPayeeTypeIT {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(RestAssuredPayeeTypeIT.class);
-		
 	private static final int phonePayeeTypeId = 31;
-	@BeforeClass
-	public static void setUp() {
-		RestAssured.baseURI = BASE_SVR;
-		RestAssured.basePath = BASE_PATH;
-		
-		LOGGER.info("baseURI and basePath set to " + ConfigTest.BASE_URI);
-	}
 	
 	@Test
 	public void testGetSingleUser() {
@@ -110,15 +91,33 @@ public class RestAssuredPayeeTypeIT {
 	}
 	
 	@Test
+	@Order(4)
+	public void testPutUpdateUser() {
+		Response r = when().get("/payeeType?uid=test-payeeType-uid-1234567890").then().statusCode(200).extract().response();		
+		Object id = r.path("id");
+		Object mDate = r.path("version");
+
+		// make sure the type is NOT selectable (see previous method)
+		Assert.assertEquals(false, r.path("selectable"));
+	
+		// replace the selectable value to true
+		String body = r.asString().replace("false", "true");
+	
+		// update the type
+		expect().statusCode(200).when().given().header("Content-Type", "application/json").body(body).put("/payeeType/" + id);
+
+		expect().statusCode(200).
+    	body(
+  	      "selectable",equalTo(true), 		// check the new selectable value
+  	      "version", not(equalTo(mDate))). 	// check the version has changed
+  	    when().get("/payeeType/" + id);
+  	      
+	}
+	
+	@Test
 	@Order(6)
 	public void testGetDeleteUser() {
-		// created at previous test
-		Response response = 
-				when().get("/payeeType?uid=test-payeeType-uid-1234567890").
-				then().statusCode(200).extract().response();
-
-		// extract id (it's an integer)
-		Object id = response.path("id");
+		Object id = getIdForUid("payeeType","test-payeeType-uid-1234567890");
 		
 		expect().statusCode(200).when().get("/payeeType/"+id);
 

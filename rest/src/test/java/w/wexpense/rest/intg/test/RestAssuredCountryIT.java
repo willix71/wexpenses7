@@ -5,32 +5,13 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.not;
-import static w.wexpense.rest.intg.test.ConfigTest.*;
+import static w.wexpense.rest.intg.test.ConfigTest.BASE_URI;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 
-import com.jayway.restassured.RestAssured;
+public class RestAssuredCountryIT extends AbstractRestAssured {
 
-import w.junit.extras.OrderedJUnit4ClassRunner;
-
-@RunWith(OrderedJUnit4ClassRunner.class)
-public class RestAssuredCountryIT {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(RestAssuredCountryIT.class);
-		
-	@BeforeClass
-	public static void setUp() {
-		RestAssured.baseURI = BASE_SVR;
-		RestAssured.basePath = BASE_PATH;
-		
-		LOGGER.info("baseURI and basePath set to " + ConfigTest.BASE_URI);
-	}
-	
 	@Test
 	public void testGetSingleUser() {
 	  expect().
@@ -102,7 +83,7 @@ public class RestAssuredCountryIT {
 	}
 
 	@Test
-	@Order(3)
+	@Order(4)
 	public void testPutUpdateUser() {
 		expect().statusCode(200).
 		body("code", equalTo("WK"), "name", equalTo("Williams country"), "currency.code", equalTo("CHF"), "currency.name", equalTo("Swiss Francs")).
@@ -117,7 +98,22 @@ public class RestAssuredCountryIT {
 	}
 	
 	@Test
-	@Order(4)
+	@Order(5)
+	public void testPatchUpdateUser() {
+		expect().statusCode(200).
+		body("code", equalTo("WK"), "name", equalTo("My country"), "currency.code", equalTo("USD"), "currency.name", equalTo("US Dollar")).
+		when().get("/country/WK");
+
+		expect().statusCode(204).when().given().header("Content-Type", "application/json")
+				.body("{\"name\":\"My other country\"}").patch("/country/WK");
+
+		expect().statusCode(200).
+		body("code", equalTo("WK"), "name", equalTo("My other country"), "currency.code", equalTo("USD"), "currency.name", equalTo("US Dollar")).
+		when().get("/country/WK");
+	}
+	
+	@Test
+	@Order(6)
 	public void testGetDeleteUser() {
 		// created at previous test
 		expect().statusCode(200).when().get("/country/WK");

@@ -2,6 +2,7 @@ package w.wexpense.rest.web;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -65,8 +66,15 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 
 	protected abstract ID getIdFromDTO(D dto);
 
-	protected T fromDto(D dto) {
-		T entity = modelMapper.map(dto, clazz);
+	protected T fromDto(D dto, T entity) {
+		if (entity==null) {
+			entity = modelMapper.map(dto, clazz);
+		} else {
+			if (!getIdFromDTO(dto).equals(getIdFromEntity(entity))) {
+				throw new IllegalArgumentException("None matching ids");
+			}
+			modelMapper.map(dto, entity);
+		}
 		return service.save(entity);
 	}
 
@@ -146,7 +154,8 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	@ResponseStatus(HttpStatus.CREATED)
 	public void create(@RequestBody final D dto, final HttpServletResponse response) {
 		Preconditions.checkNotNull(dto);
-		final ID idOfCreatedResource = getIdFromEntity(fromDto(dto));
+		
+		final ID idOfCreatedResource = getIdFromEntity(fromDto(dto, null));
 
 		eventPublisher.publishEvent(new ResourceCreatedEvent(this, response, idOfCreatedResource));
 	}
@@ -160,13 +169,12 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	@ResponseStatus(HttpStatus.OK)
 	public void update(@PathVariable("id") final ID id, @RequestBody final D dto) {
 		Preconditions.checkNotNull(dto);
-		if (!getIdFromDTO(dto).equals(id)) {
-			throw new IllegalArgumentException("None matching ids");
-		}
 
-		RestPreconditions.checkFound(service.load(getIdFromDTO(dto)));
+		T entity = service.load(id);
+		
+		RestPreconditions.checkFound(entity);
 
-		fromDto(dto);
+		fromDto(dto, entity);
 	}
 
 	/**
@@ -176,12 +184,17 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void patch(@PathVariable("id") final ID id, @RequestBody final T resource) {
+	@Transactional
+	public void patch(@PathVariable("id") final ID id, @RequestBody final Map<String,?> resource) {
 		Preconditions.checkNotNull(resource);
 
-		// TODO
+		T entity = service.load(id);
 
-		LOGGER.info("Patching " + resource);
+		RestPreconditions.checkFound(entity);
+		
+		modelMapper.map(resource, entity);
+		
+		service.save(entity);
 	}
 
 	/**

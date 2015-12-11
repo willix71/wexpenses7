@@ -30,12 +30,11 @@ public class DBableController<T extends DBable<T>,D extends DBableDTO> extends A
 	}
 	
 	@Override
-	protected T fromDto(D dto) {
+	protected T fromDto(D dto, T entity) {
 		if (dto.getUid() == null) {
 			dto.setUid(DBable.newUid());
 		}
-		T entity = modelMapper.map(dto, clazz);
-		return service.save(entity);
+		return super.fromDto(dto, entity);
 	}
 	
     /**

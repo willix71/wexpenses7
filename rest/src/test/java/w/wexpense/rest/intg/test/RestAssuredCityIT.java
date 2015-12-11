@@ -7,35 +7,16 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.iterableWithSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
-import static w.wexpense.rest.intg.test.ConfigTest.BASE_PATH;
-import static w.wexpense.rest.intg.test.ConfigTest.BASE_SVR;
 import static w.wexpense.rest.intg.test.ConfigTest.BASE_URI;
 
-import org.junit.BeforeClass;
+import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 
-import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 
-import w.junit.extras.OrderedJUnit4ClassRunner;
+public class RestAssuredCityIT extends AbstractRestAssured {
 
-@RunWith(OrderedJUnit4ClassRunner.class)
-public class RestAssuredCityIT {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(RestAssuredCityIT.class);
-		
-	@BeforeClass
-	public static void setUp() {
-		RestAssured.baseURI = BASE_SVR;
-		RestAssured.basePath = BASE_PATH;
-		
-		LOGGER.info("baseURI and basePath set to " + ConfigTest.BASE_URI);
-	}
-	
 	@Test
 	public void testGetSingleUser() {
 	  expect().
@@ -126,15 +107,66 @@ public class RestAssuredCityIT {
 	}
 	
 	@Test
+	@Order(4)
+	public void testPutUpdateUser() {
+		Response r = when().get("/city?uid=test-city-uid-1234567890").then().statusCode(200).extract().response();		
+		Object id = r.path("id");
+		Object mDate = r.path("version");
+
+		// make sure the zip is what we expect
+		Assert.assertEquals("1000", r.path("zip"));
+		Assert.assertEquals("CH", r.path("country.code"));
+	
+		// replace some values
+		String body = r.asString().replace("1000", "1001").replace("CH","UK");
+	
+		// update the city
+		expect().statusCode(200).when().given().header("Content-Type", "application/json").body(body).put("/city/" + id);
+
+		// check update
+		expect().statusCode(200).
+    	body(
+    			// check the values
+    			"name",equalTo("TestCity"),	
+    			"zip",equalTo("1001"), 			
+    			"country.code",equalTo("UK"),
+    			"country.name",equalTo("United Kingdom"), 
+    			"version", not(equalTo(mDate))). 	// check the version has changed
+  	    when().get("/city/" + id);
+  	      
+	}	
+	
+	@Test
+	@Order(5)
+	public void testPatchUpdateUser() {
+		Response r = when().get("/city?uid=test-city-uid-1234567890").then().statusCode(200).extract().response();		
+		Object id = r.path("id");
+		Object mDate = r.path("version");
+		
+		// make sure the zip is what we expect
+		Assert.assertEquals("1001", r.path("zip"));
+		Assert.assertEquals("UK", r.path("country.code"));
+
+		// patch the city
+		expect().statusCode(204).when().given().header("Content-Type", "application/json")
+				.body("{\"name\":\"PatchedCity\",\"country\":{\"code\":\"DE\"}}").patch("/city/"+id);
+
+		// check
+		expect().statusCode(200).
+    	body(
+    			// check the values
+    			"name",equalTo("PatchedCity"),	
+    			"zip",equalTo("1001"), 			
+    			"country.code",equalTo("DE"),
+    			"country.name",equalTo("Germany"), 
+    			"version", not(equalTo(mDate))). 	// check the version has changed
+  	    when().get("/city/" + id);
+	}
+	
+	@Test
 	@Order(6)
 	public void testGetDeleteUser() {
-		// created at previous test
-		Response response = 
-				when().get("/city?uid=test-city-uid-1234567890").
-				then().statusCode(200).extract().response();
-
-		// extract id (it's an integer)
-		Object id = response.path("id");
+		Object id = getIdForUid("city", "test-city-uid-1234567890");
 		
 		expect().statusCode(200).when().get("/city/"+id);
 
