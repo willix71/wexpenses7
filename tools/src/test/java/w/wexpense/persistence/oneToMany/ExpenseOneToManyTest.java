@@ -17,10 +17,15 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import w.utils.DateUtils;
+import w.wexpense.dta.DtaHelper;
 import w.wexpense.model.Expense;
 import w.wexpense.model.TransactionLine;
+import w.wexpense.model.enums.TransactionLineEnum;
 import w.wexpense.service.StorableService;
+import w.wexpense.service.model.impl.TransactionLineService;
 import w.wexpense.utils.ExpenseUtils;
+import w.wexpense.utils.TransactionLineUtils;
 
 @ActiveProfiles("ExpenseOneToManyTest")
 public class ExpenseOneToManyTest extends AbstractOneToManyTest {
@@ -32,13 +37,13 @@ public class ExpenseOneToManyTest extends AbstractOneToManyTest {
 	private static final Expense EXPENSE = new Expense();
 
 	@Test
-	@Order(1)
+	@Order(0)
 	public void setup() {
 		Assert.assertNotNull(expenseService);
 	}
 
 	@Test
-	@Order(2)
+	@Order(1)
 	public void insertNewExpense() {
 		logger.info("================ STEP 1 insert new expense and new expense ================");
 
@@ -72,7 +77,7 @@ public class ExpenseOneToManyTest extends AbstractOneToManyTest {
 	}
 
 	@Test
-	@Order(3)
+	@Order(2)
 	public void updateExistingExpense() {
 		List<TransactionLine> lines;
 
@@ -109,7 +114,7 @@ public class ExpenseOneToManyTest extends AbstractOneToManyTest {
 	}
 
 	@Test
-	@Order(4)
+	@Order(3)
 	public void removeExistingExpenseTransactionLine() {
 		List<TransactionLine> lines;
 
@@ -146,6 +151,41 @@ public class ExpenseOneToManyTest extends AbstractOneToManyTest {
 		Assert.assertEquals(3, persistenceHelper.count(TransactionLine.class));
 	}
 
+	@Test
+	@Order(4)
+	public void updateExistingExpenseFromNewExpense() {
+		
+		logger.info("================ STEP 4 modify expense and transaction line with new expense ================");
+		
+		Expense ex1 = ExpenseUtils.newExpense(new Date(), testPayee(), new BigDecimal("100"), CHF(), BVO(), outAccount(), inAccount());
+		Expense ex2 = saveExpense(ex1);
+		
+		Assert.assertNotNull("Id has not been set", ex2.getId());
+		
+		Expense ex3 = ExpenseUtils.newExpense(new Date(), testPayee(), new BigDecimal("200"), CHF(), BVO(), outAccount(), inAccount());
+		ex3.setId(ex2.getId());
+		ex3.setUid(ex2.getUid());
+		ex3.setVersion(ex2.getVersion());
+		ex3.setCreatedTs(DateUtils.toDate(1,1,3000));	
+		TransactionLine in = DtaHelper.getTransactionLine(TransactionLineEnum.IN, ex3);
+		in.setAmount(new BigDecimal("100"));
+		in.updateValue();
+		
+		ExpenseUtils.addTransactionLines(ex3, ExpenseUtils.newTransactionLine(TransactionLineEnum.IN, new BigDecimal("100"), inAccount()));
+		
+		Expense ex4 = saveExpense(ex3);
+		
+		Assert.assertNotNull("Loading from db");
+		
+		Expense ex5 = loadExpense(ex2.getId());
+		
+		Assert.assertEquals(ex4, ex5);
+		Assert.assertNotSame(ex4, ex5);
+		Assert.assertEquals(3, ex5.getTransactions().size());
+		Assert.assertEquals(ex1.getCreatedTs(), ex5.getCreatedTs());
+
+	}
+	
 	//
 	// ========================================================================
 	//

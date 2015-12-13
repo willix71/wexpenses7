@@ -96,7 +96,7 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	@Transactional
+	@Transactional(readOnly=true)
 	public D findById(@PathVariable("id") final ID id, final HttpServletResponse response) {
 		final T resourceById = RestPreconditions.checkFound(service.load(id));
 		eventPublisher.publishEvent(new SingleResourceRetrievedEvent(this, response));
@@ -110,7 +110,7 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<D> findAll() {
 		return toDtos(service.loadAll());
 	}
@@ -121,7 +121,7 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	 */
 	@RequestMapping(params = { "page" }, method = RequestMethod.GET)
 	@ResponseBody
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<D> findPaginated(@RequestParam("page") final int page,
 			@RequestParam(value = "size", defaultValue = "10") final int size,
 			@RequestParam(value = "orderBy", required = false) final String orderBy,

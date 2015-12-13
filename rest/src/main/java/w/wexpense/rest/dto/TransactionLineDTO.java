@@ -7,8 +7,8 @@ import w.wexpense.model.enums.TransactionLineEnum;
 public class TransactionLineDTO extends DBableDTO {
 	private static final long serialVersionUID = 1L;
 
+	//private ExpenseDTO expense;
 	//private AccountPeriod period;
-	private ExpenseDTO expense;
 	private DBableDTO discriminator;
 	private DBableDTO account;
 	private TransactionLineEnum factor = TransactionLineEnum.OUT;
@@ -19,12 +19,19 @@ public class TransactionLineDTO extends DBableDTO {
 	private String date;
 	private DBableDTO consolidation;
 	private String description;
-	public ExpenseDTO getExpense() {
-		return expense;
-	}
-	public void setExpense(ExpenseDTO expense) {
-		this.expense = expense;
-	}
+	
+//	public ExpenseDTO getExpense() {
+//		return expense;
+//	}
+//	public void setExpense(ExpenseDTO expense) {
+//		this.expense = expense;
+//	}
+//	public AccountPeriod getPeriod() {
+//		return period;
+//	}
+//	public void setPeriod(AccountPeriod period) {
+//		this.period = period;
+//	}
 	public DBableDTO getDiscriminator() {
 		return discriminator;
 	}

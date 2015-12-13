@@ -39,6 +39,7 @@ public abstract class DBable<T extends DBable<T>> implements Serializable, Dupli
 	private Date modifiedTs;
 
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="createdTS", nullable = false, updatable = false)
 	private Date createdTs;
 
 	@Column(name = "uid", unique = true, nullable = false, updatable = false)
