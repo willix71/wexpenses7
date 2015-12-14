@@ -22,7 +22,6 @@ import com.jayway.restassured.response.Response;
  * @author willix
  *
  */
-@Ignore
 public class RestAssuredExpenseIT extends AbstractRestAssured {
 
 	private static final int expenseId = 59;
@@ -66,7 +65,7 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	  expect().
 	    statusCode(200).
 	    contentType("application/json"). 
-	    body("name", iterableWithSize(2)).
+	    body("uid", iterableWithSize(1)).
 	    when().get("/expense");
 	}
 	
@@ -80,14 +79,15 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	    header("Link", not(containsString("last"))).
 	    header("Link", not(containsString("prev"))).
 	    header("Link", not(containsString("first"))).
-	    body("code", iterableWithSize(2)).
-	    when().get("/expense?page=0&size=3&orderBy=name");
+	    body("uid", iterableWithSize(1)).
+	    when().get("/expense?page=0&size=3&orderBy=date");
 		  
-	  expect().statusCode(404).when().get("/expense?page=1&size=3&orderBy=name");
+	  expect().statusCode(404).when().get("/expense?page=1&size=3&orderBy=date");
 	}
 	
 	@Test
 	@Order(3)
+	@Ignore
 	public void testGetCreateUser() {
 	  expect().
 	    statusCode(201).
@@ -100,6 +100,7 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	
 	@Test
 	@Order(4)
+	@Ignore
 	public void testPutUpdateUser() {
 		Response r = when().get("/expense?uid=test-expense-uid-1234567890").then().statusCode(200).extract().response();		
 		Object id = r.path("id");
@@ -124,6 +125,7 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	
 	@Test
 	@Order(6)
+	@Ignore
 	public void testGetDeleteUser() {
 		Object id = getIdForUid("expense","test-expense-uid-1234567890");
 		

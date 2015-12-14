@@ -6,7 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.modelmapper.AbstractConverter;
+import org.modelmapper.Condition;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.spi.MappingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -56,7 +58,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	
 	@Bean
 	public ModelMapper modelMapper() {
-		ModelMapper modelMapper =  new ModelMapper();
+		return newModelMapper();
+	}
+	
+	public static ModelMapper newModelMapper() {
+		ModelMapper modelMapper =  new ModelMapper();	
 		modelMapper.addConverter(new AbstractConverter<Account, DBableDTO>() {
 			@Override
 			protected DBableDTO convert(Account source) {

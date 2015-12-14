@@ -2,6 +2,7 @@ package w.wexpense.rest.web;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,6 +44,7 @@ public class DBableController<T extends DBable<T>,D extends DBableDTO> extends A
      */
     @RequestMapping(params = { "uid" }, method = RequestMethod.GET)
     @ResponseBody
+    @Transactional(readOnly=true)
     public D findByUid(@RequestParam("uid") final String uid, final HttpServletResponse response) {
         final T resourceByUid = RestPreconditions.checkFound(service.loadByUid(uid));
         
