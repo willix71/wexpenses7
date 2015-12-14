@@ -120,7 +120,7 @@ public class RestAssuredCountryIT extends AbstractRestAssured {
 	
 	@Test
 	@Order(6)
-	public void testPatchUpdateUser2() {
+	public void testPatchAgainWithDifferentProperty() {
 		expect().statusCode(204).when().given().header("Content-Type", "application/json")
 				.body("{\"currency\":{\"code\":\"EUR\"}}").patch("/country/WK");
 

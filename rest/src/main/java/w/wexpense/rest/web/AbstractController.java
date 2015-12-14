@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.common.base.Preconditions;
 
+import w.wexpense.rest.config.WebConfig;
 import w.wexpense.rest.events.PaginatedResultsRetrievedEvent;
 import w.wexpense.rest.events.ResourceCreatedEvent;
 import w.wexpense.rest.events.SingleResourceRetrievedEvent;
@@ -40,7 +42,7 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 
 	@Autowired
 	protected ModelMapper modelMapper;
-
+	
 	@Autowired
 	protected ApplicationEventPublisher eventPublisher;
 
@@ -73,6 +75,7 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 			if (!getIdFromDTO(dto).equals(getIdFromEntity(entity))) {
 				throw new IllegalArgumentException("None matching ids");
 			}
+			
 			modelMapper.map(dto, entity);
 		}
 		return service.save(entity);
@@ -193,11 +196,21 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 
 		RestPreconditions.checkFound(entity);
 		
-		modelMapper.map(resource, entity);
+		// we need a new mapper else old mapping might corrupt our current mappings.
+		ModelMapper m = WebConfig.newModelMapper();
+		m.map(resource, entity);
+
+		if (LOGGER.isDebugEnabled()) {
+			StringBuilder sb = new StringBuilder("Mappings\n");
+			for(TypeMap<?,?> tm: m.getTypeMaps()) {
+				sb.append("\t").append(tm).append("=").append(tm.getMappings()).append("\n");
+			}
+			LOGGER.debug(sb.toString());
+		}
 		
 		service.save(entity);
 	}
-
+	
 	/**
 	 * curl -i -X DELETE http://localhost:8880/spring/rest/foos/1
 	 * 

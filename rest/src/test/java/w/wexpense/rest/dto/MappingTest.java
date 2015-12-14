@@ -20,7 +20,7 @@ import w.wexpense.utils.ExchangeRateUtils;
 public class MappingTest {
 
 	public ModelMapper getModelMapper() {
-		return new WebConfig().modelMapper();
+		return WebConfig.newModelMapper();
 	}
 	
 	@Test
