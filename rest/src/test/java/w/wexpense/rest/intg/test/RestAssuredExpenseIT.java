@@ -87,37 +87,37 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	
 	@Test
 	@Order(3)
-	@Ignore
-	public void testGetCreateUser() {
+	public void testGetCreateUser() {		
+		String json = "{'uid':'test-expense-uid-1234567890','description':'test expense','date':'20000202 141516','amount':100.00,'currency':{'code':'CHF'},'payee':{'id':39},'type':{'id':23}, 'transactions':[" +
+				"{'uid':'test-line-uid-1234567890-1','account':{'id':49},'factor':'OUT','amount':100.00,'value':100.00}, " +
+				"{'uid':'test-line-uid-1234567890-2','account':{'id':53},'factor':'IN','amount':100.00,'value':100.00}  ]}";
 	  expect().
 	    statusCode(201).
 	    header("Location", startsWith(BASE_URI + "/expense/")).
 	    when().given().
 	    header("Content-Type", "application/json").
-	    body("{\"name\":\"TestPayeeType\",\"selectable\":false, \"uid\":\"test-expense-uid-1234567890\"}").
+	    body(json.replaceAll("'", "\"")).
 	    post("/expense");
 	}
 	
 	@Test
 	@Order(4)
-	@Ignore
 	public void testPutUpdateUser() {
-		Response r = when().get("/expense?uid=test-expense-uid-1234567890").then().statusCode(200).extract().response();		
+		Response r = when().get("/expense?uid=9684a46f-9b8b-432d-a586-126127afbba6").then().statusCode(200).extract().response();		
 		Object id = r.path("id");
 		Object mDate = r.path("version");
 
 		// make sure the type is NOT selectable (see previous method)
-		Assert.assertEquals(false, r.path("selectable"));
+		//Assert.assertEquals(false, r.path("a"));
 	
 		// replace the selectable value to true
-		String body = r.asString().replace("false", "true");
+		String body = r.asString().replace("100.00", "200.00");
 	
 		// update the type
 		expect().statusCode(200).when().given().header("Content-Type", "application/json").body(body).put("/expense/" + id);
 
 		expect().statusCode(200).
     	body(
-  	      "selectable",equalTo(true), 		// check the new selectable value
   	      "version", not(equalTo(mDate))). 	// check the version has changed
   	    when().get("/expense/" + id);
   	      
