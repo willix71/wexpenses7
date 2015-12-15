@@ -9,10 +9,15 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 import static w.wexpense.rest.intg.test.ConfigTest.BASE_URI;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.annotation.Order;
+import org.springframework.util.FileCopyUtils;
 
 import com.jayway.restassured.response.Response;
 
@@ -87,37 +92,37 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	
 	@Test
 	@Order(3)
-	@Ignore
-	public void testGetCreateUser() {
+	public void testGetCreateUser() throws IOException {	
+		String json = FileCopyUtils.copyToString(new FileReader(new File("src/test/resources/create_expense.json")));
+
 	  expect().
 	    statusCode(201).
 	    header("Location", startsWith(BASE_URI + "/expense/")).
 	    when().given().
 	    header("Content-Type", "application/json").
-	    body("{\"name\":\"TestPayeeType\",\"selectable\":false, \"uid\":\"test-expense-uid-1234567890\"}").
+	    body(json).
 	    post("/expense");
 	}
 	
 	@Test
 	@Order(4)
-	@Ignore
 	public void testPutUpdateUser() {
 		Response r = when().get("/expense?uid=test-expense-uid-1234567890").then().statusCode(200).extract().response();		
 		Object id = r.path("id");
 		Object mDate = r.path("version");
 
-		// make sure the type is NOT selectable (see previous method)
-		Assert.assertEquals(false, r.path("selectable"));
+		Number d = r.path("amount");
+		Assert.assertEquals(80.0f,d.floatValue(),0.00001);
 	
 		// replace the selectable value to true
-		String body = r.asString().replace("false", "true");
+		String body = r.asString().replace("80.00", "122.00");
 	
 		// update the type
 		expect().statusCode(200).when().given().header("Content-Type", "application/json").body(body).put("/expense/" + id);
 
 		expect().statusCode(200).
     	body(
-  	      "selectable",equalTo(true), 		// check the new selectable value
+  	      "amount",equalTo(122.00f), 		// check the new selectable value
   	      "version", not(equalTo(mDate))). 	// check the version has changed
   	    when().get("/expense/" + id);
   	      
@@ -125,7 +130,6 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	
 	@Test
 	@Order(6)
-	@Ignore
 	public void testGetDeleteUser() {
 		Object id = getIdForUid("expense","test-expense-uid-1234567890");
 		

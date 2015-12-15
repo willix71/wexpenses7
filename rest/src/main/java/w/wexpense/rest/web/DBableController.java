@@ -31,11 +31,11 @@ public class DBableController<T extends DBable<T>,D extends DBableDTO> extends A
 	}
 	
 	@Override
-	protected T fromDto(D dto, T entity) {
+	protected T dto2Entity(D dto, T entity) {
 		if (dto.getUid() == null) {
 			dto.setUid(DBable.newUid());
 		}
-		return super.fromDto(dto, entity);
+		return super.dto2Entity(dto, entity);
 	}
 	
     /**
@@ -50,6 +50,6 @@ public class DBableController<T extends DBable<T>,D extends DBableDTO> extends A
         
         eventPublisher.publishEvent(new SingleResourceRetrievedEvent(this, response));
         
-        return toDto(resourceByUid);
+        return entity2Dto(resourceByUid);
     }
 }
