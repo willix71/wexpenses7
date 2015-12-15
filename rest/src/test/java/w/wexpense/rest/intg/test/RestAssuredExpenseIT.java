@@ -9,10 +9,14 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 import static w.wexpense.rest.intg.test.ConfigTest.BASE_URI;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.annotation.Order;
+import org.springframework.util.FileCopyUtils;
 
 import com.jayway.restassured.response.Response;
 
@@ -87,16 +91,15 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	
 	@Test
 	@Order(3)
-	public void testGetCreateUser() {		
-		String json = "{'uid':'test-expense-uid-1234567890','description':'test expense','date':'20000202 141516','amount':100.00,'currency':{'code':'CHF'},'payee':{'id':39},'type':{'id':23}, 'transactions':[" +
-				"{'uid':'test-line-uid-1234567890-1','account':{'id':49},'factor':'OUT','amount':100.00,'value':100.00}, " +
-				"{'uid':'test-line-uid-1234567890-2','account':{'id':53},'factor':'IN','amount':100.00,'value':100.00}  ]}";
+	public void testGetCreateUser() throws IOException {	
+		String json = FileCopyUtils.copyToString(new FileReader(new File("src/test/resources/create_expense.json")));
+
 	  expect().
 	    statusCode(201).
 	    header("Location", startsWith(BASE_URI + "/expense/")).
 	    when().given().
 	    header("Content-Type", "application/json").
-	    body(json.replaceAll("'", "\"")).
+	    body(json).
 	    post("/expense");
 	}
 	
@@ -107,17 +110,18 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 		Object id = r.path("id");
 		Object mDate = r.path("version");
 
-		// make sure the type is NOT selectable (see previous method)
-		//Assert.assertEquals(false, r.path("a"));
+		Number d = r.path("amount");
+		Assert.assertEquals(80.0f,d.floatValue(),0.00001);
 	
 		// replace the selectable value to true
-		String body = r.asString().replace("100.00", "200.00");
+		String body = r.asString().replace("80.00", "122.00");
 	
 		// update the type
 		expect().statusCode(200).when().given().header("Content-Type", "application/json").body(body).put("/expense/" + id);
 
 		expect().statusCode(200).
     	body(
+  	      "amount",equalTo(122.00f), 		// check the new selectable value
   	      "version", not(equalTo(mDate))). 	// check the version has changed
   	    when().get("/expense/" + id);
   	      
@@ -125,7 +129,6 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	
 	@Test
 	@Order(6)
-	@Ignore
 	public void testGetDeleteUser() {
 		Object id = getIdForUid("expense","test-expense-uid-1234567890");
 		

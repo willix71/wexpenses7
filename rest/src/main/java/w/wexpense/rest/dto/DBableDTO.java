@@ -1,8 +1,6 @@
 package w.wexpense.rest.dto;
 
-import java.io.Serializable;
-
-public class DBableDTO implements Serializable {
+public class DBableDTO extends AbstractDTO<Long> {
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
@@ -20,6 +18,16 @@ public class DBableDTO implements Serializable {
 	public DBableDTO(Long id, Long version, String uid, String display) {
 		this(id,version,uid);
 		this.display = display;
+	}
+
+	@Override
+	public Long identifer() {
+		return getId();
+	}
+
+	@Override
+	public void identifer(Long i) {
+		setId(i);
 	}
 
 	public Long getId() {

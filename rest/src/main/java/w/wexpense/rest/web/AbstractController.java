@@ -26,19 +26,20 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.common.base.Preconditions;
 
+import w.wexpense.persistence.PersistenceUtils;
 import w.wexpense.rest.config.WebConfig;
+import w.wexpense.rest.dto.AbstractDTO;
 import w.wexpense.rest.events.PaginatedResultsRetrievedEvent;
 import w.wexpense.rest.events.ResourceCreatedEvent;
 import w.wexpense.rest.events.SingleResourceRetrievedEvent;
 import w.wexpense.rest.exception.ResourceNotFoundException;
-import w.wexpense.rest.utils.LinkUtil;
 import w.wexpense.rest.utils.RestPreconditions;
 import w.wexpense.service.PagedContent;
 import w.wexpense.service.StorableService;
 
-public abstract class AbstractController<T, D, ID extends Serializable> {
+public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extends Serializable> {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	protected ModelMapper modelMapper;
@@ -63,31 +64,22 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 			throw new RuntimeException(e);
 		}
 	}
-
-	protected abstract ID getIdFromEntity(T entity);
-
-	protected abstract ID getIdFromDTO(D dto);
-
-	protected T fromDto(D dto, T entity) {
+	
+	protected T dto2Entity(D dto, T entity) {
 		if (entity==null) {
-			entity = modelMapper.map(dto, clazz);
-		} else {
-			if (!getIdFromDTO(dto).equals(getIdFromEntity(entity))) {
-				throw new IllegalArgumentException("None matching ids");
-			}
-			
+			return modelMapper.map(dto, clazz);
+		} else {		
 			modelMapper.map(dto, entity);
-		}
-		return service.save(entity);
+			return entity;
+		}		
 	}
 
-	protected D toDto(T t) {
-		D dto = modelMapper.map(t, clazzDTO);
-		return dto;
+	protected D entity2Dto(T t) {
+		return modelMapper.map(t, clazzDTO);
 	}
 
-	protected List<D> toDtos(List<T> ts) {
-		return ts.stream().map(post -> toDto(post)).collect(Collectors.toList());
+	protected List<D> entities2Dtos(List<T> ts) {
+		return ts.stream().map(post -> entity2Dto(post)).collect(Collectors.toList());
 	}
 
 	/**
@@ -104,7 +96,7 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 		final T resourceById = RestPreconditions.checkFound(service.load(id));
 		eventPublisher.publishEvent(new SingleResourceRetrievedEvent(this, response));
 
-		return toDto(resourceById);
+		return entity2Dto(resourceById);
 	}
 
 	/**
@@ -115,7 +107,7 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	@ResponseBody
 	@Transactional(readOnly=true)
 	public List<D> findAll() {
-		return toDtos(service.loadAll());
+		return entities2Dtos(service.loadAll());
 	}
 
 	/**
@@ -129,7 +121,7 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 			@RequestParam(value = "size", defaultValue = "10") final int size,
 			@RequestParam(value = "orderBy", required = false) final String orderBy,
 			final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
-
+		
 		PagedContent<T> resultPage = service.loadPage(page, size, orderBy);
 
 		if (page >= resultPage.getTotalPages()) {
@@ -137,10 +129,9 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 		}
 
 		eventPublisher.publishEvent(
-				new PaginatedResultsRetrievedEvent(this, LinkUtil.getRequestMapping(uriBuilder, this.getClass()),
-						response, size, page, resultPage.getTotalPages(), orderBy));
+				new PaginatedResultsRetrievedEvent(this, response, page, size, orderBy, resultPage.getTotalPages()));
 
-		return toDtos(resultPage.getContent());
+		return entities2Dtos(resultPage.getContent());
 	}
 
 	// write
@@ -160,7 +151,7 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	public void create(@RequestBody final D dto, final HttpServletResponse response) {
 		Preconditions.checkNotNull(dto);
 		
-		final ID idOfCreatedResource = getIdFromEntity(fromDto(dto, null));
+		final Object idOfCreatedResource = PersistenceUtils.getIdValue( service.save(dto2Entity(dto, null)) );
 
 		eventPublisher.publishEvent(new ResourceCreatedEvent(this, response, idOfCreatedResource));
 	}
@@ -175,11 +166,11 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	public void update(@PathVariable("id") final ID id, @RequestBody final D dto) {
 		Preconditions.checkNotNull(dto);
 
-		T entity = service.load(id);
+		dto.checkIdentifier(id);
 		
-		RestPreconditions.checkFound(entity);
+		RestPreconditions.checkFound(service.load(id));
 
-		fromDto(dto, entity);
+		service.save(dto2Entity(dto, null));
 	}
 
 	/**
@@ -191,15 +182,22 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void patch(@PathVariable("id") final ID id, @RequestBody final Map<String,?> resource) {
 		Preconditions.checkNotNull(resource);
-
+		
 		T entity = service.load(id);
-
+		
+		Object entityId = PersistenceUtils.getIdValue(entity);
+		
 		RestPreconditions.checkFound(entity);
 		
 		// we need a new mapper else old mapping might corrupt our current mappings.
 		ModelMapper m = WebConfig.newModelMapper();
 		m.map(resource, entity);
 
+		// make sure we did not overwrite the id
+		if (!entityId.equals(PersistenceUtils.getIdValue(entity))) {
+			throw new IllegalArgumentException("None matching ids");
+		}
+		
 		if (LOGGER.isDebugEnabled()) {
 			StringBuilder sb = new StringBuilder("Mappings\n");
 			for(TypeMap<?,?> tm: m.getTypeMaps()) {
@@ -220,5 +218,4 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 	public void delete(@PathVariable("id") final ID id) {
 		service.delete(id);
 	}
-
 }

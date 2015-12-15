@@ -19,16 +19,13 @@ public class SingleResourceRetrievedDiscoverabilityListener implements Applicati
     public void onApplicationEvent(final SingleResourceRetrievedEvent resourceRetrievedEvent) {
         Preconditions.checkNotNull(resourceRetrievedEvent);
 
-        final HttpServletResponse response = resourceRetrievedEvent.getResponse();
-        
-        addLinkHeaderOnSingleResourceRetrieval(response);
+        addLinkHeaderOnSingleResourceRetrieval(resourceRetrievedEvent.getResponse());
     }
 
     void addLinkHeaderOnSingleResourceRetrieval(final HttpServletResponse response) {
         final String requestURL = ServletUriComponentsBuilder.fromCurrentRequestUri().build().toUri().toASCIIString();
         
-        final int positionOfLastSlash = requestURL.lastIndexOf("/");
-        final String uriForCollection = requestURL.substring(0, positionOfLastSlash);
+        final String uriForCollection = requestURL.substring(0, requestURL.lastIndexOf("/"));
 
         final String linkHeaderValue = LinkUtil.createLinkHeader(uriForCollection, "collection");
         

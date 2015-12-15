@@ -17,13 +17,10 @@ import w.wexpense.rest.events.ResourceCreatedEvent;
 public class ResourceCreatedDiscoverabilityListener implements ApplicationListener<ResourceCreatedEvent> {
 
     @Override
-    public void onApplicationEvent(final ResourceCreatedEvent resourceCreatedEvent) {
-        Preconditions.checkNotNull(resourceCreatedEvent);
+    public void onApplicationEvent(final ResourceCreatedEvent event) {
+        Preconditions.checkNotNull(event);
 
-        final HttpServletResponse response = resourceCreatedEvent.getResponse();
-        final Object idOfNewResource = resourceCreatedEvent.getIdOfNewResource();
-
-        addLinkHeaderOnResourceCreation(response, idOfNewResource);
+        addLinkHeaderOnResourceCreation(event.getResponse(), event.getIdOfNewResource());
     }
 
     void addLinkHeaderOnResourceCreation(final HttpServletResponse response, final Object idOfNewResource) {
