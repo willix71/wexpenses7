@@ -12,13 +12,13 @@ import w.wexpense.rest.events.PaginatedResultsRetrievedEvent;
 import w.wexpense.rest.utils.LinkUtil;
 
 @Component
-public class PaginatedResultsRetrievedDiscoverabilityListener implements ApplicationListener<PaginatedResultsRetrievedEvent> {
+public class PaginatedResultsRetrievedListener implements ApplicationListener<PaginatedResultsRetrievedEvent> {
 
     private static final String PAGE = "page";
     private static final String SIZE = "size";
     private static final String ORDER_BY = "orderBy";
     
-    public PaginatedResultsRetrievedDiscoverabilityListener() {
+    public PaginatedResultsRetrievedListener() {
         super();
      }
 

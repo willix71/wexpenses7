@@ -13,7 +13,7 @@ import w.wexpense.rest.events.SingleResourceRetrievedEvent;
 import w.wexpense.rest.utils.LinkUtil;
 
 @Component
-public class SingleResourceRetrievedDiscoverabilityListener implements ApplicationListener<SingleResourceRetrievedEvent> {
+public class SingleResourceRetrievedListener implements ApplicationListener<SingleResourceRetrievedEvent> {
 
     @Override
     public void onApplicationEvent(final SingleResourceRetrievedEvent resourceRetrievedEvent) {

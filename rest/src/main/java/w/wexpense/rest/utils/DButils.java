@@ -7,17 +7,16 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
 
-import w.wexpense.model.DBable;
-
 @Component
 public class DButils {
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public Long getVersion(Class<? extends DBable<?>> entityClass, Object id) {
+	public Long getVersion(Class<?> entityClass, Object id) {
 		return getVersion(entityClass.getSimpleName(), id);
 	}
+	
 	public Long getVersion(String entityClass, Object id) {
 		try {
 			TypedQuery<Long> query = entityManager.createQuery("SELECT version FROM " + entityClass + " WHERE id = :id", Long.class);

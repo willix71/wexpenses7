@@ -51,6 +51,7 @@
 		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
 
+    <!-- 
 	<filter>
 		<filter-name>etagFilter</filter-name>
 		<filter-class>org.springframework.web.filter.ShallowEtagHeaderFilter</filter-class>
@@ -60,7 +61,8 @@
 		<url-pattern>/rest/country/*</url-pattern>
 		<url-pattern>/rest/currency/*</url-pattern>
 	</filter-mapping>
-
+    -->
+    
 	<!-- misc -->
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>

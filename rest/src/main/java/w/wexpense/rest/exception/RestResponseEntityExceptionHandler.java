@@ -17,9 +17,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 	}
 	
+	@ExceptionHandler(value = { ConflictException.class })
+	protected ResponseEntity<Object> handleConflict(ConflictException ex, WebRequest request) {
+		String bodyOfResponse = ex.getMessage();
+		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
+	}
+	
+	@ExceptionHandler(value = { UnmodifiedException.class })
+	protected ResponseEntity<Object> handleConflict(UnmodifiedException ex, WebRequest request) {
+		return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.NOT_MODIFIED, request);
+	}
+	
 	@ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })
 	protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
 		String bodyOfResponse = "This should be application specific\n";
-		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
+		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.I_AM_A_TEAPOT /* for now */, request);
 	}
 }

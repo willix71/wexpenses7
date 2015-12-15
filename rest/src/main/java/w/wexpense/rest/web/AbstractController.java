@@ -13,25 +13,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.common.base.Preconditions;
 
 import w.wexpense.persistence.PersistenceUtils;
 import w.wexpense.rest.config.WebConfig;
 import w.wexpense.rest.dto.AbstractDTO;
+import w.wexpense.rest.etag.SimpleVersionManager;
 import w.wexpense.rest.events.PaginatedResultsRetrievedEvent;
 import w.wexpense.rest.events.ResourceCreatedEvent;
+import w.wexpense.rest.events.ResourceUpdatedEvent;
 import w.wexpense.rest.events.SingleResourceRetrievedEvent;
+import w.wexpense.rest.exception.ConflictException;
 import w.wexpense.rest.exception.ResourceNotFoundException;
 import w.wexpense.rest.utils.RestPreconditions;
 import w.wexpense.service.PagedContent;
@@ -47,6 +51,9 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 	@Autowired
 	protected ApplicationEventPublisher eventPublisher;
 
+	@Autowired
+	protected SimpleVersionManager versionManager;
+	
 	protected final StorableService<T, ID> service;
 	protected final Class<T> clazz;
 	protected final Class<D> clazzDTO;
@@ -82,6 +89,18 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 		return ts.stream().map(post -> entity2Dto(post)).collect(Collectors.toList());
 	}
 
+	protected void versionCheck(ID id, String version, HttpServletResponse response) {
+		versionManager.checkAndSet(clazz, version, response);
+	}
+	
+	public Class<T> getClazz() {
+		return clazz;
+	}
+	
+	public Class<D> getClazzDTO() {
+		return clazzDTO;
+	}
+	
 	/**
 	 * curl -i http://localhost:8880/spring/rest/foos/1
 	 * 
@@ -92,8 +111,11 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	@Transactional(readOnly=true)
-	public D findById(@PathVariable("id") final ID id, final HttpServletResponse response) {
+	public D findById(@PathVariable("id") final ID id, @RequestHeader(value=HttpHeaders.IF_NONE_MATCH,required=false) String etag, final HttpServletResponse response) {
+		versionCheck(id, etag, response);
+		
 		final T resourceById = RestPreconditions.checkFound(service.load(id));
+		
 		eventPublisher.publishEvent(new SingleResourceRetrievedEvent(this, response));
 
 		return entity2Dto(resourceById);
@@ -106,7 +128,9 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	@Transactional(readOnly=true)
-	public List<D> findAll() {
+	public List<D> findAll(@RequestHeader(value=HttpHeaders.IF_NONE_MATCH,required=false) String etag, final HttpServletResponse response) {
+		versionCheck(null, etag, response);
+		
 		return entities2Dtos(service.loadAll());
 	}
 
@@ -120,7 +144,9 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 	public List<D> findPaginated(@RequestParam("page") final int page,
 			@RequestParam(value = "size", defaultValue = "10") final int size,
 			@RequestParam(value = "orderBy", required = false) final String orderBy,
-			final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
+			@RequestHeader(value=HttpHeaders.IF_NONE_MATCH,required=false) String etag, final HttpServletResponse response) {
+		
+		versionCheck(null, etag, response);
 		
 		PagedContent<T> resultPage = service.loadPage(page, size, orderBy);
 
@@ -163,7 +189,7 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.OK)
-	public void update(@PathVariable("id") final ID id, @RequestBody final D dto) {
+	public void update(@PathVariable("id") final ID id, @RequestBody final D dto, final HttpServletResponse response) {
 		Preconditions.checkNotNull(dto);
 
 		dto.checkIdentifier(id);
@@ -171,6 +197,8 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 		RestPreconditions.checkFound(service.load(id));
 
 		service.save(dto2Entity(dto, null));
+		
+		eventPublisher.publishEvent(new ResourceUpdatedEvent(this, response, id));
 	}
 
 	/**
@@ -180,7 +208,7 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void patch(@PathVariable("id") final ID id, @RequestBody final Map<String,?> resource) {
+	public void patch(@PathVariable("id") final ID id, @RequestBody final Map<String,?> resource, final HttpServletResponse response) {
 		Preconditions.checkNotNull(resource);
 		
 		T entity = service.load(id);
@@ -194,8 +222,9 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 		m.map(resource, entity);
 
 		// make sure we did not overwrite the id
-		if (!entityId.equals(PersistenceUtils.getIdValue(entity))) {
-			throw new IllegalArgumentException("None matching ids");
+		Object entityId2 = PersistenceUtils.getIdValue(entity);
+		if (!entityId.equals(entityId2)) {
+			new ConflictException("Ids", entityId, entityId2);
 		}
 		
 		if (LOGGER.isDebugEnabled()) {
@@ -207,6 +236,8 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 		}
 		
 		service.save(entity);
+		
+		eventPublisher.publishEvent(new ResourceUpdatedEvent(this, response, id));
 	}
 	
 	/**

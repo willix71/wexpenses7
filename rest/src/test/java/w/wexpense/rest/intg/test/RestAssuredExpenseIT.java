@@ -106,7 +106,7 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	@Test
 	@Order(4)
 	public void testPutUpdateUser() {
-		Response r = when().get("/expense?uid=9684a46f-9b8b-432d-a586-126127afbba6").then().statusCode(200).extract().response();		
+		Response r = when().get("/expense?uid=test-expense-uid-1234567890").then().statusCode(200).extract().response();		
 		Object id = r.path("id");
 		Object mDate = r.path("version");
 
