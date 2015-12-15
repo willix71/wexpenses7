@@ -23,9 +23,7 @@ import w.wexpense.model.Expense;
 import w.wexpense.model.TransactionLine;
 import w.wexpense.model.enums.TransactionLineEnum;
 import w.wexpense.service.StorableService;
-import w.wexpense.service.model.impl.TransactionLineService;
 import w.wexpense.utils.ExpenseUtils;
-import w.wexpense.utils.TransactionLineUtils;
 
 @ActiveProfiles("ExpenseOneToManyTest")
 public class ExpenseOneToManyTest extends AbstractOneToManyTest {
