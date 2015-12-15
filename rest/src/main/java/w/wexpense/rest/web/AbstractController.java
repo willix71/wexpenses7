@@ -32,7 +32,6 @@ import w.wexpense.rest.events.PaginatedResultsRetrievedEvent;
 import w.wexpense.rest.events.ResourceCreatedEvent;
 import w.wexpense.rest.events.SingleResourceRetrievedEvent;
 import w.wexpense.rest.exception.ResourceNotFoundException;
-import w.wexpense.rest.utils.LinkUtil;
 import w.wexpense.rest.utils.RestPreconditions;
 import w.wexpense.service.PagedContent;
 import w.wexpense.service.StorableService;
@@ -140,8 +139,7 @@ public abstract class AbstractController<T, D, ID extends Serializable> {
 		}
 
 		eventPublisher.publishEvent(
-				new PaginatedResultsRetrievedEvent(this, LinkUtil.getRequestMapping(uriBuilder, this.getClass()),
-						response, size, page, resultPage.getTotalPages(), orderBy));
+				new PaginatedResultsRetrievedEvent(this, response, page, size, orderBy, resultPage.getTotalPages()));
 
 		return entities2Dtos(resultPage.getContent());
 	}
