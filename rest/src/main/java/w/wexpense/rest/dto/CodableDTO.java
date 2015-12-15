@@ -1,8 +1,6 @@
 package w.wexpense.rest.dto;
 
-import java.io.Serializable;
-
-public class CodableDTO implements Serializable {
+public class CodableDTO extends AbstractDTO<String> {
 	private static final long serialVersionUID = 1L;
 
 	private String code;
@@ -15,6 +13,15 @@ public class CodableDTO implements Serializable {
 		this.name = name;
 	}
 
+	@Override
+	public String identifer() {
+		return getCode();
+	}
+	@Override
+	public void identifer(String code) {
+		setCode(code);
+	}
+	
 	public String getCode() {
 		return code;
 	}

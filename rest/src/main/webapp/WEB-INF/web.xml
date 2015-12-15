@@ -57,7 +57,8 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>etagFilter</filter-name>
-		<url-pattern>/rest/*</url-pattern>
+		<url-pattern>/rest/country/*</url-pattern>
+		<url-pattern>/rest/currency/*</url-pattern>
 	</filter-mapping>
 
 	<!-- misc -->

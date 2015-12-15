@@ -19,16 +19,6 @@ public class DBableController<T extends DBable<T>,D extends DBableDTO> extends A
 	public DBableController(StorableService<T, Long> service, Class<T> clazz) throws RuntimeException {
 		super(service, clazz);
 	}
-
-	@Override
-	protected Long getIdFromEntity(T entity) {
-		return entity.getId();
-	}
-
-	@Override
-	protected Long getIdFromDTO(D dto) {
-		return dto.getId();
-	}
 	
 	@Override
 	protected T dto2Entity(D dto, T entity) {
@@ -37,8 +27,8 @@ public class DBableController<T extends DBable<T>,D extends DBableDTO> extends A
 		}
 		return super.dto2Entity(dto, entity);
 	}
-	
-    /**
+
+	/**
      * curl -i http://localhost:8880/spring/rest/foos?uid=12345
      * 
      */
