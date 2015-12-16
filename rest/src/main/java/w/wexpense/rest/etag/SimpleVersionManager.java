@@ -7,14 +7,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Component;
-
 
 import w.wexpense.rest.exception.ResourceNotFoundException;
 import w.wexpense.rest.exception.UnmodifiedException;
 import w.wexpense.rest.utils.DButils;
 
-@Component
+//@Component
+@Deprecated // using an interceptor for this now
 public class SimpleVersionManager {
 	
 	@Autowired

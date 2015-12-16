@@ -27,10 +27,6 @@ public class DBableController<T extends DBable<T>,D extends DBableDTO> extends A
 		}
 		return super.dto2Entity(dto, entity);
 	}
-
-	protected void versionCheck(Long id, String version, HttpServletResponse response) {
-		//versionManager.checkAndSet(clazz, id, version, response);
-	}
 	
 	/**
      * curl -i http://localhost:8880/spring/rest/foos?uid=12345

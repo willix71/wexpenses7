@@ -30,7 +30,6 @@ import com.google.common.base.Preconditions;
 import w.wexpense.persistence.PersistenceUtils;
 import w.wexpense.rest.config.WebConfig;
 import w.wexpense.rest.dto.AbstractDTO;
-import w.wexpense.rest.etag.SimpleVersionManager;
 import w.wexpense.rest.events.PaginatedResultsRetrievedEvent;
 import w.wexpense.rest.events.ResourceCreatedEvent;
 import w.wexpense.rest.events.ResourceUpdatedEvent;
@@ -50,9 +49,6 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 	
 	@Autowired
 	protected ApplicationEventPublisher eventPublisher;
-
-//	@Autowired
-//	protected SimpleVersionManager versionManager;
 	
 	protected final StorableService<T, ID> service;
 	protected final Class<T> clazz;
@@ -89,10 +85,6 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 		return ts.stream().map(post -> entity2Dto(post)).collect(Collectors.toList());
 	}
 
-	protected void versionCheck(ID id, String version, HttpServletResponse response) {
-		//versionManager.checkAndSet(clazz, version, response);
-	}
-	
 	public Class<T> getClazz() {
 		return clazz;
 	}
@@ -112,8 +104,6 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 	@ResponseBody
 	@Transactional(readOnly=true)
 	public D findById(@PathVariable("id") final ID id, @RequestHeader(value=HttpHeaders.IF_NONE_MATCH,required=false) String etag, final HttpServletResponse response) {
-		versionCheck(id, etag, response);
-		
 		final T resourceById = RestPreconditions.checkFound(service.load(id));
 		
 		eventPublisher.publishEvent(new SingleResourceRetrievedEvent(this, response));
@@ -129,8 +119,6 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 	@ResponseBody
 	@Transactional(readOnly=true)
 	public List<D> findAll(@RequestHeader(value=HttpHeaders.IF_NONE_MATCH,required=false) String etag, final HttpServletResponse response) {
-		versionCheck(null, etag, response);
-		
 		return entities2Dtos(service.loadAll());
 	}
 
@@ -145,8 +133,6 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 			@RequestParam(value = "size", defaultValue = "10") final int size,
 			@RequestParam(value = "orderBy", required = false) final String orderBy,
 			@RequestHeader(value=HttpHeaders.IF_NONE_MATCH,required=false) String etag, final HttpServletResponse response) {
-		
-		versionCheck(null, etag, response);
 		
 		PagedContent<T> resultPage = service.loadPage(page, size, orderBy);
 
