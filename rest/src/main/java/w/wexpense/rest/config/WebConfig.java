@@ -9,6 +9,7 @@ import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -18,11 +19,15 @@ import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import w.wexpense.model.Account;
 import w.wexpense.model.Discriminator;
 import w.wexpense.rest.dto.DBableDTO;
+import w.wexpense.rest.etag.DBableVersionInterceptor;
+import w.wexpense.rest.etag.SimpleVersionInterceptor;
+import w.wexpense.rest.utils.DButils;
 
 @Configuration
 @EnableWebMvc
@@ -30,12 +35,21 @@ import w.wexpense.rest.dto.DBableDTO;
 @EnableTransactionManagement
 public class WebConfig extends WebMvcConfigurerAdapter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
+
+	@Autowired
+	private DButils dbutils;
 	
 	public WebConfig() {
 		super();
 		LOGGER.info("WebConfig initialized");
 	}
 
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(new SimpleVersionInterceptor()).addPathPatterns("/currency","/currency/*","/country","/country/*");
+		registry.addInterceptor(new DBableVersionInterceptor(dbutils)).excludePathPatterns("/currency","/currency/*","/country","/country/*");
+	}
+	 
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 		converters.add(new MappingJackson2HttpMessageConverter());

@@ -51,8 +51,8 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 	@Autowired
 	protected ApplicationEventPublisher eventPublisher;
 
-	@Autowired
-	protected SimpleVersionManager versionManager;
+//	@Autowired
+//	protected SimpleVersionManager versionManager;
 	
 	protected final StorableService<T, ID> service;
 	protected final Class<T> clazz;
@@ -90,7 +90,7 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 	}
 
 	protected void versionCheck(ID id, String version, HttpServletResponse response) {
-		versionManager.checkAndSet(clazz, version, response);
+		//versionManager.checkAndSet(clazz, version, response);
 	}
 	
 	public Class<T> getClazz() {

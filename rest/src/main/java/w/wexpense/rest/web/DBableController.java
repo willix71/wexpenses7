@@ -29,7 +29,7 @@ public class DBableController<T extends DBable<T>,D extends DBableDTO> extends A
 	}
 
 	protected void versionCheck(Long id, String version, HttpServletResponse response) {
-		versionManager.checkAndSet(clazz, id, version, response);
+		//versionManager.checkAndSet(clazz, id, version, response);
 	}
 	
 	/**
