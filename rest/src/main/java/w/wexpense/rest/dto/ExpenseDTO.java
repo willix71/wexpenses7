@@ -3,6 +3,7 @@ package w.wexpense.rest.dto;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class ExpenseDTO extends DBableDTO {
 	private static final long serialVersionUID = 1L;
@@ -17,6 +18,8 @@ public class ExpenseDTO extends DBableDTO {
 	private String description;
 	private DBableDTO payment;
 	private List<TransactionLineDTO> transactions = new ArrayList<>();
+	private Set<ExchangeRateDTO> exchangeRates;
+	
 	public String getDate() {
 		return date;
 	}
@@ -76,5 +79,11 @@ public class ExpenseDTO extends DBableDTO {
 	}
 	public void setTransactions(List<TransactionLineDTO> transactions) {
 		this.transactions = transactions;
+	}
+	public Set<ExchangeRateDTO> getExchangeRates() {
+		return exchangeRates;
+	}
+	public void setExchangeRates(Set<ExchangeRateDTO> exchangeRates) {
+		this.exchangeRates = exchangeRates;
 	}
 }

@@ -5,6 +5,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -21,53 +22,54 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import w.wexpense.utils.ExpenseUtils;
 import w.wexpense.validation.Dtanized;
 import w.wexpense.validation.Transactionized;
 import w.wexpense.validation.Warning;
 
 @Entity
-@Dtanized(groups=Warning.class)
+@Dtanized(groups = Warning.class)
 public class Expense extends DBable<Expense> implements Closable {
 
 	private static final long serialVersionUID = 2482940442245899869L;
-	
+
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
-	
+
 	@NotNull
 	private BigDecimal amount;
-	
+
 	@NotNull
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Currency currency;
-	
+
 	@NotNull
 	@ManyToOne(fetch = FetchType.EAGER)
-	//@JoinColumn(name="PAYEE_OID")
+	// @JoinColumn(name="PAYEE_OID")
 	private Payee payee;
-	
+
 	private String payed;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
-	//@JoinColumn(name="TYPE_OID")
+	// @JoinColumn(name="TYPE_OID")
 	private ExpenseType type;
-	
+
 	private String externalReference;
-	
+
 	private String description;
-	
+
 	@ManyToOne
 	private Payment payment;
-	
-   @OneToMany(mappedBy="expense", cascade={CascadeType.ALL}, orphanRemoval=true)
-   @OrderBy("factor, amount")
-   @OnDelete(action=OnDeleteAction.CASCADE)
-   @Transactionized
-   @Size(min=2,message="A expense must have at least 2 transaction lines: one IN and one OUT")
-   @Valid
-   private List<TransactionLine> transactions = new ArrayList<>();
-   
+
+	@OneToMany(mappedBy = "expense", cascade = { CascadeType.ALL }, orphanRemoval = true)
+	@OrderBy("factor, amount")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Transactionized
+	@Size(min = 2, message = "A expense must have at least 2 transaction lines: one IN and one OUT")
+	@Valid
+	private List<TransactionLine> transactions = new ArrayList<>();
+
 	public Date getDate() {
 		return date;
 	}
@@ -123,7 +125,7 @@ public class Expense extends DBable<Expense> implements Closable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public List<TransactionLine> getTransactions() {
 		return transactions;
 	}
@@ -139,15 +141,23 @@ public class Expense extends DBable<Expense> implements Closable {
 		transactions.add(transaction);
 		transaction.setExpense(this);
 	}
+
+	public void removeTransaction(TransactionLine transaction) {
+		if (this.transactions != null) {
+			if (this.transactions.remove(transaction)) {
+				transaction.setExpense(null);
+			}
+		}
+	}
 	
-   public void removeTransaction(TransactionLine transaction) {
-      if (this.transactions != null) {
-         if (this.transactions.remove(transaction)) {
-            transaction.setExpense(null);
-         }
-      }
-   }
-	  
+	public Set<ExchangeRate> getExchangeRates() {
+		return ExpenseUtils.getExchangeRates(this);
+	}
+	
+	public void getExchangeRates(Set<ExchangeRate> rates) {
+		// TODO
+	}
+	
 	public Payment getPayment() {
 		return payment;
 	}
@@ -158,7 +168,7 @@ public class Expense extends DBable<Expense> implements Closable {
 
 	@Override
 	public boolean isClosed() {
-		return getPayment()!=null && getPayment().isClosed();
+		return getPayment() != null && getPayment().isClosed();
 	}
 
 	public String getPayed() {
@@ -170,27 +180,27 @@ public class Expense extends DBable<Expense> implements Closable {
 	}
 
 	@Override
-	public String toString() {		
+	public String toString() {
 		return MessageFormat.format("{0,date,dd/MM/yyyy} {1} {2,number, 0.00}{3}", date, payee, amount, currency);
 	}
-	
+
 	@Override
-   public Expense duplicate() {
+	public Expense duplicate() {
 		Expense klone = super.duplicate();
 		kloneLines(klone, true);
 		return klone;
-   }
+	}
 
 	@Override
-   public Expense klone() {
+	public Expense klone() {
 		Expense klone = super.klone();
-      if (getPayment()!=null && !getPayment().isSelectable()) {
-         klone.setPayment(null);
-      }
-      kloneLines(klone, false);
+		if (getPayment() != null && !getPayment().isSelectable()) {
+			klone.setPayment(null);
+		}
+		kloneLines(klone, false);
 		return klone;
-   }
-	
+	}
+
 	private void kloneLines(Expense klone, boolean duplicate) {
 		if (getTransactions() != null) {
 			List<TransactionLine> newLines = new ArrayList<TransactionLine>();

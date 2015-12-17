@@ -85,6 +85,10 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 		return ts.stream().map(post -> entity2Dto(post)).collect(Collectors.toList());
 	}
 
+	protected ModelMapper getModelMapper() {
+		return modelMapper;
+	}
+
 	public Class<T> getClazz() {
 		return clazz;
 	}
@@ -108,7 +112,9 @@ public abstract class AbstractController<T, D extends AbstractDTO<ID>, ID extend
 		
 		eventPublisher.publishEvent(new SingleResourceRetrievedEvent(this, response));
 
-		return entity2Dto(resourceById);
+		D dto = entity2Dto(resourceById);
+		
+		return dto;
 	}
 
 	/**

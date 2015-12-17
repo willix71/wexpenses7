@@ -7,6 +7,7 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import static javax.persistence.CascadeType.*;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.ValidationException;
@@ -48,7 +49,7 @@ public class TransactionLine extends DBable<TransactionLine> implements Closable
 	@NotNull
 	private BigDecimal amount;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, cascade={PERSIST, MERGE, REMOVE, REFRESH, DETACH})
 	private ExchangeRate exchangeRate;
 
 	@NotNull

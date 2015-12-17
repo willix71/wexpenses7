@@ -34,67 +34,87 @@ import w.wexpense.utils.ExpenseUtils;
 import w.wexpense.utils.PayeeUtils;
 
 @Configuration
-class OneToManyConfig  extends DatabasePopulationConfig {
-   public OneToManyConfig() {
-      Currency chf = add(new Currency("CHF", "Swiss Francs", 100));
-      Country ch = add(new Country("CH", "Swiss", chf));
-      City c = add(new City("1010", "testCity", ch));
+class OneToManyConfig extends DatabasePopulationConfig {
+	public OneToManyConfig() {
+		add(new Currency("EUR", "Euro", 100));
+		Currency chf = add(new Currency("CHF", "Swiss Francs", 20));
+		Country ch = add(new Country("CH", "Swiss", chf));
+		City c = add(new City("1010", "testCity", ch));
 
-      add(new ExpenseType("BVO", true, BvoDtaFormater.class.getName()));
-      
-      add(PayeeUtils.newPayee("testPayee", c, "1-11111-1"));
-      
-      add(AccountUtils.newAccount(1, "in", "123123123123123"));
-      
-      add(AccountUtils.newAccount(2, "out","321321321321321", add(PayeeUtils.newPayee("wk", c, "1-123-1", "CH120022822877005740J"))));
-    };
+		add(new ExpenseType("BVO", true, BvoDtaFormater.class.getName()));
+
+		add(PayeeUtils.newPayee("testPayee", c, "1-11111-1"));
+
+		add(AccountUtils.newAccount(1, "in", "123123123123123"));
+
+		add(AccountUtils.newAccount(2, "out", "321321321321321", add(PayeeUtils.newPayee("wk", c, "1-123-1", "CH120022822877005740J"))));
+	};
 }
 
 @ContextConfiguration(classes = { OneToManyConfig.class })
 public abstract class AbstractOneToManyTest extends AbstractTest {
 
-   public static final Logger logger = LoggerFactory.getLogger(PaymentOneToManyTest.class);
-  
-   @PersistenceContext
-   protected EntityManager entityManager;
-   
-   @Autowired
-   protected PersistenceHelper persistenceHelper;
-   
-   @Autowired
-   protected PlatformTransactionManager transactionManager;
-   
-   protected Country CH() { return persistenceHelper.get(Country.class, "CH"); }
+	public static final Logger logger = LoggerFactory.getLogger(PaymentOneToManyTest.class);
 
-   protected Currency CHF() { return persistenceHelper.get(Currency.class, "CHF"); }
+	@PersistenceContext
+	protected EntityManager entityManager;
 
-   protected City testCity() { return persistenceHelper.getByName(City.class, "testCity"); }
+	@Autowired
+	protected PersistenceHelper persistenceHelper;
 
-   protected Payee testPayee() { return persistenceHelper.getByName(Payee.class, "testPayee"); }
+	@Autowired
+	protected PlatformTransactionManager transactionManager;
+	
+	protected Country CH() {
+		return persistenceHelper.get(Country.class, "CH");
+	}
 
-   protected ExpenseType BVO() { return persistenceHelper.getByName(ExpenseType.class, "BVO"); }
+	protected Currency CHF() {
+		return persistenceHelper.get(Currency.class, "CHF");
+	}
 
-   protected Account inAccount() { return persistenceHelper.getByName(Account.class, "in"); }
+	protected Currency EUR() {
+		return persistenceHelper.get(Currency.class, "EUR");
+	}
 
-   protected Account outAccount() { return persistenceHelper.getByName(Account.class, "out"); }
+	protected City testCity() {
+		return persistenceHelper.getByName(City.class, "testCity");
+	}
 
-   protected Expense newExpense(String amount) {
-      Expense x = ExpenseUtils.newExpense(new Date(), new BigDecimal(amount), CHF(), testPayee(), BVO(), "1 12345 12345 12345 12345", outAccount(), inAccount());
-      return x;
-   }
+	protected Payee testPayee() {
+		return persistenceHelper.getByName(Payee.class, "testPayee");
+	}
 
-   protected Expense newlines(Expense x) {
-      ExpenseUtils.newTransactionLine(x, outAccount(), TransactionLineEnum.OUT);
-      ExpenseUtils.newTransactionLine(x, inAccount(), TransactionLineEnum.IN);      
-      return x;
-   }
-   
-   @Test
-   @Order(-1)
-   public void testDB() {
-      Assert.assertEquals(1,persistenceHelper.count(Currency.class));
-      Assert.assertEquals(1,persistenceHelper.count(Country.class));
-      Assert.assertEquals(0,persistenceHelper.count(Expense.class));
-      Assert.assertEquals(0,persistenceHelper.count(TransactionLine.class));
-   }
+	protected ExpenseType BVO() {
+		return persistenceHelper.getByName(ExpenseType.class, "BVO");
+	}
+
+	protected Account inAccount() {
+		return persistenceHelper.getByName(Account.class, "in");
+	}
+
+	protected Account outAccount() {
+		return persistenceHelper.getByName(Account.class, "out");
+	}
+
+	protected Expense newExpense(String amount) {
+		Expense x = ExpenseUtils.newExpense(new Date(), new BigDecimal(amount), CHF(), testPayee(), BVO(),
+				"1 12345 12345 12345 12345", outAccount(), inAccount());
+		return x;
+	}
+
+	protected Expense newlines(Expense x) {
+		ExpenseUtils.newTransactionLine(x, outAccount(), TransactionLineEnum.OUT);
+		ExpenseUtils.newTransactionLine(x, inAccount(), TransactionLineEnum.IN);
+		return x;
+	}
+
+	@Test
+	@Order(-1)
+	public void testDB() {
+		Assert.assertEquals(2, persistenceHelper.count(Currency.class));
+		Assert.assertEquals(1, persistenceHelper.count(Country.class));
+		Assert.assertEquals(0, persistenceHelper.count(Expense.class));
+		Assert.assertEquals(0, persistenceHelper.count(TransactionLine.class));
+	}
 }

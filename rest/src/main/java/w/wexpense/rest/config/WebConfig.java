@@ -74,7 +74,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	}
 	
 	public static ModelMapper newModelMapper() {
-		ModelMapper modelMapper =  new ModelMapper();	
+		ModelMapper modelMapper =  new ModelMapper();
+
 		modelMapper.addConverter(new AbstractConverter<Account, DBableDTO>() {
 			@Override
 			protected DBableDTO convert(Account source) {

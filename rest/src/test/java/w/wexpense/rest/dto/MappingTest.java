@@ -2,6 +2,7 @@ package w.wexpense.rest.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,9 +14,13 @@ import w.wexpense.model.Account;
 import w.wexpense.model.Country;
 import w.wexpense.model.Currency;
 import w.wexpense.model.ExchangeRate;
+import w.wexpense.model.Expense;
 import w.wexpense.model.enums.AccountEnum;
 import w.wexpense.rest.config.WebConfig;
+import w.wexpense.utils.AccountUtils;
 import w.wexpense.utils.ExchangeRateUtils;
+import w.wexpense.utils.ExpenseUtils;
+import w.wexpense.utils.PayeeUtils;
 
 public class MappingTest {
 
@@ -114,5 +119,36 @@ public class MappingTest {
 		assertThat(dto.getDate()).isEqualTo("30040201 115500");
 	}
 
-
+	@Test
+	public void whenConvertExpenseEntityToDTO() {
+		Expense entity = ExpenseUtils.newExpense(110, new Currency("CHF",null,null), DateUtils.toDate(1,1,2001), PayeeUtils.newPayee("Migros"), AccountUtils.newAccount("cash"), AccountUtils.newAccount("groceries") );
+		
+		BigDecimal chf100 = new BigDecimal(110);
+		ExpenseDTO dto = getModelMapper().map(entity, ExpenseDTO.class);
+		assertThat(dto.getAmount()).isEqualTo(chf100);
+		assertThat(dto.getDate()).isEqualTo("20010101 000000");
+		assertThat(dto.getTransactions().size()).isEqualTo(2);
+		
+		assertThat(dto.getTransactions().size()).isEqualTo(2);
+		assertThat(dto.getTransactions().get(0).getDate()).isEqualTo("20010101 000000");
+		assertThat(dto.getTransactions().get(0).getAmount()).isEqualTo(chf100);
+		assertThat(dto.getTransactions().get(0).getValue()).isEqualTo(chf100);
+		
+		assertThat(dto.getExchangeRates().size()).isEqualTo(0);
+		
+		ExchangeRate xrate = ExchangeRateUtils.newExchangeRate(new Currency("CHF",null,null), new Currency("EUR",null,null), 1.234, DateUtils.toDate(1,2,3004,11,55));
+		entity.getTransactions().get(0).setExchangeRate(xrate);
+		
+		ExpenseDTO dto2 = getModelMapper().map(entity, ExpenseDTO.class);
+		assertThat(dto2.getExchangeRates().size()).isEqualTo(1);
+		
+		entity.getTransactions().get(1).setExchangeRate(xrate);
+		ExpenseDTO dto3 = getModelMapper().map(entity, ExpenseDTO.class);
+		assertThat(dto3.getExchangeRates().size()).isEqualTo(1);
+		
+		ExchangeRate xrate2 = ExchangeRateUtils.newExchangeRate(new Currency("CHF",null,null), new Currency("EUR",null,null), 4.321, DateUtils.toDate(1,2,3004,23,55));
+		entity.getTransactions().get(1).setExchangeRate(xrate2);
+		ExpenseDTO dto4 = getModelMapper().map(entity, ExpenseDTO.class);
+		assertThat(dto4.getExchangeRates().size()).isEqualTo(2);
+	}
 }

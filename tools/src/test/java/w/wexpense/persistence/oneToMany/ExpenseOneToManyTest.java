@@ -19,10 +19,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import w.utils.DateUtils;
 import w.wexpense.dta.DtaHelper;
+import w.wexpense.model.ExchangeRate;
 import w.wexpense.model.Expense;
 import w.wexpense.model.TransactionLine;
 import w.wexpense.model.enums.TransactionLineEnum;
 import w.wexpense.service.StorableService;
+import w.wexpense.utils.ExchangeRateUtils;
 import w.wexpense.utils.ExpenseUtils;
 
 @ActiveProfiles("ExpenseOneToManyTest")
@@ -45,8 +47,9 @@ public class ExpenseOneToManyTest extends AbstractOneToManyTest {
 	public void insertNewExpense() {
 		logger.info("================ STEP 1 insert new expense and new expense ================");
 
-		ExpenseUtils.fillExpense(EXPENSE, new Date(), testPayee(), new BigDecimal("100"), CHF(), BVO(), outAccount(),
-				inAccount());
+		ExchangeRate xr = ExchangeRateUtils.newExchangeRate(CHF(), EUR(), 1.35);
+		
+		ExpenseUtils.fillExpense(EXPENSE, new Date(), testPayee(), new BigDecimal("100"), CHF(), BVO(), outAccount(), inAccount(), xr);
 
 		Expense expense2 = saveExpense(EXPENSE);
 
@@ -87,7 +90,11 @@ public class ExpenseOneToManyTest extends AbstractOneToManyTest {
 
 		final String trDescription = "test expense";
 		final TransactionLine tl = expense2.getTransactions().get(0);
+		
 		tl.setDescription(trDescription);
+		
+		Assert.assertNotNull(tl.getExchangeRate());
+		tl.getExchangeRate().setFixFee(2.2);
 
 		Expense expense3 = saveExpense(expense2);
 
@@ -104,8 +111,9 @@ public class ExpenseOneToManyTest extends AbstractOneToManyTest {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				TransactionLine tr = persistenceHelper.getByUid(TransactionLine.class, tl.getUid());
 				Assert.assertEquals("Transaction line was not updated", trDescription, tr.getDescription());
-
+				Assert.assertEquals("Transaction line's exchange rate was not updated", 2.2, tr.getExchangeRate().getFixFee(),0.00001);
 			}
+			
 		});
 
 		Assert.assertEquals(2, persistenceHelper.count(TransactionLine.class));
