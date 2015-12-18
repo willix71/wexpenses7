@@ -9,6 +9,7 @@ import w.wexpense.AbstractTest;
 import w.wexpense.model.PayeeType;
 import w.wexpense.service.StorableService;
 import w.wexpense.test.config.DatabasePopulationConfig;
+import w.wexpense.test.utils.PersistenceHelper;
 
 import static org.assertj.core.api.Assertions.assertThat; 
 import org.junit.Test;
@@ -28,6 +29,9 @@ public class PayeeTypeServiceTest extends AbstractTest {
 	@Autowired
 	StorableService<PayeeType, Long> payeeTypeService;
 	
+	@Autowired
+	private PersistenceHelper persistenceHelper;
+	
 	@Test
 	@Order(0)
 	public void testSetup() {
@@ -39,11 +43,13 @@ public class PayeeTypeServiceTest extends AbstractTest {
 	@Test
 	@Order(1)
 	public void testLoad() {
-		PayeeType payee = payeeTypeService.save(new PayeeType("four", false));
+		PayeeType type = payeeTypeService.save(new PayeeType("four", false));
 		
-		assertThat(payee.getId()).isNotNull();
+		assertThat(type.getId()).isNotNull();
 		assertThat(payeeTypeService.loadAll()).hasSize(4);
-		assertThat(payeeTypeService.loadByUid(payee.getUid())).isEqualTo(payee);
+		assertThat(payeeTypeService.loadByUid(type.getUid())).isEqualTo(type);
+		
+		assertThat(persistenceHelper.getVersion(PayeeType.class, type.getId())).isEqualTo(type.getVersion());
 	}
 	
 	@Test

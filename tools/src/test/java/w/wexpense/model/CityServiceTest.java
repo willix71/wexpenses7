@@ -14,6 +14,7 @@ import w.wexpense.model.Country;
 import w.wexpense.model.Currency;
 import w.wexpense.service.StorableService;
 import w.wexpense.test.config.DatabasePopulationConfig;
+import w.wexpense.test.utils.PersistenceHelper;
 
 @Configuration
 class CityServiceTestConfig extends DatabasePopulationConfig {
@@ -33,22 +34,26 @@ public class CityServiceTest extends AbstractTest {
 	@Autowired
 	StorableService<City, Long> cityService;
 	
+	@Autowired
+	private PersistenceHelper persistenceHelper;
+	
 	@Test
 	@Order(0)
 	public void testSetup() {
 		assertThat(cityService).isNotNull();
-		
 		assertThat(cityService.loadAll()).hasSize(2);
 	}
 	
 	@Test
 	@Order(1)
 	public void testLoad() {
-		City type = cityService.save(new City("10","dix", countryService.load("CH")));
+		City city = cityService.save(new City("10","dix", countryService.load("CH")));
 		
-		assertThat(type.getId()).isNotNull();
+		assertThat(city.getId()).isNotNull();
 		assertThat(cityService.loadAll()).hasSize(3);
-		assertThat(cityService.loadByUid(type.getUid())).isEqualTo(type);
+		assertThat(cityService.loadByUid(city.getUid())).isEqualTo(city);
+		
+		assertThat(persistenceHelper.getVersion(City.class, city.getId())).isEqualTo(city.getVersion());
 	}
 	
 	@Test
