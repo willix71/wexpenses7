@@ -9,12 +9,12 @@ import static w.wexpense.model.enums.TransactionLineEnum.OUT;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Multimap;
+
 import w.wexpense.model.Expense;
 import w.wexpense.model.Payee;
 import w.wexpense.model.Payment;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Multimap;
 
 public class BvoDtaFormater implements DtaFormater {
 

@@ -13,6 +13,8 @@
 
 	<logger name="org.hibernate" level="INFO" />
     
+    <logger name="org.springframework.transaction" level="DEBUG" />
+    
 	<root>
 		<level value="DEBUG" />
 		<appender-ref ref="CONSOLE" />

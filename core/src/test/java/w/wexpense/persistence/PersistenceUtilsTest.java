@@ -7,7 +7,6 @@ import w.wexpense.model.City;
 import w.wexpense.model.Country;
 import w.wexpense.model.Currency;
 import w.wexpense.model.DBable;
-import w.wexpense.persistence.PersistenceUtils;
 
 public class PersistenceUtilsTest {
 

@@ -2,10 +2,10 @@ package w.wexpense.dta;
 
 import java.util.List;
 
+import com.google.common.collect.Multimap;
+
 import w.wexpense.model.Expense;
 import w.wexpense.model.Payment;
-
-import com.google.common.collect.Multimap;
 
 public interface DtaFormater {
 
