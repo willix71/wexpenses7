@@ -1,13 +1,18 @@
 package w.wexpense.model;
 
+import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.REFRESH;
+
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
-import static javax.persistence.CascadeType.*;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.ValidationException;
@@ -49,7 +54,7 @@ public class TransactionLine extends DBable<TransactionLine> implements Closable
 	@NotNull
 	private BigDecimal amount;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade={PERSIST, MERGE, REMOVE, REFRESH, DETACH})
+	@ManyToOne(fetch = FetchType.EAGER, cascade={PERSIST, MERGE, REFRESH, DETACH})
 	private ExchangeRate exchangeRate;
 
 	@NotNull
@@ -73,8 +78,13 @@ public class TransactionLine extends DBable<TransactionLine> implements Closable
 		this.expense = expense;
 	}
 
-	// TODO Remove once figured out a way to get Nested properties out of a
-	// BeanItemContainer
+	public void resetExpense(Expense x) {
+		this.expense = x;
+		if (date==null) date=x.getDate();
+		if (value==null) updateValue();
+	}
+	
+	// TODO Remove once figured out a way to get Nested properties out of a BeanItemContainer
 	public Payee getPayee() {
 		return expense == null ? null : expense.getPayee();
 	}
@@ -110,6 +120,17 @@ public class TransactionLine extends DBable<TransactionLine> implements Closable
 	public void setExchangeRate(ExchangeRate exchangeRate) {
 		this.exchangeRate = exchangeRate;
 	}
+	
+	public void resetExchangeRate(Collection<ExchangeRate> rates) {
+		if (rates != null && !rates.isEmpty() && this.exchangeRate !=null) {
+			for(ExchangeRate xrate: rates) {
+				if (this.exchangeRate.equals(xrate)) {
+					this.exchangeRate = xrate;
+					break;
+				}
+			}
+		}
+	}
 
 	/**
 	 * automatically calculates the amountValue based on the amount, the
@@ -117,8 +138,7 @@ public class TransactionLine extends DBable<TransactionLine> implements Closable
 	 */
 	public void updateValue() {
 		// using double because it will be rounded by the AmountValue object
-		// anyway
-		// so we don't need the precision of a BigDecimal
+		// anyway so we don't need the precision of a BigDecimal
 
 		if (amount == null) {
 			value = null;

@@ -10,6 +10,7 @@ import w.wexpense.model.Account;
 import w.wexpense.model.City;
 import w.wexpense.model.Country;
 import w.wexpense.model.Currency;
+import w.wexpense.model.ExchangeRate;
 import w.wexpense.model.Expense;
 import w.wexpense.model.ExpenseType;
 import w.wexpense.model.Payee;
@@ -36,7 +37,7 @@ public class DefaultDatabasePopulationConfig extends DatabasePopulationConfig {
 		add(new Country("DE", "Germany", euro));
 		add(new Country("US", "United States of America", usd));
 
-		add(new City(null, "London", uk));
+		City london = add(new City(null, "London", uk));
 		add(new City(null, "Paris", f));
 		City nyon = add(new City("1260", "Nyon", ch));
 		City gland = add(new City("1196", "Gland", ch));
@@ -52,7 +53,7 @@ public class DefaultDatabasePopulationConfig extends DatabasePopulationConfig {
 	    
 		add(ExchangeRateUtils.newExchangeRate(euro,chf,DateUtils.toDate(1,1,2000),1.6));
 		add(ExchangeRateUtils.newExchangeRate(euro,chf,DateUtils.toDate(1,1,2015),1.2));
-		add(ExchangeRateUtils.newExchangeRate(gbp,chf,DateUtils.toDate(1,1,2015),1.48315));
+		ExchangeRate xrate = add(ExchangeRateUtils.newExchangeRate(gbp,chf,DateUtils.toDate(1,1,2015),1.48315));
 		
 		PayeeType phone = add(new PayeeType("Phone"));
 		PayeeType wine = add(new PayeeType("Wine"));
@@ -63,6 +64,7 @@ public class DefaultDatabasePopulationConfig extends DatabasePopulationConfig {
 		Payee talktalk = add(PayeeUtils.newPayee(phone, "Talk Talk AG", "Case Postal 1359", zoug, "01-2546-3"));
 		Payee sunrise = add(PayeeUtils.newPayee(phone, "Sunrise", "Binzmuhlestrasse 130", zurich, "01-053099-3"));
 		Payee migros = add(PayeeUtils.newPayee("Migros", nyon));
+		Payee guinness = add(PayeeUtils.newPayee("Guinness World", london));
 		
 		Account asset = add(AccountUtils.newAccount(1,"Asset", AccountEnum.ASSET, chf));
 		Account cash = add(AccountUtils.newAccount(asset, 2,"Cash", AccountEnum.ASSET, chf));
@@ -73,8 +75,8 @@ public class DefaultDatabasePopulationConfig extends DatabasePopulationConfig {
 		
 		Expense x1 = add(ExpenseUtils.newExpense(recu, DateUtils.toDate(1,2,2015), 100, migros, cash, car ));
 		addAll(x1.getTransactions());
-//
-//		Expense x2 =  add(ExpenseUtils.newExpense(recu, DateUtils.toDate(2,2,2015), 86, migros, cash, misc ));
-//		addAll(x2.getTransactions());
+
+		Expense x2 =  add(ExpenseUtils.newExpense(recu, DateUtils.toDate(2,12,2012), 86, gbp, guinness, cash, misc, xrate));
+		addAll(x2.getTransactions());
 	};
 }

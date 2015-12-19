@@ -24,10 +24,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import w.wexpense.model.Account;
 import w.wexpense.model.Discriminator;
+import w.wexpense.model.ExchangeRate;
 import w.wexpense.rest.dto.DBableDTO;
 import w.wexpense.rest.etag.DBableVersionInterceptor;
 import w.wexpense.rest.etag.SimpleVersionInterceptor;
 import w.wexpense.rest.utils.DButils;
+import w.wexpense.rest.utils.DTOutils;
 
 @Configuration
 @EnableWebMvc
@@ -73,23 +75,30 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 		return newModelMapper();
 	}
 	
+	/**
+	 * @return
+	 */
 	public static ModelMapper newModelMapper() {
 		ModelMapper modelMapper =  new ModelMapper();
 
 		modelMapper.addConverter(new AbstractConverter<Account, DBableDTO>() {
 			@Override
 			protected DBableDTO convert(Account source) {
-				if (source == null) return null;
-				DBableDTO dto =  new DBableDTO(source.getId(), source.getVersion(), source.getUid(), source.toString());
-				return dto;
+				return DTOutils.toDto(source);
 			}
 		});
 		modelMapper.addConverter(new AbstractConverter<Discriminator, DBableDTO>() {
 			@Override
 			protected DBableDTO convert(Discriminator source) {
-				if (source == null) return null;
-				DBableDTO dto =  new DBableDTO(source.getId(), source.getVersion(), source.getUid(), source.toString());
-				return dto;
+				return DTOutils.toDto(source);
+			}
+		});
+		// not quit sure why this converter is needed, but unless we do add it, 
+		// it fails to convert a transaction's exchange rate.
+		modelMapper.addConverter(new AbstractConverter<DBableDTO, ExchangeRate>() {
+			@Override
+			protected ExchangeRate convert(DBableDTO source) {
+				return DTOutils.fromDto(source, ExchangeRate.class);
 			}
 		});
 		modelMapper.addConverter(new AbstractConverter<Date, String>() {

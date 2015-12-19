@@ -98,6 +98,11 @@ public class JpaRepoDaoService<T, ID extends Serializable> implements StorableSe
 	}
 
 	@Override
+	public long count() {
+		return dao.count();
+	}
+
+	@Override
 	public List<T> loadAll() {
 		return dao.findAll();
 	}

@@ -15,6 +15,8 @@ public interface StorableService<T, ID extends Serializable> {
 
 	T loadByUid(String uid);
 	
+	long count();
+	
 	List<T> loadAll();
 	
 	PagedContent<T> loadPage(final int page, final int size, final String orderBy);

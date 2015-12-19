@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -22,7 +24,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import w.wexpense.utils.ExpenseUtils;
 import w.wexpense.validation.Dtanized;
 import w.wexpense.validation.Transactionized;
 import w.wexpense.validation.Warning;
@@ -70,6 +71,10 @@ public class Expense extends DBable<Expense> implements Closable {
 	@Valid
 	private List<TransactionLine> transactions = new ArrayList<>();
 
+	// dummy variable to temporarily hold the 'real' exchange rates when convertion from DTOs
+	@Transient
+	private transient Set<ExchangeRate> allExchangeRates;
+	
 	public Date getDate() {
 		return date;
 	}
@@ -150,12 +155,34 @@ public class Expense extends DBable<Expense> implements Closable {
 		}
 	}
 	
-	public Set<ExchangeRate> getExchangeRates() {
-		return ExpenseUtils.getExchangeRates(this);
+
+	/**
+	 * When converting a DTO to an Entity, the exchange rate all point to different instances which
+	 * Hibernate does not like. This method ensures there is only one instance of each ExchangeRate
+	 */
+	public void resetTransactions() {
+		if (transactions != null) {
+			for (TransactionLine tl : transactions) {
+				tl.resetExpense(this);
+				tl.resetExchangeRate(this.allExchangeRates);
+			}
+		}
 	}
 	
-	public void getExchangeRates(Set<ExchangeRate> rates) {
-		// TODO
+	public void setAllExchangeRates(Set<ExchangeRate> exchangeRates) {
+		this.allExchangeRates = exchangeRates;
+	}
+	
+	public Set<ExchangeRate> getAllExchangeRates() {
+		Set<ExchangeRate> xrs = new HashSet<ExchangeRate>();
+		if (getTransactions() != null) {
+			for (TransactionLine tl : getTransactions()) {
+				if (tl.getExchangeRate() != null) {
+					xrs.add(tl.getExchangeRate());
+				}
+			}
+		}
+		return xrs;
 	}
 	
 	public Payment getPayment() {

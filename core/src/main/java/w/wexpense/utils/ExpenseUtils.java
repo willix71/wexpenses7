@@ -66,6 +66,7 @@ public class ExpenseUtils {
 					for(TransactionLine tl : x.getTransactions()) {
 						if (tl.getAccount().getCurrency() == null || xr.getToCurrency().equals(tl.getAccount().getCurrency())) {
 							tl.setExchangeRate(xr);
+							tl.updateValue();
 						}
 					}
 			} else {
@@ -150,4 +151,5 @@ public class ExpenseUtils {
 		}
 		return xrs;
 	}
+
 }

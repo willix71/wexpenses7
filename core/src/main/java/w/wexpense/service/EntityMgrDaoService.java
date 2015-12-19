@@ -102,6 +102,13 @@ public class EntityMgrDaoService<T, ID extends Serializable> implements Storable
 	}
 	
 	@Override
+	public long count() {
+		String entityName = entityClass.getSimpleName();
+		Query q = entityManager.createQuery("select count(*) from " + entityName);
+		return ((Number) q.getSingleResult()).longValue();
+	}
+
+	@Override
 	public List<T> loadAll() {
 		String entityName = entityClass.getSimpleName();
 		return entityManager.createQuery("FROM " + entityName, entityClass).getResultList();

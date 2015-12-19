@@ -18,7 +18,7 @@ public class ExpenseDTO extends DBableDTO {
 	private String description;
 	private DBableDTO payment;
 	private List<TransactionLineDTO> transactions = new ArrayList<>();
-	private Set<ExchangeRateDTO> exchangeRates;
+	private Set<ExchangeRateDTO> allExchangeRates;
 	
 	public String getDate() {
 		return date;
@@ -80,10 +80,10 @@ public class ExpenseDTO extends DBableDTO {
 	public void setTransactions(List<TransactionLineDTO> transactions) {
 		this.transactions = transactions;
 	}
-	public Set<ExchangeRateDTO> getExchangeRates() {
-		return exchangeRates;
+	public Set<ExchangeRateDTO> getAllExchangeRates() {
+		return allExchangeRates;
 	}
-	public void setExchangeRates(Set<ExchangeRateDTO> exchangeRates) {
-		this.exchangeRates = exchangeRates;
+	public void setAllExchangeRates(Set<ExchangeRateDTO> allExchangeRates) {
+		this.allExchangeRates = allExchangeRates;
 	}
 }

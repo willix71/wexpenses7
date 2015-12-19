@@ -2,12 +2,15 @@ package w.wexpense.rest.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import w.utils.DateUtils;
 import w.wexpense.model.Account;
@@ -134,21 +137,41 @@ public class MappingTest {
 		assertThat(dto.getTransactions().get(0).getAmount()).isEqualTo(chf100);
 		assertThat(dto.getTransactions().get(0).getValue()).isEqualTo(chf100);
 		
-		assertThat(dto.getExchangeRates().size()).isEqualTo(0);
+		assertThat(dto.getAllExchangeRates().size()).isEqualTo(0);
 		
 		ExchangeRate xrate = ExchangeRateUtils.newExchangeRate(new Currency("CHF",null,null), new Currency("EUR",null,null), 1.234, DateUtils.toDate(1,2,3004,11,55));
 		entity.getTransactions().get(0).setExchangeRate(xrate);
 		
 		ExpenseDTO dto2 = getModelMapper().map(entity, ExpenseDTO.class);
-		assertThat(dto2.getExchangeRates().size()).isEqualTo(1);
+		assertThat(dto2.getAllExchangeRates().size()).isEqualTo(1);
 		
 		entity.getTransactions().get(1).setExchangeRate(xrate);
 		ExpenseDTO dto3 = getModelMapper().map(entity, ExpenseDTO.class);
-		assertThat(dto3.getExchangeRates().size()).isEqualTo(1);
+		assertThat(dto3.getAllExchangeRates().size()).isEqualTo(1);
 		
 		ExchangeRate xrate2 = ExchangeRateUtils.newExchangeRate(new Currency("CHF",null,null), new Currency("EUR",null,null), 4.321, DateUtils.toDate(1,2,3004,23,55));
 		entity.getTransactions().get(1).setExchangeRate(xrate2);
 		ExpenseDTO dto4 = getModelMapper().map(entity, ExpenseDTO.class);
-		assertThat(dto4.getExchangeRates().size()).isEqualTo(2);
+		assertThat(dto4.getAllExchangeRates().size()).isEqualTo(2);
+		
+	}
+	
+	@Test
+	public void testResetAllExchangeRates() throws Exception {
+		ExpenseDTO dto = new ObjectMapper().readValue(new File("src/test/resources/create_foreign_expense.json"), ExpenseDTO.class);
+		
+		// convert the dto to the entity
+		Expense entity = getModelMapper().map(dto, Expense.class);
+		entity.resetTransactions();
+		
+		assertThat(entity.getAllExchangeRates().size()).isEqualTo(1);
+		ExchangeRate rate = entity.getAllExchangeRates().iterator().next();
+		assertThat(rate.getFromCurrency().getCode()).isEqualTo("GBP");
+		assertThat(rate.getToCurrency().getCode()).isEqualTo("CHF");		
+		assertThat(rate.getRate()).isEqualTo(2);
+
+		assertThat(entity.getTransactions().size()).isEqualTo(2);
+		assertThat(entity.getTransactions().get(0).getExchangeRate()).isSameAs(rate);
+		assertThat(entity.getTransactions().get(1).getExchangeRate()).isSameAs(rate);
 	}
 }

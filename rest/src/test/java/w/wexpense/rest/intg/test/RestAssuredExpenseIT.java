@@ -28,10 +28,11 @@ import com.jayway.restassured.response.Response;
  */
 public class RestAssuredExpenseIT extends AbstractRestAssured {
 
-	private static final int expenseId = 59;
+	private static final int expenseId = 61;
+	private static final int expenseWithXRateId = 63;
 	
 	@Test
-	public void testGetSingleUser() {
+	public void testGetSingle() {
 	  expect().
 	    statusCode(200).
 	    contentType("application/json").
@@ -57,25 +58,39 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	}
 
 	@Test
-	public void testGetUnknownUser() {
+	public void testGetUnknown() {
 	  expect().
 	    statusCode(404). // default mapping is json
 	    when().get("/expense/999999");
+	}	
+	
+	@Test
+	public void testGetWithExchangeRate() {
+	  expect().
+	    statusCode(200).
+	    contentType("application/json").
+	    body(
+	      "date", equalTo("20121202 000000"),
+	      "amount",equalTo(86F),
+	      "currency.code",equalTo("GBP"),
+	      "allExchangeRates[0].rate",equalTo(1.48315F),
+	      "transactions[0].value",equalTo(127.55F)). 
+	    when().get("/expense/"+expenseWithXRateId);
 	}
 	
 	@Test
 	@Order(1)
-	public void testGetAllUser() {
+	public void testGetAll() {
 	  expect().
 	    statusCode(200).
 	    contentType("application/json"). 
-	    body("uid", iterableWithSize(1)).
+	    body("uid", iterableWithSize(2)).
 	    when().get("/expense");
 	}
 	
 	@Test
 	@Order(2)
-	public void testGetPagedUser() {
+	public void testGetPaged() {
 	  expect().
 	    statusCode(200).
 	    contentType("application/json").
@@ -83,7 +98,7 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	    header("Link", not(containsString("last"))).
 	    header("Link", not(containsString("prev"))).
 	    header("Link", not(containsString("first"))).
-	    body("uid", iterableWithSize(1)).
+	    body("uid", iterableWithSize(2)).
 	    when().get("/expense?page=0&size=3&orderBy=date");
 		  
 	  expect().statusCode(404).when().get("/expense?page=1&size=3&orderBy=date");
@@ -91,7 +106,7 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	
 	@Test
 	@Order(3)
-	public void testGetCreateUser() throws IOException {	
+	public void testCreate() throws IOException {	
 		String json = FileCopyUtils.copyToString(new FileReader(new File("src/test/resources/create_expense.json")));
 
 	  expect().
@@ -105,7 +120,7 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	
 	@Test
 	@Order(4)
-	public void testPutUpdateUser() {
+	public void testPutUpdate() {
 		Response r = when().get("/expense?uid=test-expense-uid-1234567890").then().statusCode(200).extract().response();		
 		Object id = r.path("id");
 		Object mDate = r.path("version");
@@ -129,7 +144,7 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 	
 	@Test
 	@Order(6)
-	public void testGetDeleteUser() {
+	public void testDelete() {
 		Object id = getIdForUid("expense","test-expense-uid-1234567890");
 		
 		expect().statusCode(200).when().get("/expense/"+id);
@@ -141,4 +156,33 @@ public class RestAssuredExpenseIT extends AbstractRestAssured {
 		expect().statusCode(404).when().get("/expense?uid=test-expense-uid-1234567890");
 	}
 	
+	@Test
+	@Order(10)
+	public void testCreateForeignExpense() throws IOException {	
+		String json = FileCopyUtils.copyToString(new FileReader(new File("src/test/resources/create_foreign_expense.json")));
+
+		expect().
+			statusCode(201).header("Location", startsWith(BASE_URI + "/expense/")).
+			when().given().header("Content-Type", "application/json").body(json).post("/expense");
+	  
+		expect().statusCode(200).when().
+			body(
+		      "amount",equalTo(49.00F),
+		      "currency.code",equalTo("GBP"),
+		      "allExchangeRates[0].rate",equalTo(2F),
+		      "transactions[0].amount",equalTo(49F),
+		      "transactions[0].value",equalTo(100F)).
+			get("/expense?uid=test-foreign-expense-uid-1234567890");
+	}
+	
+	@Test
+	@Order(11)
+	public void testCleanUpCreateForeignExpense() throws IOException {	
+		Response response = when().get("/expense?uid=test-foreign-expense-uid-1234567890").then().statusCode(200).extract().response();
+		Object id = response.path("id");
+		Object rateId = response.path("allExchangeRates[0].id");
+		
+		expect().statusCode(200).when().delete("/expense/"+id);
+		expect().statusCode(200).when().delete("/exchangeRate/"+rateId);
+	}
 }
