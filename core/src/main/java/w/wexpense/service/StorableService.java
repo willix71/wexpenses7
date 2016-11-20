@@ -1,6 +1,7 @@
 package w.wexpense.service;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,14 @@ public interface StorableService<T, ID extends Serializable> {
 
 	T load(ID id);
 
+	T loadByUid(String uid);
+	
+	long count();
+	
+	List<T> loadAll();
+	
+	PagedContent<T> loadPage(final int page, final int size, final String orderBy);
+	
 	@Transactional
 	T save(T entity);
 

@@ -6,18 +6,17 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import w.utils.DateUtils;
 import w.wexpense.model.enums.AccountEnum;
 import w.wexpense.model.enums.TransactionLineEnum;
 import w.wexpense.utils.ExpenseUtils;
 import w.wexpense.utils.TransactionLineUtils;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * @author willy
@@ -41,16 +40,16 @@ public class TransactionLineUtilsTest {
 	 */
 	private List<Expense> initExpenses() {
 		List<Expense> xs = new ArrayList<Expense>();
-		xs.add( ExpenseUtils.newExpense(DateUtils.getDate(1,2,2013), new BigDecimal("100"), CHF, A11, A111) );
-		xs.add( ExpenseUtils.newExpense(DateUtils.getDate(1,4,2014), new BigDecimal("45"), CHF, A11, A12) );
-		xs.add( ExpenseUtils.newExpense(DateUtils.getDate(1,1,2012), new BigDecimal("200"), CHF, A13, A11) );	
+		xs.add( ExpenseUtils.newExpense(DateUtils.toDate(1,2,2013), new BigDecimal("100"), CHF, A11, A111) );
+		xs.add( ExpenseUtils.newExpense(DateUtils.toDate(1,4,2014), new BigDecimal("45"), CHF, A11, A12) );
+		xs.add( ExpenseUtils.newExpense(DateUtils.toDate(1,1,2012), new BigDecimal("200"), CHF, A13, A11) );	
 		
-		Expense xsum = ExpenseUtils.newExpense(DateUtils.getDate(1,10,2015), new BigDecimal("0"), CHF);
+		Expense xsum = ExpenseUtils.newExpense(DateUtils.toDate(1,10,2015), new BigDecimal("0"), CHF);
 		ExpenseUtils.newTransactionLine(xsum, App, TransactionLineEnum.IN);
 		ExpenseUtils.newTransactionLine(xsum, A12, TransactionLineEnum.SUM, new BigDecimal("300"));
 		xs.add(xsum);
 		
-		xs.add( ExpenseUtils.newExpense(DateUtils.getDate(1,1,2016), new BigDecimal("88"), CHF, A11, A12) );
+		xs.add( ExpenseUtils.newExpense(DateUtils.toDate(1,1,2016), new BigDecimal("88"), CHF, A11, A12) );
 		return xs;
 	}
 
@@ -60,7 +59,7 @@ public class TransactionLineUtilsTest {
 		List<TransactionLine> initlines = TransactionLineUtils.getAllTransactionLines(initExpenses());
 		
 		List<TransactionLine> lines = TransactionLineUtils.sortForBalance(initlines);
-		Date d = DateUtils.getDate(1,1,2000);
+		Date d = DateUtils.toDate(1,1,2000);
 		
 		for(TransactionLine l: lines) {
 			Assert.assertFalse(l.getDate().before(d));
@@ -121,7 +120,7 @@ public class TransactionLineUtilsTest {
 		
 		TransactionLineUtils.sortAndBalance(TransactionLineUtils.getAllTransactionLines(xs));
 
-		xs.add(ExpenseUtils.newExpense(DateUtils.getDate(1,4,2014), new BigDecimal("12"), CHF, A11, A12));
+		xs.add(ExpenseUtils.newExpense(DateUtils.toDate(1,4,2014), new BigDecimal("12"), CHF, A11, A12));
 		
 		clearBalance(TransactionLineUtils.getAllTransactionLines(xs));
 		

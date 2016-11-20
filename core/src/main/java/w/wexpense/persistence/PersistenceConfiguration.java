@@ -10,17 +10,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.orm.jpa.JpaDialect;
+//import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
+@EnableJpaRepositories(basePackages="w.wexpense.persistence.dao") // equivalent to <jpa:repositories base-package="w.wexpense.persistence.dao" />
 @EnableTransactionManagement
 public class PersistenceConfiguration {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PersistenceConfiguration.class);
+	
+	private String driverManagerClassName = DriverManagerDataSource.class.getName();
 	
 	//@Value( "${jdbc.driverClassName}" ) 
 	private String driverClassName;
@@ -43,23 +50,29 @@ public class PersistenceConfiguration {
 	private Properties jpaAdapterProperties;
 	
 	@Bean
-	public DataSource wxDataSource() {
-		final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+	public DataSource wxDataSource() throws Exception {
+		final DriverManagerDataSource  dataSource = (DriverManagerDataSource) Class.forName(driverManagerClassName).newInstance();		 
 		dataSource.setDriverClassName(driverClassName);
 		dataSource.setUsername(username);
 		dataSource.setPassword(password);
 		dataSource.setUrl(url);
+		
+		if (dataSource instanceof SingleConnectionDataSource) {
+			((SingleConnectionDataSource) dataSource).setSuppressClose(true);
+		}
+		
 		return dataSource;
 	}
 
 	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean() throws Exception {	
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {	
 		final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
 		factoryBean.setDataSource( wxDataSource() );
 		factoryBean.setPackagesToScan( new String[ ] { "w.wexpense.model" } );
 		
+		factoryBean.setJpaDialect( getJpaDialect());
 		factoryBean.setJpaVendorAdapter( getJpaVendorAdapter() );
-		factoryBean.setJpaProperties( getJpaAdapterProperties( ));
+		factoryBean.setJpaProperties( getJpaAdapterProperties() );
 
 		return factoryBean;
 	}
@@ -67,7 +80,7 @@ public class PersistenceConfiguration {
 	@Bean
 	public JpaTransactionManager transactionManager() throws Exception {
 		final JpaTransactionManager transactionManager = new JpaTransactionManager();
-		transactionManager.setEntityManagerFactory(entityManagerFactoryBean().getObject());
+		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
 		return transactionManager;
 	}
 
@@ -82,6 +95,15 @@ public class PersistenceConfiguration {
 		LOGGER.debug("JpaVendorAdapter class name {}", jpaAdapterClassName);
 		@SuppressWarnings("unchecked")
 		Class <JpaVendorAdapter> clazz = (Class<JpaVendorAdapter>) Class.forName(jpaAdapterClassName);	
+		return clazz.newInstance() ;
+	}
+	
+	protected JpaDialect getJpaDialect() throws Exception {
+		String jpaDialectClassName = "org.springframework.orm.jpa.vendor." + jpaAdapterName + "JpaDialect";
+
+		LOGGER.debug("JpaDialect class name {}", jpaDialectClassName);
+		@SuppressWarnings("unchecked")
+		Class <JpaDialect> clazz = (Class<JpaDialect>) Class.forName(jpaDialectClassName);	
 		return clazz.newInstance() ;
 	}
 	
@@ -110,6 +132,10 @@ public class PersistenceConfiguration {
 	
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public void setDriverManagerClassName(String driverManagerClassName) {
+		this.driverManagerClassName = driverManagerClassName;
 	}
 
 	public void setDriverClassName(String driverClassName) {

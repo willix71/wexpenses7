@@ -54,7 +54,7 @@
 
 	<context:component-scan base-package="w.wexpense.service" />
 
-	<bean class="w.wexpense.persistence.DatabasePopulator" />
+	<bean class="w.wexpense.persistence.DatabasePopulationScriptWriter" />
 
 	<bean class="w.wexpense.test.utils.PersistenceHelper" />
 </beans>

@@ -22,7 +22,7 @@ public class ExchangeRateTransactionLineValidationTest extends AbstractValidatio
 	
 
 	public Expense getExpense() {
-	   return ExpenseUtils.newExpense(DateUtils.getDate(), new BigDecimal("10"), CHF, new Payee());
+	   return ExpenseUtils.newExpense(DateUtils.toDate(), new BigDecimal("10"), CHF, new Payee());
 	}
 	
 	@Test

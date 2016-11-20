@@ -32,16 +32,16 @@ public class TemplateConfiguration {
 	
 	@Autowired
 	@Qualifier("templateService")
-	private StorableService<Template, String> templateService;
+	private StorableService<Template, Long> templateService;
 	
 	@Bean
 	@Scope("prototype")
-	public EditorView<Template, String> templateEditorView() {
+	public EditorView<Template, Long> templateEditorView() {
 	    PropertyFieldLayout l = PropertyFieldHelper.getDBableFormPropertyFieldLayout(
 	        "createdTs","modifiedTs","templateMenu","templateName","templateDescription","templateOrder","type",
             "payee","amount","currency","externalReference","description","outAccount","outFactor","outDiscriminator","inAccount","inFactor","inDiscriminator");
 	    
-		EditorView<Template, String> editorview = new EditorView<Template, String>(templateService, l);
+		EditorView<Template, Long> editorview = new EditorView<Template, Long>(templateService, l);
 		initMenuItems(editorview);
 		return editorview;
 	}
@@ -73,7 +73,7 @@ public class TemplateConfiguration {
 		return listview;
 	}
 	
-	private void initMenuItems(final EditorView<Template, String> editorview) {
+	private void initMenuItems(final EditorView<Template, Long> editorview) {
 		EnabalebalMenuBar<Template> menuBar = editorview.getMenuBar();
 		MenuItem mnuDta = menuBar.addItem("Template", null);
 		mnuDta.addItem("to expense", new Command() {

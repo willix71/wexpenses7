@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
+
+	<display-name>REST Wexpenses</display-name>
+
+	<!-- Spring root -->
+	<context-param>
+		<param-name>contextClass</param-name>
+		<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+	</context-param>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>w.wexpense.config.ApplicationConfig</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	
+	<!-- Rest context -->
+	<servlet>
+		<servlet-name>rest</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextClass</param-name>
+			<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+		</init-param>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>w.wexpense.rest.config.WebConfig</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<!-- 
+		The url-pattern specification:
+
+        A string beginning with a ‘/’ character and ending with a ‘/*’ suffix is used for path mapping.
+        A string beginning with a ‘*.’ prefix is used as an extension mapping.
+        A string containing only the ’/’ character indicates the "default" servlet of the application. In this case the servlet path is the request URI minus the context path and the path info is null.
+        All other strings are used for exact matches only.
+
+		Reference : <a href="http://download.oracle.com/otndocs/jcp/servlet-3.0-fr-eval-oth-JSpec/">Java Servlet Specification</a>
+		You may also see this : <a href="http://jweavers.com/posts/How_to_configure_Servlet_file_in_web.xml_configuration_file.php">Servlet Configuration</a>
+	 -->	
+	<servlet-mapping>
+		<servlet-name>rest</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+
+    <!-- 
+	<filter>
+		<filter-name>etagFilter</filter-name>
+		<filter-class>org.springframework.web.filter.ShallowEtagHeaderFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>etagFilter</filter-name>
+		<url-pattern>/rest/country/*</url-pattern>
+		<url-pattern>/rest/currency/*</url-pattern>
+	</filter-mapping>
+    -->
+    
+	<!-- misc -->
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+</web-app>

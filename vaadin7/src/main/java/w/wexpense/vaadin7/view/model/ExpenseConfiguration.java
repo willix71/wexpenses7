@@ -28,7 +28,7 @@ public class ExpenseConfiguration {
 	@Scope("prototype")
 	public ListView<Expense> todaysExpenseListView() {
 		ListView<Expense> listview = getExpenseListView();
-		listview.setFilter(new Compare.Greater("modifiedTs", DateUtils.getDate()));		
+		listview.setFilter(new Compare.Greater("modifiedTs", DateUtils.toDate()));		
 		listview.setViewName("Today's Expense");
 		return listview;
 	}

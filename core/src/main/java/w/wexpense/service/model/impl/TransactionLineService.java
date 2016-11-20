@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 
 import w.wexpense.model.TransactionLine;
 import w.wexpense.persistence.dao.ITransactionLineJpaDao;
-import w.wexpense.service.DaoService;
+import w.wexpense.service.JpaRepoDaoService;
 import w.wexpense.service.model.ITransactionLineService;
 import w.wexpense.utils.TransactionLineUtils;
 
 @Service
-public class TransactionLineService extends DaoService<TransactionLine, Long> implements ITransactionLineService {
+public class TransactionLineService extends JpaRepoDaoService<TransactionLine, Long> implements ITransactionLineService {
 	
 	@PersistenceContext
 	private EntityManager entityManager;

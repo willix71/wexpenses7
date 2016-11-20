@@ -33,6 +33,11 @@ public class Currency implements Codable<Currency> {
 		this.roundingFactor = roundingFactor;
 	}
 
+	public Currency(String code, String name, Integer roundingFactor, Integer strengh) {
+		this(code,name,roundingFactor);
+		this.strengh = strengh;
+	}
+	
 	public String getCode() {
 		return code;
 	}

@@ -42,7 +42,7 @@ public class ExchangeRate extends DBable<ExchangeRate> {
 	public ExchangeRate() {}
 	
 	public ExchangeRate(Currency fromCurrency, Currency toCurrency, Double rate) {
-		this.date = DateUtils.getDate();
+		this.date = DateUtils.toDate();
 		this.fromCurrency = fromCurrency;
 		this.toCurrency = toCurrency;
 		this.rate = rate;		

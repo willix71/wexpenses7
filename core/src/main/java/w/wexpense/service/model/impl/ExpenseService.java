@@ -6,20 +6,33 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import w.wexpense.model.Expense;
+import w.wexpense.model.TransactionLine;
 import w.wexpense.model.enums.TransactionLineEnum;
 import w.wexpense.persistence.dao.IExpenseJpaDao;
-import w.wexpense.service.DaoService;
+import w.wexpense.service.JpaRepoDaoService;
 import w.wexpense.service.model.IExpenseService;
 import w.wexpense.utils.ExpenseUtils;
 
 @Service
-public class ExpenseService extends DaoService<Expense, Long> implements IExpenseService {
+public class ExpenseService extends JpaRepoDaoService<Expense, Long> implements IExpenseService {
 	
 	@Autowired
 	public ExpenseService(IExpenseJpaDao dao) {
 		super(Expense.class, dao);
+	}
+
+	@Override
+	@Transactional
+	public Expense load(Long id) {
+		Expense x = super.load(id);
+		
+		// make sure we load the transaction lines as well		
+		if (x!=null) for(TransactionLine l : x.getTransactions()) l.getExchangeRate();
+
+		return x;
 	}
 
 	@Override

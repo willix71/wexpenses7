@@ -1,0 +1,25 @@
+{
+	"uid":"test-expense-uid-1234567890",
+	"type":{"id":23,"version":24,"uid":"6d443816-aa81-4dff-94a2-6aa901f8166e"},
+	"date":"20150201 000000",
+	"amount":80.00,
+	"currency":{"code":"CHF","name":"Swiss Francs"},
+	"payee":{"id":45,"version":46,"uid":"2cafc554-74a1-4a1c-873c-86ec140d6aca"},
+	"payed":"Migros, 1260 Nyon (CH)",
+	"transactions":[
+	{
+		"uid":"test-line-uid-1234567890-1",
+		"date":"20150201 000000",
+		"account":{"id":49,"version":50,"uid":"131991b6-26f0-4641-a7f7-1afd8e47e85c"},
+		"factor":"OUT",
+		"amount":80.00,
+		"value":80.00
+	},{
+		"uid":"test-line-uid-1234567890-2",
+		"date":"20150201 000000",
+		"account":{"id":55,"version":56,"uid":"e1fd9ce4-5d32-4da7-b090-68d4a86d89a2"},
+		"factor":"IN",
+		"amount":80.00,
+		"value":80.00
+	}]
+}

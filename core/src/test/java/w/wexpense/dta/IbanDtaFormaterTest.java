@@ -5,6 +5,7 @@ import static w.wexpense.dta.DtaCommonTestData.chf;
 import static w.wexpense.dta.DtaCommonTestData.createDate;
 import static w.wexpense.dta.DtaCommonTestData.createPaymentData;
 import static w.wexpense.dta.DtaCommonTestData.iban;
+import static w.wexpense.dta.DtaCommonTestData.williamKeyser;
 import static w.wexpense.model.enums.AccountEnum.ASSET;
 import static w.wexpense.model.enums.AccountEnum.EXPENSE;
 
@@ -12,8 +13,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.Assert;
-
+import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.iterable.Extractor;
 import org.junit.Test;
 
 import w.wexpense.model.Account;
@@ -38,25 +39,31 @@ public class IbanDtaFormaterTest {
 	public void testIbanExpense() throws DtaException {
 		Payment payment = createPaymentData(18,12,2012,"test.dta", getIbanExpense());
 		List<String> l = new IbanDtaFormater().format(payment, 5, payment.getExpenses().get(0));
-		Assert.assertEquals(5, l.size());
-		// print out
-//		for(int i=0;i<5;i++) {
-//			System.out.println(l.get(i) + "]]");
-//		}
+		
+		// use SoftAssertions instead of direct assertThat methods
+		SoftAssertions softly = new SoftAssertions();
+		softly.assertThat(l.size()).isEqualTo(5);
+		
 		// check length
-		for(int i=0;i<5;i++) {
-			Assert.assertEquals("line "+i+"'s length is not 128",128, l.get(i).length());
+		for(int i=0;i<3;i++) {
+			softly.assertThat(l.get(i).length()).as("line "+i).isEqualTo(128);
 		}
+		
 		// check content
-		for(int i=0;i<5;i++) {
-			Assert.assertEquals("Line "+i+" is wrong", expected[i], l.get(i).toUpperCase());
-		}
+		softly.assertThat(l).extracting(new Extractor<String, String>() {
+			  public String extract(String input) {
+				  return input.toUpperCase();
+			  }
+		}).containsOnly(expected);
+
+		// Don't forget to call SoftAssertions global verification !
+		softly.assertAll();
 	}
 	
 	public static Expense getIbanExpense() {	
 		Account assetAcc = new Account(null, 1, "asset", ASSET, null);						
 		Account ecAcc = new Account(assetAcc, 2, "courant", ASSET, chf);
-		ecAcc.setOwner(DtaHelperTest.getWilliamsBankDetails());
+		ecAcc.setOwner(williamKeyser);
 		
 		Account sportsAcc = new Account(null, 4, "sports", EXPENSE, null);
 		Account foot = new Account(sportsAcc, 1, "football", EXPENSE, chf);			

@@ -1,0 +1,39 @@
+{
+	"uid":"test-foreign-expense-uid-1234567890",
+	"type":{"id":23,"version":24,"uid":"6d443816-aa81-4dff-94a2-6aa901f8166e"},
+	"date":"20150201 100000",
+	"amount":49.00,
+	"currency":{"code":"GBP"},
+	"payee":{"id":47,"version":48},
+	"payed":"Guinness World, London (UK)",
+	"transactions":[
+	{
+		"uid":"test-line-uid-1234567890-3",
+		"date":"20150201 100000",
+		"account":{"id":49,"version":50},
+		"factor":"OUT",
+		"amount":49.00,
+		"exchangeRate":{"uid":"test-xrate-uid-123"},
+		"value":100.00
+	},{
+		"uid":"test-line-uid-1234567890-4",
+		"date":"20150201 100000",
+		"account":{"id":55,"version":56},
+		"factor":"IN",
+		"amount":49.00,
+		"exchangeRate":{"uid":"test-xrate-uid-123"},
+		"value":100.00
+	}],
+	"allExchangeRates":[
+	{
+	   "uid":"test-xrate-uid-123",
+	   "institution":null,
+	   "date":"20150201 100000",
+	   "toCurrency":{"code":"CHF"},
+	   "fromCurrency":{"code":"GBP"},
+	   "rate":2.0,
+	   "fee":null,
+	   "fixFee":2
+	}]
+
+}

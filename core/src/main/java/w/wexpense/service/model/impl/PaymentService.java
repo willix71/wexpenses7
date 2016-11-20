@@ -21,13 +21,13 @@ import w.wexpense.model.PaymentDta;
 import w.wexpense.persistence.dao.IExpenseJpaDao;
 import w.wexpense.persistence.dao.IPaymentDtaJpaDao;
 import w.wexpense.persistence.dao.IPaymentJpaDao;
-import w.wexpense.service.DaoService;
+import w.wexpense.service.JpaRepoDaoService;
 import w.wexpense.service.model.IPaymentService;
 import w.wexpense.utils.DBableUtils;
 import w.wexpense.utils.PaymentDtaUtils;
 
 @Service
-public class PaymentService extends DaoService<Payment, Long> implements IPaymentService {
+public class PaymentService extends JpaRepoDaoService<Payment, Long> implements IPaymentService {
 
 	@PersistenceContext
 	private EntityManager entityManager;

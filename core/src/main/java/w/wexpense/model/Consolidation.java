@@ -20,10 +20,10 @@ import org.hibernate.validator.constraints.Range;
 import w.wexpense.validation.Warning;
 
 @Entity
-public class Consolidation extends DBable<Consolidation> {
+public class Consolidation extends DBable<Consolidation> implements Closable {
 
 	private static final long serialVersionUID = 2482940442245899869L;
-	
+
 	@NotNull
 	@ManyToOne
 	private Payee institution;
@@ -31,17 +31,22 @@ public class Consolidation extends DBable<Consolidation> {
 	@NotNull
 	@Temporal(TemporalType.DATE)
 	private Date date;
-	
+
 	private BigDecimal openingBalance;
-	
+
 	private BigDecimal closingBalance;
-	
-	@Range(min=0,max=0, message="Delta balance should be 0", groups=Warning.class)
+
+	@Range(min = 0, max = 0, message = "Delta balance should be 0", groups = Warning.class)
 	private BigDecimal deltaBalance;
-	
-    @OneToMany(mappedBy="consolidation", cascade={CascadeType.PERSIST, CascadeType.MERGE})
-    @OrderBy("date")
-    private List<TransactionLine> transactions;
+
+	@OneToMany(mappedBy = "consolidation", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OrderBy("date")
+	private List<TransactionLine> transactions;
+
+	@Override
+	public boolean isClosed() {
+		return getDeltaBalance()!=null && getDeltaBalance().compareTo(BigDecimal.ZERO) == 0 && getTransactions().size()>0;
+	}
 
 	public Payee getInstitution() {
 		return institution;
@@ -90,7 +95,7 @@ public class Consolidation extends DBable<Consolidation> {
 
 		this.deltaBalance = delta;
 	}
-	
+
 	public List<TransactionLine> getTransactions() {
 		return transactions;
 	}
@@ -98,45 +103,46 @@ public class Consolidation extends DBable<Consolidation> {
 	public void setTransactions(List<TransactionLine> transactions) {
 		this.transactions = transactions;
 	}
-    
+
 	public List<TransactionLine> resetTransaction() {
 		List<TransactionLine> xs = this.transactions;
 		this.transactions = new ArrayList<TransactionLine>();
 		return xs;
 	}
-	
+
 	public void addTransaction(TransactionLine transaction) {
-	   if (this.transactions == null) this.transactions = new ArrayList<TransactionLine>();
-	   this.transactions.add(transaction);
-	   transaction.setConsolidation(this);
+		if (this.transactions == null)
+			this.transactions = new ArrayList<TransactionLine>();
+		this.transactions.add(transaction);
+		transaction.setConsolidation(this);
 	}
-	  
-  public void removeTransaction(TransactionLine transaction) {
-      if (this.transactions != null) {
-	      if (this.transactions.remove(transaction)) {
-	         transaction.setConsolidation(null);
-	      }
-      }
-   }
-  
+
+	public void removeTransaction(TransactionLine transaction) {
+		if (this.transactions != null) {
+			if (this.transactions.remove(transaction)) {
+				transaction.setConsolidation(null);
+			}
+		}
+	}
+
 	@Override
-	public String toString() {		
+	public String toString() {
 		return MessageFormat.format("{0,date,dd/MM/yyyy} {1}", date, institution);
 	}
-	
+
 	@Override
-   public Consolidation duplicate() {
+	public Consolidation duplicate() {
 		Consolidation klone = super.duplicate();
 		klone.setTransactions(new ArrayList<TransactionLine>());
 		return klone;
-   }
+	}
 
 	@Override
-   public Consolidation klone() {
+	public Consolidation klone() {
 		Consolidation klone = super.klone();
-		if (klone.getTransactions()!=null) {
+		if (klone.getTransactions() != null) {
 			klone.setTransactions(new ArrayList<TransactionLine>(klone.getTransactions()));
 		}
 		return klone;
-   }
+	}
 }
