@@ -1,0 +1,20 @@
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="../WEB-INF/templates/main-template.xhtml"
+	>
+	
+	<ui:define name="title">Pages Wexpenses Accounts</ui:define>
+	
+	<ui:define name="content">
+	
+		<h2>Number of Accounts <h:outputText value="#{jsfAccountController.accountCount}"/></h2>
+				
+		<ul>
+		<ui:repeat var="account" value="#{jsfAccountController.allAccounts}" varStatus="status">
+			<li><h:outputText value="#{account.name}"/></li>
+		</ui:repeat>
+		</ul>
+	</ui:define>
+</ui:composition>	

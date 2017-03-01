@@ -10,10 +10,8 @@ import org.springframework.stereotype.Component;
 import w.wexpense.model.Account;
 import w.wexpense.service.model.IAccountService;
 
-//@ManagedBean(name = "accountController")
 @Component("jsfAccountController")
 @RequestScoped
-//@Scope("request")
 public class AccountController {
 
 	@Autowired

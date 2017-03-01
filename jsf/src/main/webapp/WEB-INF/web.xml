@@ -46,6 +46,6 @@
 
 	<!-- Welcome page -->
 	<welcome-file-list>
-		<welcome-file>local.xhtml</welcome-file>
+		<welcome-file>index.xhtml</welcome-file>
 	</welcome-file-list>
 </web-app>
