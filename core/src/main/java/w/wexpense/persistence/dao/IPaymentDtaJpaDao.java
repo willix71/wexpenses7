@@ -1,10 +1,9 @@
 package w.wexpense.persistence.dao;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-
 import w.wexpense.model.PaymentDta;
+import w.wexpense.persistence.IUidableDao;
+import w.wexpense.persistence.IGenericDao;
 
-public interface IPaymentDtaJpaDao extends JpaRepository< PaymentDta, Long >, JpaSpecificationExecutor< PaymentDta >, IDBableJpaDao<PaymentDta> {
+public interface IPaymentDtaJpaDao extends IGenericDao< PaymentDta, Long >, IUidableDao<PaymentDta> {
 
 }

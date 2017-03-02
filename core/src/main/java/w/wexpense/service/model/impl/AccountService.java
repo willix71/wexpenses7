@@ -1,5 +1,7 @@
 package w.wexpense.service.model.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,5 +32,19 @@ public class AccountService extends JpaRepoDaoService<Account, Long> implements 
 		} else {
 			AccountUtils.reNumber(dao.findOne(topAccountId)); 
 		}
+	}
+
+	@Override
+	public List<Account> easyFind(String criteria) {
+		IAccountJpaDao dao = (IAccountJpaDao) getDao();
+		if (criteria == null) 
+			return dao.findAll();
+		
+		if (criteria.contains("*")) 
+			criteria = criteria.replaceFirst("*", "%");
+		else 
+			criteria = "%" + criteria + "%";
+		
+        return dao.findByFullNameOrByFullNumber(criteria);
 	}
 }

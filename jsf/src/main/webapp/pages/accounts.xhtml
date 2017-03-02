@@ -1,6 +1,8 @@
 <ui:composition 
 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="../WEB-INF/templates/main-template.xhtml"
 	>
@@ -10,11 +12,18 @@
 	<ui:define name="content">
 	
 		<h2>Number of Accounts <h:outputText value="#{jsfAccountController.accountCount}"/></h2>
-				
-		<ul>
-		<ui:repeat var="account" value="#{jsfAccountController.allAccounts}" varStatus="status">
-			<li><h:outputText value="#{account.name}"/></li>
-		</ui:repeat>
-		</ul>
+		
+		<h:form id="accountsForm" >
+			<h:inputText id="criteriaText" value="#{jsfAccountController.criteria}" >
+				<f:ajax render="accounsList" />
+			</h:inputText>
+		
+			<ul>
+			<ui:repeat id="accountsList" var="account" value="#{jsfAccountController.allAccounts}" varStatus="status">
+				<li><h:outputText value="#{account.fullNumber}"/> : <h:outputText value="#{account.fullName}"/></li>
+			</ui:repeat>
+			</ul>
+		</h:form>
+		
 	</ui:define>
 </ui:composition>	

@@ -3,15 +3,15 @@ package w.wexpense.persistence.dao;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import w.wexpense.model.Consolidation;
 import w.wexpense.model.Expense;
 import w.wexpense.model.TransactionLine;
+import w.wexpense.persistence.IUidableDao;
+import w.wexpense.persistence.IGenericDao;
 
-public interface ITransactionLineJpaDao extends JpaRepository< TransactionLine, Long >, JpaSpecificationExecutor< TransactionLine >, IDBableJpaDao<TransactionLine> {
+public interface ITransactionLineJpaDao extends IGenericDao< TransactionLine, Long >, IUidableDao<TransactionLine> {
 	List<TransactionLine> findByExpense(Expense expense);
 	
 	List<TransactionLine> findByConsolidation(Consolidation consolidation);

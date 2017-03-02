@@ -17,11 +17,27 @@ public class AccountController {
 	@Autowired
 	private IAccountService accountService;
 	
+	private String criteria;
+	
+	public String getCriteria() {
+		return criteria;
+	}
+
+	public void setCriteria(String criteria) {
+		System.out.println("Setting criteria " + criteria);
+		this.criteria = criteria;
+	}
+
 	public long getAccountCount() {
 		return accountService.count();
 	}
 	
 	public List<Account> getAllAccounts() {
-		return accountService.loadAll();
+		System.out.println("Using criteria " + criteria);
+		return accountService.easyFind(criteria);
+	}
+	
+	public String filter() {
+		return null;
 	}
 }
