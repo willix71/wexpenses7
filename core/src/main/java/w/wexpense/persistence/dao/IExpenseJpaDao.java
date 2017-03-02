@@ -21,7 +21,7 @@ public interface IExpenseJpaDao extends IGenericDao<Expense, Long>, IUidableDao<
 	@Query(value = "from Expense x where x.payment=?1 and x.uid not in (?2)")
 	List<Expense> findNotInPayment(Payment p, Collection<String> uids);
 
-	@Query(value = "from Expense x where x.date>=?1 and x.date<=?2")
+	@Query(value = "from Expense x where x.date>=?1 and x.date<=?2 order by x.date DESC")
 	List<Expense> findExpenses(Date from, Date to);
 
 	@Query(value = "from Expense x where x.date>=?1 and x.date<=?2 and x.amount = ?3")

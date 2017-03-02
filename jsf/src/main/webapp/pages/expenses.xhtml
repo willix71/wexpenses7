@@ -1,0 +1,40 @@
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="../WEB-INF/templates/main-template.xhtml"
+	>
+
+	<ui:define name="title">Pages Wexpenses Accounts</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="expensesForm">
+
+
+			<p:calendar id="fromDate" value="#{jsfExpenseController.from}" showOn="button" pattern="dd/MM/yyyy" mask="true" />
+			<p:calendar id="toDate" value="#{jsfExpenseController.to}" showOn="button" pattern="dd/MM/yyyy" mask="true" />
+			<p:commandButton value="filter" actionListener="#{jsfExpenseController.filter}" event="onclick" update="expenses" />
+		
+
+		<h:dataTable id="expenses" var="x" value="#{jsfExpenseController.expenses}" border="1">
+			<h:column>
+				<f:facet name="header">Date</f:facet>
+				#{x.date}	
+			</h:column>
+		
+			<h:column>
+				<f:facet name="header">Amount</f:facet>
+				#{x.amount}	
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header">Payee</f:facet>
+				#{x.payee}	
+			</h:column>
+		</h:dataTable>
+</h:form>
+	</ui:define>
+</ui:composition>	
