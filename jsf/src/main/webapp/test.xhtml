@@ -1,0 +1,89 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+	<title>Hello</title>
+</h:head>
+
+<h:body>
+	<h1>Hello</h1>
+
+	<h:form id="form">
+		<p:growl id="msgs" showDetail="true" sticky="true" /> 
+	 
+	 
+		<br />
+		Choose date: 
+		<p:calendar id="myDateSelector" value="#{jsfTestController.simpleDate}" showOn="button" 
+			converter="WexDateConverter" pattern="dd/MM/yyyy" navigator="true"
+			onchange="console.log('hello')">
+			<p:ajax event="change" update="myDateSelector myDateDisplay" />
+			<p:ajax event="dateSelect" update="myDateDisplay" />
+		</p:calendar>
+		:
+		<p:inputMask id="myTimeSelector" mask="99:99" slotChar="0" value="#{jsfTestController.simpleTime}" 
+			update="myDateDisplay">
+			<p:ajax event="change" update="myDateDisplay" />
+		</p:inputMask>
+		
+		<h:outputFormat id="myDateDisplay" value="{0,date,E dd.MM.yyyy HH:mm:ss}">
+			<f:param value="#{jsfTestController.simpleDate}" />
+		</h:outputFormat>
+
+		<br /><br />
+		Choose date2: 
+		<p:inputText id="date1" value="#{jsfTestController.simpleDate2}" converter="WexDateConverter">
+			<p:ajax event="change" update="date1 myDate1DisplayID" />
+		</p:inputText>
+		<h:outputText id="myDate1DisplayID" value="#{jsfTestController.simpleDate2}" />
+
+		<br /><br />
+		 <p:outputLabel value="Currency:" for="currencySelector" />
+		<p:autoComplete id="currencySelector" value="#{jsfTestController.currency}"
+			completeMethod="#{jsfTestController.getCurrencies}"
+			forceSelection="true"
+			required="true"
+			requiredMessage="You must choose a currency"
+			converter="#{WexCurrencyConverter}"
+			var="cur"
+			itemLabel="#{cur.name}" itemValue="#{cur}">
+		   <p:column>
+                <h:outputText value="#{cur.code}"  />
+            </p:column>
+ 
+            <p:column>
+                <h:outputText value="#{cur.name}" />
+            </p:column>
+			
+		</p:autoComplete>
+		
+		<br /><br />
+        <p:outputLabel value="Custom Content:" for="themeCustom" />
+        <p:autoComplete id="themeCustom" value="#{autoCompleteView.theme2}" completeMethod="#{autoCompleteView.completeTheme}"
+                        var="theme" itemLabel="#{theme.displayName}" itemValue="#{theme}" converter="themeConverter" forceSelection="true">
+            <p:column>
+                <h:outputText styleClass="ui-theme ui-theme-#{theme.name}" />
+            </p:column>
+ 
+            <p:column>
+                <h:outputText value="#{theme.displayName}" />
+            </p:column>
+            <p:ajax event="change" />
+        </p:autoComplete>
+        
+        
+		<br />
+		<!--  valueChangeListener="# {jsfTestController.valuechange}" onchange=""-->
+		<p:commandButton value="Submit" update="msgs" actionListener="#{jsfTestController.click}" icon="ui-icon-check" />
+
+		<p:dialog modal="true" resizable="false" header="Values" widgetVar="dlg" showEffect="fold">
+			<p:panelGrid id="display" columns="2" columnClasses="label,value">
+				<h:outputText value="Inline:" />
+				<h:outputText value="#{jsfTestController.simpleDate}">
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+				</h:outputText>
+			</p:panelGrid>
+		</p:dialog>
+	</h:form>
+</h:body>
+</html>

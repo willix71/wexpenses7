@@ -10,31 +10,34 @@
 	<ui:define name="title">Pages Wexpenses Accounts</ui:define>
 
 	<ui:define name="content">
+		<f:metadata>
+			<f:viewParam name="from" value="#{jsfExpenseController.from}" converter="WexDateConverter"/>
+			<f:viewParam name="to" value="#{jsfExpenseController.to}" converter="WexDateConverter"/>
+		</f:metadata>
 
 		<h:form id="expensesForm">
-
-
 			<p:calendar id="fromDate" value="#{jsfExpenseController.from}" showOn="button" pattern="dd/MM/yyyy" mask="true" />
 			<p:calendar id="toDate" value="#{jsfExpenseController.to}" showOn="button" pattern="dd/MM/yyyy" mask="true" />
 			<p:commandButton value="filter" actionListener="#{jsfExpenseController.filter}" event="onclick" update="expenses" />
 		
-
-		<h:dataTable id="expenses" var="x" value="#{jsfExpenseController.expenses}" border="1">
-			<h:column>
-				<f:facet name="header">Date</f:facet>
-				#{x.date}	
-			</h:column>
-		
-			<h:column>
-				<f:facet name="header">Amount</f:facet>
-				#{x.amount}	
-			</h:column>
+			<p:dataTable id="expenses" var="x" value="#{jsfExpenseController.expenses}" >
+				<p:column>
+					<f:facet name="header">Date</f:facet>
+					<h:outputFormat value="{0, date, dd.MM.yyy}">
+						<f:param value="#{x.date}" />
+					</h:outputFormat>	
+				</p:column>
 			
-			<h:column>
-				<f:facet name="header">Payee</f:facet>
-				#{x.payee}	
-			</h:column>
-		</h:dataTable>
-</h:form>
+				<p:column >
+					<f:facet name="header">Amount</f:facet>
+					#{x.amount}	#{x.currency}
+				</p:column>
+				
+				<p:column>
+					<f:facet name="header">Payee</f:facet>
+					#{x.payee}	
+				</p:column>
+			</p:dataTable>
+		</h:form>
 	</ui:define>
 </ui:composition>	

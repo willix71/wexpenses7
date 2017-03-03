@@ -24,10 +24,10 @@ public interface IExpenseJpaDao extends IGenericDao<Expense, Long>, IUidableDao<
 	@Query(value = "from Expense x where x.date>=?1 and x.date<=?2 order by x.date DESC")
 	List<Expense> findExpenses(Date from, Date to);
 
-	@Query(value = "from Expense x where x.date>=?1 and x.date<=?2 and x.amount = ?3")
+	@Query(value = "from Expense x where x.date>=?1 and x.date<=?2 and x.amount = ?3 order by x.date DESC")
 	List<Expense> findSimiliarExpenses(Date d1, Date d2, BigDecimal amount);
 
-	@Query(value = "from Expense x where x.date>=?1 and x.date<=?2 and x.amount = ?3 and x != ?4")
+	@Query(value = "from Expense x where x.date>=?1 and x.date<=?2 and x.amount = ?3 and x != ?4 order by x.date DESC")
 	List<Expense> findSimiliarExpenses(Date d1, Date d2, BigDecimal amount, Expense x);
 
 }

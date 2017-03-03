@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import w.utils.DateBuilder;
-import w.wexpense.jsf.config.JsfConfig;
 import w.wexpense.model.Expense;
 import w.wexpense.service.model.IExpenseService;
 
@@ -33,7 +32,7 @@ public class ExpenseController {
 		from = sb.startOfMonth().startOfDay().toDate();
 		to = sb.endOfMonth().endOfDay().toDate();
 	}
-
+	
 	public Date getFrom() {
 		return from;
 	}
@@ -42,7 +41,6 @@ public class ExpenseController {
 		this.from = DateBuilder.from(from).startOfDay().toDate();
 		LOGGER.warn("Set from filter {}", this.from);
 	}
-
 	public Date getTo() {
 		return to;
 	}
@@ -57,7 +55,7 @@ public class ExpenseController {
 	}
 
 	public String filter() {
-		LOGGER.warn("Filtering on {} and {}", from, to);
+		LOGGER.warn("Filtering between {} and {}", from, to);
 		expenses = expenseService.findExpenses(from, to);
 		return null;
 	}
