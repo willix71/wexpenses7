@@ -1,4 +1,5 @@
 package w.wexpense.jsf.config;
+import java.io.Serializable;
 import java.util.Locale;
 
 import javax.annotation.PostConstruct;
@@ -8,8 +9,10 @@ import javax.faces.context.FacesContext;
 
 @ManagedBean(name = "switcher")
 @SessionScoped
-public class LanguageSwitcher {
-    private Locale locale;
+public class LanguageSwitcher implements Serializable {
+	private static final long serialVersionUID = 465027247692688706L;
+
+	private Locale locale;
     
     @PostConstruct
     public void init() {

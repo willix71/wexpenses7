@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +17,7 @@ import w.wexpense.model.Expense;
 import w.wexpense.service.model.IExpenseService;
 
 @Component("jsfExpenseController")
-@RequestScoped
+@SessionScoped
 public class ExpenseController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExpenseController.class);
@@ -26,7 +28,7 @@ public class ExpenseController {
 	private Date from;
 	private Date to;
 	private List<Expense> expenses;
-
+	
 	public ExpenseController() {
 		DateBuilder sb = new DateBuilder();
 		from = sb.startOfMonth().startOfDay().toDate();
@@ -54,6 +56,14 @@ public class ExpenseController {
 		return expenses;
 	}
 
+	public void setFilterNow(boolean anything) {
+		if (anything) filter();
+	}
+	
+	public boolean getFilterNow() {
+		return true;
+	}
+	
 	public String filter() {
 		LOGGER.warn("Filtering between {} and {}", from, to);
 		expenses = expenseService.findExpenses(from, to);

@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+<cc:interface />
+
+<cc:implementation>
+  <ul>
+    <li>Requesting host: #{request.remoteHost}</li>
+    <li>Requesting client type:<br/> #{header["User-Agent"]}</li>
+    <li>Locale: #{view.locale}</li>
+    <li>Session id: #{session.id}</li>
+  </ul>
+</cc:implementation>
+
+</html>

@@ -10,9 +10,11 @@
 	<ui:define name="title">Pages Wexpenses Accounts</ui:define>
 
 	<ui:define name="content">
+
 		<f:metadata>
 			<f:viewParam name="from" value="#{jsfExpenseController.from}" converter="WexDateConverter"/>
 			<f:viewParam name="to" value="#{jsfExpenseController.to}" converter="WexDateConverter"/>
+			<f:viewParam name="filterNow" value="#{jsfExpenseController.filterNow}"/>
 		</f:metadata>
 
 		<h:form id="expensesForm">
@@ -20,24 +22,34 @@
 			<p:calendar id="toDate" value="#{jsfExpenseController.to}" showOn="button" pattern="dd/MM/yyyy" mask="true" />
 			<p:commandButton value="filter" actionListener="#{jsfExpenseController.filter}" event="onclick" update="expenses" />
 		
-			<p:dataTable id="expenses" var="x" value="#{jsfExpenseController.expenses}" >
-				<p:column>
-					<f:facet name="header">Date</f:facet>
+			<p:growl id="growl" />
+			
+			<p:dataTable id="expenses" var="x" value="#{jsfExpenseController.expenses}" resizableColumns="true">
+				<p:column headerText="Date" sortBy="#{x.amount}" style="width:10%;">					
 					<h:outputFormat value="{0, date, dd.MM.yyy}">
 						<f:param value="#{x.date}" />
 					</h:outputFormat>	
 				</p:column>
 			
-				<p:column >
-					<f:facet name="header">Amount</f:facet>
+				<p:column headerText="Amount" sortBy="#{x.amount}" style="width:10%;text-align:right;">
 					#{x.amount}	#{x.currency}
 				</p:column>
 				
-				<p:column>
-					<f:facet name="header">Payee</f:facet>
+				<p:column headerText="Payee">
 					#{x.payee}	
 				</p:column>
+				<p:column style="width:10%;">
+					<p:commandButton value="e d i t" actionListener="#{jsfExpenseDetailsController.setExpenseUid(x.uid)}"
+						update="expensesForm:expenseUID" oncomplete="PF('dialog4').show()" >
+						
+					</p:commandButton>
+				</p:column>
 			</p:dataTable>
+
+			<p:dialog id="expenseUID" header="UID:#{jsfExpenseDetailsController.expense.uid}" widgetVar="dialog4"  position="top">
+				<ui:include src="../WEB-INF/partials/expenseDetails.xhtml" />
+			</p:dialog>
+
 		</h:form>
 	</ui:define>
 </ui:composition>	

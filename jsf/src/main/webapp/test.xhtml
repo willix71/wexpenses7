@@ -1,4 +1,9 @@
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:edits="http://xmlns.jcp.org/jsf/composite/edits"
+	xmlns:utils="http://xmlns.jcp.org/jsf/composite/utils"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <h:head>
@@ -8,6 +13,23 @@
 <h:body>
 	<h1>Hello</h1>
 
+<utils:info/>
+
+
+			<!-- 	
+				<p:column style="width:10%;">
+					<p:commandButton value="edit" oncomplete="PF('dialog4').show()" update="expensesForm:expenseUID"
+						actionListener="#{jsfExpenseController.setExpenseUid(x.uid)}">
+						<f:param value="#{x.uid}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			
+			<p:dialog id="expenseUID" header="UID:#{jsfExpenseController.expense.uid}" widgetVar="dialog4" >
+			  <edits:expenseDetails uid="#{jsfExpenseController.expense.uid}" expense="#{jsfExpenseController.expense}" />
+			</p:dialog>
+ 			-->
+ 			
 	<h:form id="form">
 		<p:growl id="msgs" showDetail="true" sticky="true" /> 
 	 
