@@ -4,9 +4,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY, region="codable")
 public class Currency implements Codable<Currency> {
 
 	private static final long serialVersionUID = 2482940442245899869L;

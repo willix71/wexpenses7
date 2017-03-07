@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -21,6 +22,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -47,13 +50,15 @@ public class Expense extends DBable<Expense> implements Closable {
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.EAGER)
-	// @JoinColumn(name="PAYEE_OID")
+	//@JoinColumn(name="PAYEE_ID")
+	@Fetch(FetchMode.JOIN)
 	private Payee payee;
 
 	private String payed;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	// @JoinColumn(name="TYPE_OID")
+	// @JoinColumn(name="TYPE_ID")
+	@Fetch(FetchMode.JOIN)
 	private ExpenseType type;
 
 	private String externalReference;

@@ -6,9 +6,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region="typable")
 public class City extends DBable<City> {
 
 	private static final long serialVersionUID = 2482940442245899869L;
