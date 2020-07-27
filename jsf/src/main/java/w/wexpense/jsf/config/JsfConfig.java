@@ -18,5 +18,7 @@ public class JsfConfig {
 	
 	public JsfConfig() {
 		LOGGER.info("\n" + FigletUtil.getMessage("Initiating JSF", Figlet.CHUNKY));
+		
+		LOGGER.debug("Debug is enabled");
 	}
 }
