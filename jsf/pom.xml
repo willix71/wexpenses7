@@ -20,7 +20,22 @@
 		<richfaces.version>4.5.5.Final</richfaces.version>
 	</properties>
 
+	<repositories>
+		<!-- https://jitpack.io/#javaplugs/spring-jsf/0.1.1 -->
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+	
 	<dependencies>
+		<dependency>
+			<!-- https://github.com/javaplugs/spring-jsf -->
+		    <groupId>com.github.javaplugs</groupId>
+		    <artifactId>spring-jsf</artifactId>
+		    <version>0.1.1</version>
+		</dependency>
+	
 		<dependency>
 			<groupId>w.wexpense</groupId>
 			<artifactId>wexpenses-core</artifactId>

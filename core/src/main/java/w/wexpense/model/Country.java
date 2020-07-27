@@ -6,9 +6,12 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY, region="codable")
 public class Country implements Codable<Country>  {
 
 	private static final long serialVersionUID = 2482940442245899869L;

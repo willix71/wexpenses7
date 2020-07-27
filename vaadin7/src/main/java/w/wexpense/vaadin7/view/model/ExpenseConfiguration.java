@@ -53,7 +53,9 @@ public class ExpenseConfiguration {
 	                new TableColumnConfig("currency").centerAlign(),
 	                new TableColumnConfig("payee").sortBy(".display").expand(1.0f),              
 	                new TableColumnConfig("externalReference").collapse(),
-	                new TableColumnConfig("description").collapse()
+	                new TableColumnConfig("description").collapse(),
+	                new TableColumnConfig("fileName").collapse(),
+	                new TableColumnConfig("fileDate").collapse()
 	                );
 	       
 	    ActionHelper.setDefaultListViewActions(listview, "expenseEditorView");

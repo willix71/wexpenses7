@@ -51,7 +51,7 @@ public class BvoDtaFormater implements DtaFormater {
 	@Override
 	public String payee(Expense expense) {
 		Payee payee = expense.getPayee();
-		return payee.toString() + "\n" + DtaHelper.formatPostalAccount(payee);
+		return payee.toShortString() + "\n" + DtaHelper.formatPostalAccount(payee);
 	}
 	
 	protected String formatLine02(Payment payment, int index, Expense expense) {

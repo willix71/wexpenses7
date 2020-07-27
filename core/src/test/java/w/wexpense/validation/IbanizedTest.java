@@ -57,4 +57,10 @@ public class IbanizedTest extends AbstractValidationTest {
 		Assert.assertEquals("", IbanValidator.formatIban(""));
 		Assert.assertNull(IbanValidator.formatIban(null));
 	}
+	
+	@Test
+	public void testGoodPostalIbanValidator() {
+		bad("CH63 0900 0000 1500 3457 9");
+		good("CH23 0900 0000 1500 3457 9");
+	}
 }

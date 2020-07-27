@@ -10,6 +10,8 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.google.common.base.Joiner;
+
 import w.wexpense.validation.Ibanized;
 
 @Entity
@@ -169,10 +171,15 @@ public class Payee extends DBable<Payee> {
 		this.bankDetails = bankDetails;
 	}
 	
+	public String toShortString() {
+		String s = getPrefixedName();
+		if (city != null) s += ", " + city.toString();
+		return s;
+	}
 	@Override
 	public String toString() {
-		String s = getPrefixedName();
-		if (city != null) s += ", " + city.toString();			
+		String s = toShortString();
+		if (postalAccount!=null || iban!=null) s+= " [" + Joiner.on(" | ").skipNulls().join(postalAccount,iban) + "]";
 		return s;
 	}
 }

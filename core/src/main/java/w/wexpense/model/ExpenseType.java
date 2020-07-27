@@ -2,7 +2,11 @@ package w.wexpense.model;
 
 import javax.persistence.Entity;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY, region="typable")
 public class ExpenseType extends AbstractType<ExpenseType> {
 
 	private static final long serialVersionUID = 2482940442245899869L;

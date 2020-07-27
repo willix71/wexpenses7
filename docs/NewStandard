@@ -1,0 +1,8 @@
+Les formats de transmission des banques (DTA) et de PostFinance (EZAG, EGA , ESR) seront remplacés
+À l’avenir, vous transmettrez vos ordres de paiement selon la norme ISO 20022; les virements s’effectuent avec le type de message XML pain.001 (paiements sur le territoire national, SEPA à l’étranger) (Customer Credit Transfer Initiation)
+Le Status Report pain.002 vous informe du statut actuel de vos ordres de paiement
+Les paiements en Suisse s’effectuent encore avec l’IBAN (International Bank Account Number)
+
+
+https://www.ubs.com/ch/fr/swissbank/entreprises/operations-de-paiement/harmonisation/corporate/systeme-virement.html
+https://www.ubs.com/ch/fr/swissbank/entreprises/operations-de-paiement/harmonisation/documents-iso-20022.html

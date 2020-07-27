@@ -54,7 +54,7 @@ public class BvrDtaFormater implements DtaFormater {
 		Payee payee = expense.getPayee();
 
 		Joiner j = Joiner.on('\n').skipNulls();
-	    return j.join(payee.toString(), IbanValidator.formatIban(payee.getIban()), DtaHelper.formatPostalAccount(payee));   
+	    return j.join(payee.toShortString(), IbanValidator.formatIban(payee.getIban()), DtaHelper.formatPostalAccount(payee));   
    }
    
 	protected String getProcessingDate(Expense expense) {

@@ -57,7 +57,7 @@ public class WindowSizer implements Serializable {
 
     public WindowSizer() {
         // set defaults
-        windowsSizes.put(getWindowIdentifier(ExpenseEditorView.class, Expense.class), new WindowSize(850,Unit.PIXELS,635,Unit.PIXELS));
+        windowsSizes.put(getWindowIdentifier(ExpenseEditorView.class, Expense.class), new WindowSize(850,Unit.PIXELS,650,Unit.PIXELS));
     }
     
     private String getWindowIdentifier(GenericView<?> view) {

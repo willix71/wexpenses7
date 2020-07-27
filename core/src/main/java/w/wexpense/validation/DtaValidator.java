@@ -31,7 +31,8 @@ public class DtaValidator implements ConstraintValidator<Dtanized, Expense> {
    public boolean isValid(Expense expense, ConstraintValidatorContext context) {
       boolean isValid = true;
 
-      String formaterName = expense.getType().getPaymentGeneratorClassName();
+       
+      String formaterName = expense.getType()==null?null:expense.getType().getPaymentGeneratorClassName();
       if (!Strings.isNullOrEmpty(formaterName)) {
          
          if (expense.getPayment() == null) {

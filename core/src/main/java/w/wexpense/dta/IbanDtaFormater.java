@@ -58,7 +58,7 @@ public class IbanDtaFormater implements DtaFormater {
 		Payee payee = expense.getPayee();
         Joiner j = Joiner.on('\n').skipNulls();
         return j.join(               
-                payee.toString(),
+                payee.toShortString(),
                 IbanValidator.formatIban(payee.getIban()),
                 payee.getBankDetails().toString()); 
     }

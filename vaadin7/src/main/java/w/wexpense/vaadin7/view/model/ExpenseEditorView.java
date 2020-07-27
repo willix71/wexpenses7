@@ -10,6 +10,24 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 
+import com.vaadin.data.Container;
+import com.vaadin.data.Container.ItemSetChangeEvent;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.AbstractLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.MenuBar.Command;
+import com.vaadin.ui.MenuBar.MenuItem;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+
 import w.wexpense.model.ExchangeRate;
 import w.wexpense.model.Expense;
 import w.wexpense.model.Payee;
@@ -39,24 +57,6 @@ import w.wexpense.vaadin7.saver.SavingStep;
 import w.wexpense.vaadin7.saver.ValidateStep;
 import w.wexpense.vaadin7.support.TableColumnConfig;
 import w.wexpense.vaadin7.view.EditorView;
-
-import com.vaadin.data.Container;
-import com.vaadin.data.Container.ItemSetChangeEvent;
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.AbstractLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar.Command;
-import com.vaadin.ui.MenuBar.MenuItem;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 
 @org.springframework.stereotype.Component
 @Scope("prototype")
@@ -122,18 +122,39 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(vl, "payee"));
         
-        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(vl, "payed").width(100,Unit.PERCENTAGE).height(3,Unit.PICAS).readOnly(true));
+        // date/time
+        HorizontalLayout hl31 = PropertyFieldHelper.getHorizontalLayout(true, false);    
+        fpl.addPropertyFieldConfig(new DatePart(hl31, "Day", "{0,date,EE}").width(40,Unit.PIXELS));
+        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl31, "date").width(140, Unit.PIXELS));
+        fpl.addPropertyFieldConfig(new DatePart(hl31, "Time", "{0,date,HH:mm}").width(60,Unit.PIXELS));
         
-        HorizontalLayout hl3 = PropertyFieldHelper.getHorizontalLayout(true, false);    
-        fpl.addPropertyFieldConfig(new DatePart(hl3, "Day", "{0,date,EE}").width(40,Unit.PIXELS));
-        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl3, "date").width(200, Unit.PIXELS));
-        fpl.addPropertyFieldConfig(new DatePart(hl3, "Time", "{0,date,HH:mm}").width(60,Unit.PIXELS));
-        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl3, "amount"));
-        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl3, "currency").width(80, Unit.PIXELS));
-        fpl.addPropertyFieldConfig(new StaticFieldConfig<Expense>(vl, hl3));
+        // amount
+        HorizontalLayout hl32 = PropertyFieldHelper.getHorizontalLayout(true, false);
+        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl32, "amount").width(180, Unit.PIXELS));
+        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl32, "currency").width(60, Unit.PIXELS));
+        fpl.addPropertyFieldConfig(new StaticFieldConfig<Expense>(vl, hl32));
+        
+        VerticalLayout vl30 = PropertyFieldHelper.getVerticalLayout(false, false);
+        fpl.addPropertyFieldConfig(new StaticFieldConfig<Expense>(vl30, hl31));
+        fpl.addPropertyFieldConfig(new StaticFieldConfig<Expense>(vl30, hl32));        
+        
+        // payed
+        HorizontalLayout hl3 = PropertyFieldHelper.getHorizontalLayout(true, false);
+        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl3, "payed").width(100,Unit.PERCENTAGE).height(4,Unit.PICAS).readOnly(true));
+        fpl.addPropertyFieldConfig(new StaticFieldConfig<Expense>(hl3, vl30).width(250, Unit.PIXELS));
+        
+        fpl.addPropertyFieldConfig(new StaticFieldConfig<Expense>(vl, hl3).width(100, Unit.PERCENTAGE));
+        
+        
         
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(vl, "externalReference"));
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(vl, "description"));
+        
+        HorizontalLayout hl4 = PropertyFieldHelper.getHorizontalLayout(true, false);
+        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl4, "fileDate").width(200, Unit.PIXELS));
+        fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(hl4, "fileName").expand(100f));
+        fpl.addPropertyFieldConfig(new StaticFieldConfig<Expense>(vl, hl4).width(100, Unit.PERCENTAGE));
+        
         fpl.addPropertyFieldConfig(new PropertyFieldConfig<Expense>(vl, "transactions"));        
         return fpl;
     }
@@ -242,19 +263,39 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
 			@Override
 			public void valueChange(Property.ValueChangeEvent event) {
 				Payee payee = getInstance().getPayee();
-				if (payee.getCity()!=null && payee.getCity().getCountry()!=null) {
-					getInstance().setCurrency(payee.getCity().getCountry().getCurrency());
-					getField("currency").markAsDirty();
-				}
 				
 				String payed = null;
 				try {
 					payed = PaymentDtaUtils.getDtaFormater(getInstance()).payee(getInstance());
 				} catch(Exception e) {
-					payed = payee==null?null:payee.toString();
+					payed = payee==null?null:payee.toShortString();
 				}
 				getInstance().setPayed(payed);
 				getField("payed").markAsDirty();
+				
+				if (payee.getCity()!=null && payee.getCity().getCountry()!=null) {
+					getInstance().setCurrency(payee.getCity().getCountry().getCurrency());
+					getField("currency").markAsDirty();
+				}
+			}
+		});
+		
+		UIHelper.addValueChangeListener(getField("fileDate"), new Property.ValueChangeListener() {
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void valueChange(Property.ValueChangeEvent event) {
+				Expense x = getInstance();
+				int uidlen = x.getUid().length();
+				String fileName = MessageFormat.format(
+						"{0,date,yyyyMMdd} {1,number,0.00}{2} {3}.{4}.pdf",
+						x.getFileDate(), 
+						x.getAmount(), 
+						x.getCurrency().getCode(), 
+						x.getPayee().getPrefixedName().replaceAll("\\s+", "_"),
+						x.getUid().substring(uidlen-4,uidlen));
+				x.setFileName(fileName);
+				getField("fileName").markAsDirty();
 			}
 		});
 	}
@@ -334,7 +375,7 @@ public class ExpenseEditorView extends EditorView<Expense, Long> {
             new TableColumnConfig("exchangeRate", "rate").width(100),
             new TableColumnConfig("value").rightAlign().width(80)
       		);
-      xtransactionsField.setPageLength(5);
+      xtransactionsField.setPageLength(4);
       xtransactionsField.setEditable(true);
 		xtransactionsField.addFooterListener(new Container.ItemSetChangeListener() {
 		   private static final long serialVersionUID = 1L;
