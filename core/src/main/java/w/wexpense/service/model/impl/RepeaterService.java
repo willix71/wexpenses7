@@ -20,7 +20,7 @@ public class RepeaterService extends JpaRepoDaoService<Repeater, Long> implement
    }
 
    @Override
-   @Scheduled(cron="* * 0 * * *")
+   @Scheduled(cron="0 0 0 * * *")
    public void execute() {
       LOGGER.debug("checking repeaters...");      
    }

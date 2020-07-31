@@ -6,22 +6,22 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
 import w.wexpense.jsf.config.ServiceLocator;
-import w.wexpense.model.Currency;
+import w.wexpense.model.ExpenseType;
 import w.wexpense.service.StorableService;
 
-@FacesConverter(value = "WexCurrencyConverter")
-public class CurrencyConverter implements Converter {
+@FacesConverter(value = "WexExpenseTypeConverter")
+public class ExpenseTypeConverter implements Converter {
 
-	private StorableService<Currency, String> currencyService = ServiceLocator.getService("currencyService", StorableService.class);
+	private StorableService<ExpenseType, String> currencyService = ServiceLocator.getService("expenseTypeService", StorableService.class);
 
 	@Override
 	public Object getAsObject(FacesContext arg0, UIComponent arg1, String value) {
-		return value==null || value.trim().length() == 0?null:currencyService.load(value);
+		return value==null || value.trim().length() == 0?null:currencyService.loadByName(value);
 	}
 
 	@Override
 	public String getAsString(FacesContext arg0, UIComponent arg1, Object object) {
-		return object== null?null:String.valueOf(((Currency) object).getCode());
+		return object== null?null:String.valueOf(((ExpenseType) object).getName());
 	}
 
 }

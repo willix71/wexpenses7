@@ -4,6 +4,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:x="http://java.sun.com/jsf/composite/x-cc"
 	template="../WEB-INF/templates/main-template.xhtml"
 	>
 
@@ -12,44 +13,83 @@
 	<ui:define name="content">
 
 		<f:metadata>
-			<f:viewParam name="from" value="#{jsfExpenseController.from}" converter="WexDateConverter"/>
-			<f:viewParam name="to" value="#{jsfExpenseController.to}" converter="WexDateConverter"/>
+			<f:viewParam name="from" value="#{jsfExpenseController.criteria.fromDate}" converter="WexDateConverter"/>
+			<f:viewParam name="to" value="#{jsfExpenseController.criteria.toDate}" converter="WexDateConverter"/>
 			<f:viewParam name="filterNow" value="#{jsfExpenseController.filterNow}"/>
 		</f:metadata>
 
 		<h:form id="expensesForm">
-			<p:calendar id="fromDate" value="#{jsfExpenseController.from}" showOn="button" pattern="dd/MM/yyyy" mask="true" />
-			<p:calendar id="toDate" value="#{jsfExpenseController.to}" showOn="button" pattern="dd/MM/yyyy" mask="true" />
-			<p:commandButton value="filter" actionListener="#{jsfExpenseController.filter}" event="onclick" update="expenses" />
-		
 			<p:growl id="growl" />
+
+		    <p:fieldset id="criteria" legend="Filter" toggleable="true" toggleSpeed="500">
+		        <h:panelGrid columns="3" cellpadding="2">
+					<p:calendar id="fromDate" value="#{jsfExpenseController.criteria.fromDate}" showOn="button" pattern="dd/MM/yyyy" mask="true" />
+					<p:calendar id="toDate" value="#{jsfExpenseController.criteria.toDate}" showOn="button" pattern="dd/MM/yyyy" mask="true" />
+	        		<p:autoComplete id="expenseType" value="#{jsfExpenseController.criteria.expenseType}" 
+	        				dropdown="true" completeMethod="#{autocompleteController.autoCompleteExpenseType}"
+	                        var="theme" itemLabel="#{theme.name}" itemValue="#{theme}" converter="WexExpenseTypeConverter" forceSelection="true" />
+					        
+					<p:inputNumber id="fromAmount" value="#{jsfExpenseController.criteria.fromAmount}" decimalPlaces="2"/>  
+					<p:inputNumber id="toAmount" value="#{jsfExpenseController.criteria.toAmount}" decimalPlaces="2"/>  
+	        		<p:autoComplete id="currency" value="#{jsfExpenseController.criteria.currency}" 
+	        				dropdown="true" completeMethod="#{autocompleteController.autoCompleteCurrency}"
+	                        var="theme" itemLabel="#{theme.code}" itemValue="#{theme}" converter="WexCurrencyConverter" forceSelection="true" />
+	                        
+					<h:inputText id="payeeContains" value="#{jsfExpenseController.criteria.payeeText}" />
+					
+					<p:commandButton id="filterExpenses" value="Update" type="submit" action="#{jsfExpenseController.filter}" update="expenses" />
+					<p:commandButton id="resetFilter" value="Reset" type="submit" action="#{jsfExpenseController.reset}" update="criteria expenses" />
+				</h:panelGrid>
+			</p:fieldset>
 			
-			<p:dataTable id="expenses" var="x" value="#{jsfExpenseController.expenses}" resizableColumns="true">
-				<p:column headerText="Date" sortBy="#{x.amount}" style="width:10%;">					
+			<p:dataTable id="expenses" var="x" value="#{jsfExpenseController.expenses}" resizableColumns="true"
+                 paginator="true"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                 rowsPerPageTemplate="5,10,50,100,1000"
+				 rows="10"
+                 rowKey="#{x.id}"
+                 selection="#{jsfExpenseController.selectedExpense}" 
+                 selectionMode="single"
+                 >
+        
+				<p:column headerText="Date" sortBy="#{x.date}" style="width:10%;">					
 					<h:outputFormat value="{0, date, dd.MM.yyy}">
 						<f:param value="#{x.date}" />
 					</h:outputFormat>	
 				</p:column>
 			
+				<p:column headerText="Payment" sortBy="#{x.payment.date}" style="width:10%;">					
+					<h:outputFormat value="{0, date, dd.MM.yyy}" rendered="#{not empty x.payment.date}">
+						<f:param value="#{x.payment.date}" />
+					</h:outputFormat>	
+				</p:column>
+            
+            	<p:column headerText="Type" style="width:5%;">
+            		<h:outputText value="#{x.type}" />
+        		</p:column>
+							
 				<p:column headerText="Amount" sortBy="#{x.amount}" style="width:10%;text-align:right;">
 					#{x.amount}	#{x.currency}
 				</p:column>
 				
 				<p:column headerText="Payee">
-					#{x.payee}	
-				</p:column>
-				<p:column style="width:10%;">
-					<p:commandButton value="e d i t" actionListener="#{jsfExpenseDetailsController.setExpenseUid(x.uid)}"
-						update="expensesForm:expenseUID" oncomplete="PF('dialog4').show()" >
-						
-					</p:commandButton>
+					#{x.payee}
 				</p:column>
 			</p:dataTable>
-
-			<p:dialog id="expenseUID" header="UID:#{jsfExpenseDetailsController.expense.uid}" widgetVar="dialog4"  position="top">
-				<ui:include src="../WEB-INF/partials/expenseDetails.xhtml" />
+			
+ 		    <p:contextMenu for="expenses">
+		        <p:menuitem value="View" update="expenseDetail" icon="pi pi-search" oncomplete="PF('expenseDetailDialog').show()"/>
+		        <p:menuitem value="Delete" update="expenses" icon="pi pi-times" action="#{jsfExpenseController.deleteExpense}"/>
+		    </p:contextMenu>
+     
+ 			<p:dialog id="expenseDetailDialogID" widgetVar="expenseDetailDialog"  header="UID:#{jsfExpenseController.selectedExpense.uid}" position="top">
+				<!--   modal="true" showEffect="fade" hideEffect="fade" resizable="false" -->
+				<p:outputPanel id="expenseDetail">
+					<x:expenseDetailView expense="#{jsfExpenseController.selectedExpense}" />
+				</p:outputPanel>
 			</p:dialog>
-
 		</h:form>
+		
 	</ui:define>
 </ui:composition>	

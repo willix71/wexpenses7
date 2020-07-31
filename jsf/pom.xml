@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>w.wexpense</groupId>
 		<artifactId>wexpenses</artifactId>
-		<version>2.4.2-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>wexpenses-jsf</artifactId>
@@ -16,25 +16,29 @@
 	<properties>
 		<!-- 3rd librairies -->
 		<jsf.version>2.2.14</jsf.version>
-		<primefaces.version>6.0</primefaces.version>
+		<primefaces.version>7.0</primefaces.version>
 		<richfaces.version>4.5.5.Final</richfaces.version>
 	</properties>
 
 	<repositories>
 		<!-- https://jitpack.io/#javaplugs/spring-jsf/0.1.1 -->
+		<!-- 
 		<repository>
 		    <id>jitpack.io</id>
 		    <url>https://jitpack.io</url>
 		</repository>
+		-->
 	</repositories>
 	
 	<dependencies>
+		<!-- https://github.com/javaplugs/spring-jsf -->
+		<!-- 
 		<dependency>
-			<!-- https://github.com/javaplugs/spring-jsf -->
 		    <groupId>com.github.javaplugs</groupId>
 		    <artifactId>spring-jsf</artifactId>
-		    <version>0.1.1</version>
+		    <version>0.2.1</version>
 		</dependency>
+		 -->
 	
 		<dependency>
 			<groupId>w.wexpense</groupId>
@@ -64,7 +68,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
 

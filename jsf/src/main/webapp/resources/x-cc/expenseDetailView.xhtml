@@ -1,0 +1,51 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+   	xmlns:composite="http://java.sun.com/jsf/composite">
+   	
+	<composite:interface>
+		<composite:attribute name="expense" type="w.wexpense.model.Expense" required="true" />
+	</composite:interface>
+	
+	<composite:implementation>
+		<h:panelGrid columns="3" >
+			<h:panelGroup>
+				id: #{cc.attrs.expense.id} 
+			</h:panelGroup>
+			<h:panelGroup>
+				created:
+				<h:outputFormat value="{0,date,dd/MM/yyyy HH:mm}">
+					<f:param value="#{cc.attrs.expense.createdTs}" />
+				</h:outputFormat>
+			</h:panelGroup>
+			<h:panelGroup>
+				modified:
+				<h:outputFormat value="{0,date,dd/MM/yyyy HH:mm}">
+					<f:param value="#{cc.attrs.expense.modifiedTs}" />
+				</h:outputFormat>
+			</h:panelGroup>
+			
+			<h:panelGroup>
+				date:
+				<h:outputFormat value="{0,date,dd/MM/yyyy HH:mm}">
+					<f:param value="#{cc.attrs.expense.date}" />
+				</h:outputFormat>
+				<!--
+				<p:calendar value="#{cc.attrs.expense.date}" showOn="button"></p:calendar>
+				-->
+			</h:panelGroup>
+			<h:panelGroup>
+				Amount:
+				<h:outputFormat value="{0,number,0.00}">
+					<f:param value="#{cc.attrs.expense.amount}" />
+				</h:outputFormat>
+				#{cc.attrs.expense.currency.code}
+				<!--
+				<p:inputText value="#{cc.attrs.expense.amount}" />
+				-->
+			</h:panelGroup>
+		</h:panelGrid>
+   	</composite:implementation>
+</ui:component>

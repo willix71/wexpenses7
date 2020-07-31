@@ -15,6 +15,8 @@ public interface StorableService<T, ID extends Serializable> {
 
 	T loadByUid(String uid);
 	
+	T loadByName(String name);
+	
 	long count();
 	
 	List<T> loadAll();

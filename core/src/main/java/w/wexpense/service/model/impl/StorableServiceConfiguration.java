@@ -14,7 +14,9 @@ import w.wexpense.model.Template;
 import w.wexpense.persistence.dao.ICityJpaDao;
 import w.wexpense.persistence.dao.ICountryJpaDao;
 import w.wexpense.persistence.dao.ICurrencyJpaDao;
+import w.wexpense.persistence.dao.IExpenseTypeJpaDao;
 import w.wexpense.persistence.dao.IPayeeJpaDao;
+import w.wexpense.persistence.dao.IPayeeTypeJpaDao;
 import w.wexpense.persistence.dao.ITemplateJpaDao;
 import w.wexpense.service.EntityMgrDaoService;
 import w.wexpense.service.JpaRepoDaoService;
@@ -41,13 +43,13 @@ public class StorableServiceConfiguration {
 	}
 	
 	@Bean 
-	public StorableService<ExpenseType, Long> expenseTypeService() {
-		return new EntityMgrDaoService<ExpenseType, Long>(ExpenseType.class, new NameInitializor<ExpenseType>(ExpenseType.class));
+	public StorableService<ExpenseType, Long> expenseTypeService(IExpenseTypeJpaDao dao) {
+		return new JpaRepoDaoService<ExpenseType, Long>(ExpenseType.class, dao, new NameInitializor<ExpenseType>(ExpenseType.class));
 	}
 	
 	@Bean 
-	public StorableService<PayeeType, Long> payeeTypeService() {
-		return new EntityMgrDaoService<PayeeType, Long>(PayeeType.class, new NameInitializor<PayeeType>(PayeeType.class));
+	public StorableService<PayeeType, Long> payeeTypeService(IPayeeTypeJpaDao dao) {
+		return new JpaRepoDaoService<PayeeType, Long>(PayeeType.class, dao, new NameInitializor<PayeeType>(PayeeType.class));
 	}
 	
 	@Bean 

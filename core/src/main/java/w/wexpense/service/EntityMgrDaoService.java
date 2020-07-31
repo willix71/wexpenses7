@@ -102,6 +102,18 @@ public class EntityMgrDaoService<T, ID extends Serializable> implements Storable
 	}
 	
 	@Override
+	public T loadByName(String name) {
+		try {
+		String entityName = entityClass.getSimpleName();
+		TypedQuery<T> query = entityManager.createQuery("FROM " + entityName + " WHERE name = :name", entityClass);
+		query.setParameter("name", name);		
+		return query.getSingleResult();
+		} catch(NoResultException nre) {
+			return null; // to be consistent with JpaRepoDaoService
+		}
+	}
+	
+	@Override
 	public long count() {
 		String entityName = entityClass.getSimpleName();
 		Query q = entityManager.createQuery("select count(*) from " + entityName);

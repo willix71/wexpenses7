@@ -22,6 +22,7 @@ public class DateConverter implements Converter {
 
 	@Override
 	public String getAsString(FacesContext arg0, UIComponent arg1, Object arg2) {
+		if (arg2 == null) return null;
 		Date d = (Date) arg2;
 		String f = new SimpleDateFormat(date_time_format).format(d);
 		if (f.endsWith(" 00:00:00")) return f.substring(0, f.length()-9);

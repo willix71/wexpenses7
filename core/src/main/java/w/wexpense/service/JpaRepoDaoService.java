@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Transactional;
 
 import w.wexpense.persistence.IGenericDao;
+import w.wexpense.persistence.ITypeDao;
 import w.wexpense.persistence.IUidableDao;
 import w.wexpense.service.instanciator.Initializor;
 
@@ -93,6 +94,16 @@ public class JpaRepoDaoService<T, ID extends Serializable> implements StorableSe
 			@SuppressWarnings("unchecked")
 			IUidableDao<T> idBableJpaDao = (IUidableDao<T>) dao;
 			return idBableJpaDao.findByUid(uid);
+		}
+		return null;
+	}
+
+	@Override
+	public T loadByName(String name) {
+		if (dao instanceof ITypeDao) {
+			@SuppressWarnings("unchecked")
+			ITypeDao<T> idBableJpaDao = (ITypeDao<T>) dao;
+			return idBableJpaDao.findByName(name);
 		}
 		return null;
 	}

@@ -11,5 +11,4 @@
 
 	<context:component-scan base-package="w.wexpense.jsf" />
 
-	<import resource="classpath:/com/github/javaplugs/jsf/jsfSpringScope.xml"/>
 </beans>

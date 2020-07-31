@@ -10,7 +10,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,9 +117,9 @@ public class TestController {
     }
    
     public void click() {
-        RequestContext requestContext = RequestContext.getCurrentInstance();         
-        requestContext.update("form:display");
-        requestContext.execute("PF('dlg').show()");
+        //RequestContext requestContext = RequestContext.getCurrentInstance();         
+        //requestContext.update("form:display");
+        //requestContext.execute("PF('dlg').show()");
     }
     
 	public String doit() {        

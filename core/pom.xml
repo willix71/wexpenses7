@@ -3,7 +3,7 @@
   <parent>
     <groupId>w.wexpense</groupId>
     <artifactId>wexpenses</artifactId>
-    <version>2.4.2-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>wexpenses-core</artifactId>
@@ -11,6 +11,7 @@
   <properties>
   	<querydsl.version>4.1.3</querydsl.version>
   </properties>
+  
   <dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -168,17 +169,27 @@
   	 	</dependency>
   	 	
   	 	<!-- when ready to use querydsl -->
-  	 	<!-- 
   	 	<dependency>
 		  <groupId>com.querydsl</groupId>
 		  <artifactId>querydsl-jpa</artifactId>
 		  <version>${querydsl.version}</version>
 		</dependency>
+<dependency>
+    <groupId>com.querydsl</groupId>
+    <artifactId>querydsl-apt</artifactId>
+		  <version>${querydsl.version}</version>
+</dependency>		
+			<!-- 
+<dependency>
+    <groupId>com.mysema.querydsl</groupId>
+    <artifactId>querydsl-jpa</artifactId>
+    <version>2.0.7</version>
+</dependency>
 		 -->
+
   	</dependencies>
 
 	<!-- when ready to use querydsl -->
-	<!-- 
 	<build>
 		<plugins>
 			<plugin>
@@ -206,5 +217,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	 -->
 </project>

@@ -6,14 +6,15 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
 import w.wexpense.model.Expense;
 import w.wexpense.model.Payee;
 import w.wexpense.model.Payment;
-import w.wexpense.persistence.IUidableDao;
 import w.wexpense.persistence.IGenericDao;
+import w.wexpense.persistence.IUidableDao;
 
-public interface IExpenseJpaDao extends IGenericDao<Expense, Long>, IUidableDao<Expense> {
+public interface IExpenseJpaDao extends IGenericDao<Expense, Long>, IUidableDao<Expense>, QueryDslPredicateExecutor<Expense> {
 	List<Expense> findByPayee(Payee p);
 
 	List<Expense> findByPayment(Payment p);
