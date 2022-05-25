@@ -19,7 +19,7 @@
 		<spring.version>4.1.8.RELEASE</spring.version>
 		<spring-data-jpa.version>1.9.1.RELEASE</spring-data-jpa.version>
 		 -->
-		<spring.version>4.3.28.RELEASE</spring.version>
+		<spring.version>5.2.22.RELEASE</spring.version>
 		<spring-data-jpa.version>1.11.23.RELEASE</spring-data-jpa.version>		
 		
 		<!-- util -->
