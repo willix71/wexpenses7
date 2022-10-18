@@ -16,7 +16,7 @@
 	<properties>
 		<!-- marshalling -->
 		<modelmapper.version>0.7.4</modelmapper.version>
-		<jackson.version>2.4.1</jackson.version>
+		<jackson.version>2.13.4.1</jackson.version>
 		<xstream.version>1.4.7</xstream.version>
 
 		<httpcore.version>4.3.2</httpcore.version>
